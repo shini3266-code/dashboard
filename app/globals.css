@@ -1,0 +1,29 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #060810;
+  --surface: #0d1117;
+  --surface2: #131922;
+  --border: rgba(255,255,255,0.07);
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --up: #00d084;
+  --down: #ff4d6a;
+  --accent: #3b82f6;
+  --gold: #f59e0b;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+}
+
+input, textarea {
+  outline: none;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--muted);
+}
