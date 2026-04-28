@@ -30,10 +30,7 @@ async function fetchQuote(symbol: string): Promise<QuoteData | null> {
 
 async function fetchFred(series: string): Promise<FredData | null> {
   try {
-    const FRED_KEY = '여기에_실제_키_직접_입력'
-    const res = await fetch(
-      `https://api.stlouisfed.org/fred/series/observations?series_id=${series}&api_key=${FRED_KEY}&file_type=json&limit=5&sort_order=desc`
-    )
+    const res = await fetch(`/api/fred?series=${series}`)
     if (!res.ok) return null
     const data = await res.json()
     const obs = data.observations?.filter((o: any) => o.value !== '.')
