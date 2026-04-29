@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Watchlist from '@/components/Watchlist'
+import StockLineChart from '@/components/LineChart'
 
 interface QuoteData {
   symbol: string
@@ -241,22 +242,33 @@ export default function Page() {
         ))}
       </div> */}
   
-      {/* ETF — 차트 3열 */}
+      {/* ETF — 차트 */}
       <SectionLabel>📊 글로벌 ETF</SectionLabel>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 28 }}>
-        {['SPY', 'QQQ', 'SOXX'].map(sym => (
-          <div key={sym} style={{
-            background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 10, padding: '12px', 
-          }}>
-            <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 6 }}>{sym} · 3M</div>
-            <iframe
-              src={`https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#{"symbol":"${sym}","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}`}
-              style={{ width: '100%', height: 200, border: 'none', borderRadius: 6 }}
-            />
+      {[
+        { sym: 'SPY', color: '#8b5cf6' },
+        { sym: 'QQQ', color: '#3b82f6' },
+        { sym: 'SOXX', color: '#06b6d4' },
+      ].map(({ sym, color }) => (
+        <div key={sym} style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 10,
+          padding: '12px 16px',
+        }}>
+          <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>
+            {sym} · 1Y
           </div>
-        ))}
-      </div>
+          <StockLineChart
+            symbol={sym}
+            color={color}
+            range="1y"
+            height={180}
+            formatValue={(v) => `$${v.toLocaleString()}`}
+          />
+        </div>
+      ))}
+    </div>
   
       {/* 자산 — 가격 3열 */}
       {/* <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
@@ -266,26 +278,33 @@ export default function Page() {
         <QuoteCard label="WTI 원유" ticker="CL=F" data={quotes['CL=F']} sub="USD / 배럴" />
       </div> */}
   
-      {/* 자산 — 차트 3열 */}
+      {/* 자산 — 차트 */}
       <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 28 }}>
-        {[
-          { sym: 'GC=F', tv: 'GOLD', label: '금' },
-          { sym: 'BTC-USD', tv: 'BTCUSD', label: '비트코인' },
-          { sym: 'CL=F', tv: 'USOIL', label: 'WTI 원유' },
-        ].map(({ tv, label }) => (
-          <div key={tv} style={{
-            background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 10, padding: '12px',
-          }}>
-            <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 6 }}>{label} · 3M</div>
-            <iframe
-              src={`https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#{"symbol":"${tv}","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}`}
-              style={{ width: '100%', height: 200, border: 'none', borderRadius: 6 }}
-            />
+      {[
+        { sym: 'GC=F',    label: '금',      color: '#f59e0b', fmt: (v: number) => `$${v.toLocaleString()}` },
+        { sym: 'BTC-USD', label: '비트코인', color: '#f97316', fmt: (v: number) => `$${v.toLocaleString()}` },
+        { sym: 'CL=F',    label: 'WTI 원유', color: '#10b981', fmt: (v: number) => `$${v.toFixed(1)}` },
+      ].map(({ sym, label, color, fmt }) => (
+        <div key={sym} style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 10,
+          padding: '12px 16px',
+        }}>
+          <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>
+            {label} · 1Y
           </div>
-        ))}
-      </div>
+          <StockLineChart
+            symbol={sym}
+            color={color}
+            range="1y"
+            height={180}
+            formatValue={fmt}
+          />
+        </div>
+      ))}
+    </div>
   
       {/* 매크로 지표 — 가격만 4열 */}
       <SectionLabel>🌐 매크로 지표</SectionLabel>
