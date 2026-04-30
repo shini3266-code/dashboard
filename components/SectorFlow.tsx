@@ -50,13 +50,18 @@ export default function SectorFlow() {
     async function load() {
       try {
         const results = await Promise.all(
-            SECTORS.map(async ({ symbol, name }) => {
+          SECTORS.map(async ({ symbol, name }) => {
+            try {
               const res = await fetch(`/api/quote?symbol=${symbol}`)
+              if (!res.ok) return { symbol, name, change: 0, price: 0 }
               const json = await res.json()
               if (!json) return { symbol, name, change: 0, price: 0 }
               return { symbol, name, change: json.change, price: json.price }
-            })
-          )
+            } catch {
+              return { symbol, name, change: 0, price: 0 }
+            }
+          })
+        )
         // 등락률 순으로 정렬
         results.sort((a, b) => b.change - a.change)
         setData(results)
