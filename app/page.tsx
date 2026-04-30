@@ -20,17 +20,9 @@ interface FredData {
 
 async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   try {
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=5d`
-    const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
-    const res = await fetch(proxy)
+    const res = await fetch(`/api/quote?symbol=${symbol}`)
     if (!res.ok) return null
-    const data = await res.json()
-    const meta = data.chart?.result?.[0]?.meta
-    if (!meta) return null
-    const prev = meta.chartPreviousClose ?? meta.previousClose
-    const curr = meta.regularMarketPrice
-    const change = ((curr - prev) / prev) * 100
-    return { symbol, price: curr, change }
+    return res.json()
   } catch { return null }
 }
 

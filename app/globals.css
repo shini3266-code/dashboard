@@ -14,10 +14,15 @@
   --mono: 'JetBrains Mono', monospace;
 }
 
+html {
+  font-size: 16px; /* 기본값, 여기서 18px로 바꾸면 전체 +2pt */
+}
+
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Syne', sans-serif;
+  font-size: 1rem; /* html 기준으로 상대적으로 적용 */
 }
 
 input, textarea {

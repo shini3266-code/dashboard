@@ -50,19 +50,13 @@ export default function SectorFlow() {
     async function load() {
       try {
         const results = await Promise.all(
-          SECTORS.map(async ({ symbol, name }) => {
-            const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=5d`
-            const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
-            const res = await fetch(proxy)
-            const json = await res.json()
-            const meta = json.chart?.result?.[0]?.meta
-            if (!meta) return { symbol, name, change: 0, price: 0 }
-            const prev = meta.chartPreviousClose ?? meta.previousClose
-            const curr = meta.regularMarketPrice
-            const change = ((curr - prev) / prev) * 100
-            return { symbol, name, change, price: curr }
-          })
-        )
+            SECTORS.map(async ({ symbol, name }) => {
+              const res = await fetch(`/api/quote?symbol=${symbol}`)
+              const json = await res.json()
+              if (!json) return { symbol, name, change: 0, price: 0 }
+              return { symbol, name, change: json.change, price: json.price }
+            })
+          )
         // 등락률 순으로 정렬
         results.sort((a, b) => b.change - a.change)
         setData(results)

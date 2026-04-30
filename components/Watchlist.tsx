@@ -54,40 +54,31 @@ export default function Watchlist() {
       setError('이미 추가된 종목이에요')
       return
     }
-
+  
     setLoading(true)
     setError('')
-
+  
     try {
-      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1d&range=5d`
-      const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
-      const res = await fetch(proxy)
+      const res = await fetch(`/api/quote?symbol=${sym}`)
       if (!res.ok) throw new Error()
       const data = await res.json()
-      const meta = data.chart?.result?.[0]?.meta
-      if (!meta) throw new Error()
-      const prev = meta.chartPreviousClose ?? meta.previousClose
-      const curr = meta.regularMarketPrice
-      const change = ((curr - prev) / prev) * 100
-
-      const deviceId = getDeviceId()
-      const { data: inserted, error: dbError } = await supabase
-        .from('watchlist')
-        .insert({
-          device_id: deviceId,
-          symbol: sym,
-          price: curr,
-          change_pct: change,
-          memo: '',
-        })
-        .select()
-        .single()
-
-      if (dbError) throw dbError
-      setWatchlist(prev => [...prev, inserted])
+      if (!data || !data.price) throw new Error()
+  
+      const newItem: WatchItem = {
+        id: crypto.randomUUID(),
+        symbol: sym,
+        price: data.price,
+        change: data.change,
+        memo: '',
+        addedAt: new Date().toISOString(),
+      }
+  
+      const updated = [...watchlist, newItem]
+      setWatchlist(updated)
+      localStorage.setItem('watchlist', JSON.stringify(updated))
       setInput('')
     } catch {
-      setError('티커를 찾을 수 없어요. 다시 확인해주세요.')
+      setError('티커를 찾을 수 없어요. 정확한 티커를 입력해주세요. (예: AAPL, 005930.KS)')
     } finally {
       setLoading(false)
     }
@@ -193,6 +184,7 @@ export default function Watchlist() {
             onChange={e => updateMemo(item.id, e.target.value)}
             placeholder="📌 메모 — 임박한 이벤트, 매수 근거, 목표가 등"
             rows={3}
+            spellCheck={false}
             style={{
               width: '100%',
               background: 'var(--surface2)',
