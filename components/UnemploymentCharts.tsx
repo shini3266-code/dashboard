@@ -31,6 +31,26 @@ function UnempChart() {
   const [latest, setLatest] = useState<number | null>(null)
   const [change, setChange] = useState<number | null>(null)
 
+  {/* 실업률 멘트 */}
+  {latest !== null && (
+    <div style={{
+      marginTop: 8, background: 'var(--surface2)', borderRadius: 6,
+      padding: '6px 8px',
+      borderLeft: `2px solid ${latest <= 4 ? 'var(--up)' : latest <= 5 ? 'var(--gold)' : 'var(--down)'}`,
+    }}>
+      <div style={{
+        fontSize: 11, fontFamily: 'var(--mono)', lineHeight: 1.6,
+        color: latest <= 4 ? 'var(--up)' : latest <= 5 ? 'var(--gold)' : 'var(--down)',
+      }}>
+        {latest <= 4
+          ? `${latest.toFixed(1)}% — 완전고용 수준이에요. 고용시장이 탄탄해요.`
+          : latest <= 5
+          ? `${latest.toFixed(1)}% — 소폭 상승 중이에요. 고용 냉각 신호를 모니터링하세요.`
+          : `${latest.toFixed(1)}% — 고용시장이 악화되고 있어요. 연준 피벗 기대가 커질 수 있어요.`}
+      </div>
+    </div>
+  )}
+
   useEffect(() => {
     fetch(`/api/fredhistory?series=UNRATE&limit=60`)
       .then(r => r.json())
@@ -126,6 +146,25 @@ function JoblessChart() {
   const [latest, setLatest] = useState<number | null>(null)
   const [change, setChange] = useState<number | null>(null)
 
+  {latest !== null && (
+    <div style={{
+      marginTop: 8, background: 'var(--surface2)', borderRadius: 6,
+      padding: '6px 8px',
+      borderLeft: `2px solid ${latest > 300000 ? 'var(--down)' : latest > 250000 ? 'var(--gold)' : 'var(--up)'}`,
+    }}>
+      <div style={{
+        fontSize: 11, fontFamily: 'var(--mono)', lineHeight: 1.6,
+        color: latest > 300000 ? 'var(--down)' : latest > 250000 ? 'var(--gold)' : 'var(--up)',
+      }}>
+        {latest > 300000
+          ? `${Math.round(latest).toLocaleString()}건 — 30만 초과예요. 고용 냉각 신호예요. 연준 피벗 기대가 커져요.`
+          : latest > 250000
+          ? `${Math.round(latest).toLocaleString()}건 — 정상 범위 상단이에요. 모니터링이 필요해요.`
+          : `${Math.round(latest).toLocaleString()}건 — 건강한 수준이에요. 고용시장이 탄탄해요.`}
+      </div>
+    </div>
+  )}
+  
   useEffect(() => {
     fetch(`/api/fredhistory?series=ICSA&limit=104`)
       .then(r => r.json())
