@@ -173,14 +173,20 @@ function JoblessChart() {
           )}
         </div>
       </div>
-
+  
       {loading ? (
         <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: 12 }}>
           로딩 중...
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={160}>
-          <BarChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+          <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="grad-jobless" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
             <XAxis
               dataKey="date"
@@ -196,8 +202,13 @@ function JoblessChart() {
             />
             <Tooltip content={<CustomTooltip color="#ef4444" suffix="건" />} />
             <ReferenceLine y={300000} stroke="#ef4444" strokeDasharray="3 3" strokeOpacity={0.5} />
-            <Bar dataKey="value" fill="#ef4444" fillOpacity={0.7} radius={[2, 2, 0, 0]} />
-          </BarChart>
+            <Area
+              type="monotone" dataKey="value"
+              stroke="#ef4444" strokeWidth={1.5}
+              fill="url(#grad-jobless)"
+              dot={false} activeDot={{ r: 4, fill: '#ef4444' }}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       )}
     </div>
