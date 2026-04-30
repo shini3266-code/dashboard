@@ -2,6 +2,11 @@
 import { useState, useEffect } from 'react'
 import Watchlist from '@/components/Watchlist'
 import StockLineChart from '@/components/LineChart'
+import FearGreedGauge from '@/components/FearGreedGauge'
+import LiquidityCharts from '@/components/LiquidityCharts'
+import UnemploymentCharts from '@/components/UnemploymentCharts'
+import SectorFlow from '@/components/SectorFlow'
+import MarketHeatmap from '@/components/MarketHeatmap'
 
 interface QuoteData {
   symbol: string
@@ -75,6 +80,15 @@ function FredCard({ label, data, unit = '%', desc }: {
   desc?: string
 }) {
   const num = data?.value ?? null
+
+  function formatNum(n: number, unit: string) {
+    if (unit === 'B') {
+      // 소수점 없애고 콤마
+      return Math.round(n).toLocaleString() + 'B'
+    }
+    return n.toFixed(2) + unit
+  }
+
   return (
     <div style={{
       background: 'var(--surface)',
@@ -84,10 +98,10 @@ function FredCard({ label, data, unit = '%', desc }: {
     }}>
       <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>{label}</div>
       <div style={{
-        fontSize: 22, fontWeight: 700, fontFamily: 'var(--mono)',
+        fontSize: 20, fontWeight: 700, fontFamily: 'var(--mono)',
         color: num !== null && num < 0 ? 'var(--down)' : 'var(--text)',
       }}>
-        {num !== null ? `${num.toFixed(2)}${unit}` : '--'}
+        {num !== null ? formatNum(num, unit) : '--'}
       </div>
       {desc && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4, fontFamily: 'var(--mono)' }}>{desc}</div>}
     </div>
@@ -231,7 +245,7 @@ export default function Page() {
       <Watchlist />
   
       {/* ETF — 가격 3열 */}
-      {/* <SectionLabel>📊 글로벌 ETF</SectionLabel>
+      <SectionLabel>📊 글로벌 ETF</SectionLabel>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 8 }}>
         {[
           { ticker: 'SPY', label: 'S&P 500 ETF' },
@@ -240,7 +254,7 @@ export default function Page() {
         ].map(({ ticker, label }) => (
           <QuoteCard key={ticker} label={label} ticker={ticker} data={quotes[ticker]} />
         ))}
-      </div> */}
+      </div>
   
       {/* ETF — 차트 */}
       <SectionLabel>📊 글로벌 ETF</SectionLabel>
@@ -271,12 +285,12 @@ export default function Page() {
     </div>
   
       {/* 자산 — 가격 3열 */}
-      {/* <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
+      <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 8 }}>
         <QuoteCard label="금 Gold" ticker="GC=F" data={quotes['GC=F']} sub="USD / 온스" />
         <QuoteCard label="비트코인" ticker="BTC-USD" data={quotes['BTC-USD']} />
         <QuoteCard label="WTI 원유" ticker="CL=F" data={quotes['CL=F']} sub="USD / 배럴" />
-      </div> */}
+      </div>
   
       {/* 자산 — 차트 */}
       <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
@@ -315,45 +329,51 @@ export default function Page() {
         <QuoteCard label="원달러 환율" ticker="KRW=X" data={quotes['KRW=X']} unit="" sub="KRW / USD" />
       </div>
   
-      {/* 공포탐욕 + VIX */}
       <SectionLabel>😱 시장 심리</SectionLabel>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginBottom: 28 }}>
-        {/* Fear & Greed */}
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: 20 }}>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 12 }}>CNN 공포·탐욕 지수</div>
-          <FearGreed />
+      <FearGreedGauge />
+
+      {/* VIX */}
+      <div style={{
+        background: 'var(--surface)', border: '1px solid var(--border)',
+        borderRadius: 10, padding: 20, marginBottom: 28,
+      }}>
+        <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
+        <div style={{
+          fontSize: 42, fontWeight: 700, fontFamily: 'var(--mono)',
+          color: (quotes['^VIX']?.price ?? 0) >= 30 ? 'var(--down)' : (quotes['^VIX']?.price ?? 0) >= 20 ? 'var(--gold)' : 'var(--up)'
+        }}>
+          {quotes['^VIX'] ? quotes['^VIX']!.price.toFixed(2) : '--'}
         </div>
-  
-        {/* VIX */}
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: 20 }}>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
-          <div style={{
-            fontSize: 42, fontWeight: 700, fontFamily: 'var(--mono)',
-            color: (quotes['^VIX']?.price ?? 0) >= 30 ? 'var(--down)' : (quotes['^VIX']?.price ?? 0) >= 20 ? 'var(--gold)' : 'var(--up)'
-          }}>
-            {quotes['^VIX'] ? quotes['^VIX']!.price.toFixed(2) : '--'}
-          </div>
-          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 8 }}>
-            {(quotes['^VIX']?.price ?? 0) >= 30 ? '🚨 경계 — 시장 패닉' : (quotes['^VIX']?.price ?? 0) >= 20 ? '⚠ 주의 — 변동성 확대' : '😌 안정 — 정상 범위'}
-          </div>
-          <div style={{ marginTop: 16 }}>
-            <iframe
-              src={`https://s.tradingview.com/embed-widget/mini-symbol-overview/?locale=en#{"symbol":"VIX","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}`}
-              style={{ width: '100%', height: 120, border: 'none', borderRadius: 6 }}
-            />
-          </div>
+        <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 8 }}>
+          {(quotes['^VIX']?.price ?? 0) >= 30 ? '🚨 경계 — 시장 패닉' : (quotes['^VIX']?.price ?? 0) >= 20 ? '⚠ 주의 — 변동성 확대' : '😌 안정 — 정상 범위'}
+        </div>
+        <div style={{ marginTop: 16 }}>
+          <StockLineChart symbol="^VIX" color="#f59e0b" range="1y" height={140} formatValue={(v) => v.toFixed(1)} />
         </div>
       </div>
   
       {/* 연준 유동성 */}
       <SectionLabel>💧 연준 유동성</SectionLabel>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 28 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginBottom: 28 }}>
         <FredCard label="연준 총자산" data={freds['WALCL']} unit="B" desc="QE/QT 규모" />
         <FredCard label="지급준비금" data={freds['WRESBAL']} unit="B" desc="은행 시스템 총 준비금" />
         <FredCard label="역레포 잔액" data={freds['RRPONTSYD']} unit="B" desc="초과유동성 흡수액" />
         <FredCard label="TGA 잔고" data={freds['WTREGEN']} unit="B" desc="재무부 일반계정" />
       </div>
+      <LiquidityCharts />
+
+      {/* 고용 */}
+      <SectionLabel>👷 고용 지표</SectionLabel>
+      <UnemploymentCharts />
   
+      {/* 섹터별 자금흐름 */}
+      <SectionLabel>🏭 섹터별 자금 흐름</SectionLabel>
+      <SectorFlow />
+
+      {/* 미국 증시 히트맵 */}
+      <SectionLabel>🗺️ 미국 증시 히트맵</SectionLabel>
+      <MarketHeatmap />
+
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
