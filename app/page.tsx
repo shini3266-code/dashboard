@@ -221,7 +221,7 @@ export default function Page() {
   }, [])
 
   return (
-    <main style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
+    <main style={{ maxWidth: 1200, margin: '0 auto', padding: 24, fontSize: 20 }}>
 
       {/* 헤더 */}
       <div style={{

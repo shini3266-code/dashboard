@@ -1,5 +1,20 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+function getDeviceId() {
+  let id = localStorage.getItem('device_id')
+  if (!id) {
+    id = crypto.randomUUID()
+    localStorage.setItem('device_id', id)
+  }
+  return id
+}
 
 interface CalEvent {
   id: string
@@ -16,51 +31,63 @@ const CATEGORY_COLORS = {
   '기타': '#64748b',
 }
 
-// 이번달 기본 FOMC 일정 (하드코딩 — 나중에 수동 추가 가능)
-const DEFAULT_EVENTS: CalEvent[] = [
-  { id: '1', date: '2025-05-07', title: 'FOMC 회의', category: 'FOMC', memo: '금리 동결 예상' },
-  { id: '2', date: '2025-05-13', title: 'CPI 발표', category: '경제지표', memo: '' },
-  { id: '3', date: '2025-05-15', title: 'PPI 발표', category: '경제지표', memo: '' },
-  { id: '4', date: '2025-06-11', title: 'FOMC 회의', category: 'FOMC', memo: '' },
-]
-
 export default function EventCalendar() {
   const [events, setEvents] = useState<CalEvent[]>([])
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ date: '', title: '', category: 'FOMC' as CalEvent['category'], memo: '' })
   const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [loadingDb, setLoadingDb] = useState(true)
 
   useEffect(() => {
-    const saved = localStorage.getItem('cal_events')
-    if (saved) {
-      setEvents(JSON.parse(saved))
-    } else {
-      setEvents(DEFAULT_EVENTS)
-      localStorage.setItem('cal_events', JSON.stringify(DEFAULT_EVENTS))
+    async function load() {
+      const deviceId = getDeviceId()
+      const { data } = await supabase
+        .from('events')
+        .select('*')
+        .eq('device_id', deviceId)
+        .order('date', { ascending: true })
+      if (data) setEvents(data)
+      setLoadingDb(false)
     }
+    load()
   }, [])
 
-  function save(updated: CalEvent[]) {
-    setEvents(updated)
-    localStorage.setItem('cal_events', JSON.stringify(updated))
-  }
-
-  function addEvent() {
+  async function addEvent() {
     if (!form.date || !form.title) return
-    const newEvent: CalEvent = {
-      id: crypto.randomUUID(),
-      ...form,
+    const deviceId = getDeviceId()
+
+    const { data: inserted, error } = await supabase
+      .from('events')
+      .insert({
+        device_id: deviceId,
+        date: form.date,
+        title: form.title,
+        category: form.category,
+        memo: form.memo,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      alert('저장 실패: ' + error.message)
+      return
     }
-    save([...events, newEvent])
+
+    setEvents(prev => [...prev, inserted].sort((a, b) => a.date.localeCompare(b.date)))
     setForm({ date: '', title: '', category: 'FOMC', memo: '' })
     setShowForm(false)
   }
 
-  function deleteEvent(id: string) {
-    save(events.filter(e => e.id !== id))
+  async function deleteEvent(id: string) {
+    await supabase.from('events').delete().eq('id', id)
+    setEvents(prev => prev.filter(e => e.id !== id))
   }
 
-  // 달력 계산
+  async function updateEventMemo(id: string, memo: string) {
+    setEvents(prev => prev.map(e => e.id === id ? { ...e, memo } : e))
+    await supabase.from('events').update({ memo }).eq('id', id)
+  }
+
   const year = currentMonth.getFullYear()
   const month = currentMonth.getMonth()
   const firstDay = new Date(year, month, 1).getDay()
@@ -80,10 +107,8 @@ export default function EventCalendar() {
     return events.filter(e => e.date === dateStr(day))
   }
 
-  // 이번달 이후 이벤트 정렬
   const upcomingEvents = events
     .filter(e => e.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 8)
 
   return (
@@ -93,7 +118,7 @@ export default function EventCalendar() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em' }}>
-          📅 이벤트 캘린더
+          📅 이벤트 캘린더 · Supabase 연동
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -181,7 +206,6 @@ export default function EventCalendar() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16 }}>
         {/* 달력 */}
         <div>
-          {/* 월 네비게이션 */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <button
               onClick={() => setCurrentMonth(new Date(year, month - 1))}
@@ -196,7 +220,6 @@ export default function EventCalendar() {
             >›</button>
           </div>
 
-          {/* 요일 헤더 */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
             {['일', '월', '화', '수', '목', '금', '토'].map(d => (
               <div key={d} style={{ textAlign: 'center', fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', padding: '4px 0' }}>
@@ -205,7 +228,6 @@ export default function EventCalendar() {
             ))}
           </div>
 
-          {/* 날짜 셀 */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
             {cells.map((day, i) => {
               if (!day) return <div key={i} />
@@ -217,14 +239,12 @@ export default function EventCalendar() {
                   minHeight: 52,
                   background: isToday ? 'rgba(59,130,246,0.15)' : 'var(--surface2)',
                   border: isToday ? '1px solid var(--accent)' : '1px solid var(--border)',
-                  borderRadius: 6,
-                  padding: '4px 5px',
+                  borderRadius: 6, padding: '4px 5px',
                 }}>
                   <div style={{
                     fontSize: 11, fontFamily: 'var(--mono)',
                     color: isToday ? 'var(--accent)' : 'var(--muted)',
-                    fontWeight: isToday ? 700 : 400,
-                    marginBottom: 2,
+                    fontWeight: isToday ? 700 : 400, marginBottom: 2,
                   }}>
                     {day}
                   </div>
@@ -233,17 +253,12 @@ export default function EventCalendar() {
                       key={ev.id}
                       title={`${ev.title}${ev.memo ? '\n' + ev.memo : ''}`}
                       style={{
-                        fontSize: 9,
-                        fontFamily: 'var(--mono)',
+                        fontSize: 9, fontFamily: 'var(--mono)',
                         background: CATEGORY_COLORS[ev.category],
-                        color: '#fff',
-                        borderRadius: 3,
-                        padding: '1px 4px',
-                        marginBottom: 2,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        cursor: 'pointer',
+                        color: '#fff', borderRadius: 3,
+                        padding: '1px 4px', marginBottom: 2,
+                        overflow: 'hidden', textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap', cursor: 'pointer',
                       }}
                       onClick={() => deleteEvent(ev.id)}
                     >
@@ -264,7 +279,11 @@ export default function EventCalendar() {
           <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 10, letterSpacing: '0.08em' }}>
             임박한 이벤트
           </div>
-          {upcomingEvents.length === 0 ? (
+          {loadingDb ? (
+            <div style={{ color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: 12, textAlign: 'center', padding: 20 }}>
+              로딩 중...
+            </div>
+          ) : upcomingEvents.length === 0 ? (
             <div style={{ color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: 12, textAlign: 'center', padding: 20 }}>
               예정된 이벤트 없음
             </div>
@@ -276,9 +295,7 @@ export default function EventCalendar() {
                   background: 'var(--surface2)',
                   border: `1px solid ${CATEGORY_COLORS[ev.category]}40`,
                   borderLeft: `3px solid ${CATEGORY_COLORS[ev.category]}`,
-                  borderRadius: 6,
-                  padding: '8px 10px',
-                  marginBottom: 6,
+                  borderRadius: 6, padding: '8px 10px', marginBottom: 6,
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700, color: 'var(--text)' }}>
@@ -295,11 +312,20 @@ export default function EventCalendar() {
                   <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 2 }}>
                     {ev.date} · {ev.category}
                   </div>
-                  {ev.memo && (
-                    <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>
-                      {ev.memo}
-                    </div>
-                  )}
+                  {/* 메모 인라인 편집 */}
+                  <textarea
+                    value={ev.memo}
+                    onChange={e => updateEventMemo(ev.id, e.target.value)}
+                    placeholder="메모 추가..."
+                    rows={2}
+                    spellCheck={false}
+                    style={{
+                      width: '100%', marginTop: 6,
+                      background: 'var(--surface)', border: '1px solid var(--border)',
+                      borderRadius: 4, padding: '4px 8px', color: 'var(--text)',
+                      fontFamily: 'var(--mono)', fontSize: 11, resize: 'none',
+                    }}
+                  />
                 </div>
               )
             })
