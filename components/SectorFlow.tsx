@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ReferenceLine } from 'recharts'
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ReferenceLine, CartesianGrid } from 'recharts'
 
 interface SectorData {
   symbol: string
