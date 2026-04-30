@@ -50,7 +50,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   )
 }
 
-// 가격 + 차트 한줄 카드
+// 가격 + 차트 카드
 function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue }: {
   ticker: string
   label: string
@@ -61,11 +61,13 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
   formatValue?: (v: number) => string
 }) {
   const isUp = (data?.change ?? 0) >= 0
+  const fmt = formatValue ?? ((v: number) => `${unit}${v.toLocaleString()}`)
+
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: '200px 1fr',
-      gap: 16,
+      gridTemplateColumns: '180px 1fr 2fr',
+      gap: 12,
       background: 'var(--surface)',
       border: '1px solid var(--border)',
       borderRadius: 10,
@@ -73,10 +75,11 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
       marginBottom: 8,
       alignItems: 'center',
     }}>
+      {/* 가격 */}
       <div>
         <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
         <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
-        <div style={{ fontSize: 26, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1 }}>
+        <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1 }}>
           {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
         </div>
         <div style={{
@@ -87,13 +90,30 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
         </div>
         {sub && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
       </div>
-      <StockLineChart
-        symbol={ticker}
-        color={color}
-        range="1y"
-        height={110}
-        formatValue={formatValue ?? ((v) => `${unit}${v.toLocaleString()}`)}
-      />
+
+      {/* 1개월 차트 */}
+      <div>
+        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+        <StockLineChart
+          symbol={ticker}
+          color={color}
+          range="1mo"
+          height={90}
+          formatValue={fmt}
+        />
+      </div>
+
+      {/* 1년 차트 */}
+      <div>
+        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+        <StockLineChart
+          symbol={ticker}
+          color={color}
+          range="1y"
+          height={90}
+          formatValue={fmt}
+        />
+      </div>
     </div>
   )
 }
