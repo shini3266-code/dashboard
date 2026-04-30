@@ -64,18 +64,21 @@ export default function Watchlist() {
       const data = await res.json()
       if (!data || !data.price) throw new Error()
   
-      const newItem: WatchItem = {
-        id: crypto.randomUUID(),
-        symbol: sym,
-        price: data.price,
-        change: data.change,
-        memo: '',
-        addedAt: new Date().toISOString(),
-      }
+      const deviceId = getDeviceId()
+      const { data: inserted, error: dbError } = await supabase
+        .from('watchlist')
+        .insert({
+          device_id: deviceId,
+          symbol: sym,
+          price: data.price,
+          change_pct: data.change,
+          memo: '',
+        })
+        .select()
+        .single()
   
-      const updated = [...watchlist, newItem]
-      setWatchlist(updated)
-      localStorage.setItem('watchlist', JSON.stringify(updated))
+      if (dbError) throw dbError
+      setWatchlist(prev => [...prev, inserted])
       setInput('')
     } catch {
       setError('티커를 찾을 수 없어요. 정확한 티커를 입력해주세요. (예: AAPL, 005930.KS)')
