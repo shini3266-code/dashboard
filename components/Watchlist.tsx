@@ -21,9 +21,9 @@ interface WatchItem {
   id: string
   symbol: string
   price: number
-  change_pct: number
+  change_pct: number  // change → change_pct
   memo: string
-  added_at: string
+  addedAt: string
 }
 
 export default function Watchlist() {

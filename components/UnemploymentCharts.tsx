@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import {
-  ResponsiveContainer, AreaChart, Area, BarChart, Bar,
+  ResponsiveContainer, AreaChart, Area,
   XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine
 } from 'recharts'
 
@@ -87,9 +87,9 @@ function UnempChart() {
         <ResponsiveContainer width="100%" height={160}>
           <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
             <defs>
-              <linearGradient id="grad-unemp" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#f97316" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+              <linearGradient id="grad-jobless" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -102,16 +102,16 @@ function UnempChart() {
             <YAxis
               tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'var(--mono)' }}
               axisLine={false} tickLine={false}
-              tickFormatter={(v) => `${v}%`}
+              tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`}
               width={36}
             />
-            <Tooltip content={<CustomTooltip color="#f97316" suffix="%" />} />
-            <ReferenceLine y={4} stroke="#f97316" strokeDasharray="3 3" strokeOpacity={0.5} />
+            <Tooltip content={<CustomTooltip color="#ef4444" suffix="건" />} />
+            <ReferenceLine y={300000} stroke="#ef4444" strokeDasharray="3 3" strokeOpacity={0.5} />
             <Area
               type="monotone" dataKey="value"
-              stroke="#f97316" strokeWidth={1.5}
-              fill="url(#grad-unemp)"
-              dot={false} activeDot={{ r: 4, fill: '#f97316' }}
+              stroke="#ef4444" strokeWidth={1.5}
+              fill="url(#grad-jobless)"
+              dot={false} activeDot={{ r: 4, fill: '#ef4444' }}
             />
           </AreaChart>
         </ResponsiveContainer>
