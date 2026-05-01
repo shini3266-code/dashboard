@@ -16,6 +16,7 @@ interface Props {
   range?: string
   height?: number
   formatValue?: (v: number) => string
+  externalData?: { date: string; value: number }[]  // ← 이거 추가
 }
 
 export default function StockLineChart({
@@ -24,11 +25,17 @@ export default function StockLineChart({
   range = '1y',
   height = 200,
   formatValue = (v) => v.toLocaleString(),
+  externalData,  // ← 이거 추가
 }: Props) {
   const [data, setData] = useState<ChartData[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (externalData) {
+      setData(externalData)
+      setLoading(false)
+      return
+    }
     setLoading(true)
     fetch(`/api/history?symbol=${symbol}&range=${range}`)
       .then(r => r.json())
@@ -37,7 +44,7 @@ export default function StockLineChart({
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [symbol, range])
+  }, [symbol, range, externalData])
 
   if (loading) return (
     <div style={{
