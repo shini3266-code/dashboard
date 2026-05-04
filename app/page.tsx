@@ -23,8 +23,6 @@ async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   } catch { return null }
 }
 
-const [freds, setFreds] = useState<Record<string, { value: number | null } | null>>({})
-
 function MarketSummaryBar({ quotes, freds }: {
   quotes: Record<string, QuoteData | null>
   freds?: Record<string, { value: number | null } | null>
@@ -481,6 +479,7 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
 export default function Page() {
   const [quotes, setQuotes] = useState<Record<string, QuoteData | null>>({})
   const [loading, setLoading] = useState(true)
+  const [freds, setFreds] = useState<Record<string, { value: number | null } | null>>({})
 
   useEffect(() => {
     async function loadAll() {
