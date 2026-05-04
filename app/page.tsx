@@ -123,6 +123,41 @@ function CommentBox({ text, level = 'neutral' }: {
   )
 }
 
+function DrawdownBadge({ dd }: {
+  dd: { drawdown: number; status: string; comment: string } | null
+}) {
+  if (!dd) return null
+
+  const color = dd.drawdown >= -2 ? '#22c55e'
+    : dd.drawdown >= -10 ? '#f59e0b'
+    : dd.drawdown >= -20 ? '#f97316'
+    : '#ef4444'
+
+  return (
+    <div style={{ marginTop: 8 }}>
+      {/* 상태 배지 */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+        <span style={{
+          fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700,
+          color,
+          border: `1px solid ${color}`,
+          borderRadius: 6,
+          padding: '2px 8px',
+        }}>
+          {dd.status}
+        </span>
+        <span style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
+          ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
+        </span>
+      </div>
+      {/* 설명 텍스트 */}
+      <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', lineHeight: 1.6 }}>
+        {dd.comment}
+      </div>
+    </div>
+  )
+}
+
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
@@ -186,12 +221,7 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
           {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
         </div>
         {sub && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
-        {dd && (
-          <CommentBox
-            text={`${dd.status} ${dd.drawdown.toFixed(1)}% — ATH 대비 ${dd.drawdown.toFixed(1)}% 낙폭. ${dd.comment}`}
-            level={ddLevel}
-          />
-        )}
+        {dd && <DrawdownBadge dd={dd} />}
         {comment && <CommentBox text={comment} level={commentLevel} />}
       </div>
       <div>
@@ -443,7 +473,7 @@ export default function Page() {
 // WTI 원유 멘트 (페이지 밖에 선언)
 function getOilComment(val: number | null): string | null {
   if (val === null) return null
-  if (val >= 90) return `$${val.toFixed(1)} — 고유가 구간이에요. 인플레이션 압력이 커요.`
-  if (val >= 70) return `$${val.toFixed(1)} — 중립 구간이에요. 경기 회복 수요를 반영해요.`
-  return `$${val.toFixed(1)} — 저유가 구간이에요. 경기 둔화 우려가 있어요.`
+  if (val >= 90) return `고유가 구간이에요. 인플레이션 압력이 커요.`
+  if (val >= 70) return `중립 구간이에요. 경기 회복 수요를 반영해요.`
+  return `저유가 구간이에요. 경기 둔화 우려가 있어요.`
 }
