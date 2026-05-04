@@ -30,12 +30,13 @@ function CustomTooltip({ active, payload, label, color }: any) {
         background: 'var(--surface2)',
         border: '1px solid var(--border)',
         borderRadius: 8,
-        padding: '8px 12px',
+        padding: '10px 14px',
         fontFamily: 'var(--mono)',
-        fontSize: 12,
+        fontSize: 13,
+        boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
       }}>
-        <div style={{ color: 'var(--muted)', marginBottom: 2 }}>{label}</div>
-        <div style={{ color, fontWeight: 700 }}>{formatB(payload[0].value)}</div>
+        <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: 11 }}>{label}</div>
+        <div style={{ color, fontWeight: 700, fontSize: 15 }}>{formatB(payload[0].value)}</div>
       </div>
     )
   }

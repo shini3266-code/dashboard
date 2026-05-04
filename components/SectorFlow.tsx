@@ -23,19 +23,20 @@ const SECTORS = [
   { symbol: 'XLE', name: '에너지' },
 ]
 
-function CustomTooltip({ active, payload, label }: any) {
+function CustomTooltip({ active, payload, label, color, suffix = '' }: any) {
   if (active && payload?.length) {
-    const v = payload[0].value
-    const isUp = v >= 0
     return (
       <div style={{
-        background: 'var(--surface2)', border: '1px solid var(--border)',
-        borderRadius: 8, padding: '8px 12px', fontFamily: 'var(--mono)', fontSize: 12,
+        background: 'var(--surface2)',
+        border: '1px solid var(--border)',
+        borderRadius: 8,
+        padding: '10px 14px',
+        fontFamily: 'var(--mono)',
+        fontSize: 13,
+        boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
       }}>
-        <div style={{ color: 'var(--muted)', marginBottom: 2 }}>{label}</div>
-        <div style={{ color: isUp ? 'var(--up)' : 'var(--down)', fontWeight: 700 }}>
-          {isUp ? '+' : ''}{v?.toFixed(2)}%
-        </div>
+        <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: 11 }}>{label}</div>
+        <div style={{ color, fontWeight: 700, fontSize: 15 }}>{payload[0].value?.toLocaleString()}{suffix}</div>
       </div>
     )
   }

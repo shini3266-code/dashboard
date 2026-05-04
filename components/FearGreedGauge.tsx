@@ -68,17 +68,22 @@ export default function FearGreedGauge() {
   const needleBase1 = polarToCartesian(needleAngle + 90, 8)
   const needleBase2 = polarToCartesian(needleAngle - 90, 8)
 
-  const CustomTooltip = ({ active, payload, label: l }: any) => {
+  const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload?.length) {
       const v = payload[0].value
       const c = v < 25 ? '#ef4444' : v < 45 ? '#f97316' : v < 55 ? '#f59e0b' : v < 75 ? '#84cc16' : '#22c55e'
       return (
         <div style={{
-          background: 'var(--surface2)', border: '1px solid var(--border)',
-          borderRadius: 8, padding: '8px 12px', fontFamily: 'var(--mono)', fontSize: 12,
+          background: 'var(--surface2)',
+          border: '1px solid var(--border)',
+          borderRadius: 8,
+          padding: '10px 14px',
+          fontFamily: 'var(--mono)',
+          fontSize: 13,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
         }}>
-          <div style={{ color: 'var(--muted)', marginBottom: 2 }}>{l}</div>
-          <div style={{ color: c, fontWeight: 700 }}>{Math.round(v)}</div>
+          <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: 11 }}>{label}</div>
+          <div style={{ color: c, fontWeight: 700, fontSize: 15 }}>{Math.round(v)}</div>
         </div>
       )
     }
