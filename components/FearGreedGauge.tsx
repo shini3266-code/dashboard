@@ -90,7 +90,7 @@ export default function FearGreedGauge() {
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, padding: '16px', marginBottom: 8,
     }}>
-      <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 16, letterSpacing: '0.1em' }}>
+      <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 16, letterSpacing: '0.1em' }}>
         CNN 공포·탐욕 지수
       </div>
 
@@ -144,7 +144,7 @@ export default function FearGreedGauge() {
 
         {/* 차트 */}
         <div>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>
+          <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>
             공포탐욕 추이 · 최근 1년
           </div>
           <FearGreedChart />

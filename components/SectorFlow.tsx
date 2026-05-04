@@ -84,10 +84,10 @@ export default function SectorFlow() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 4 }}>
+          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 4 }}>
             섹터별 자금 흐름 · S&P500 11개 섹터 ETF
           </div>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
+          <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
             전일 대비 등락률 기준
           </div>
         </div>

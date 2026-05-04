@@ -77,10 +77,10 @@ function UnempChart() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
+          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
             미국 실업률 (UNRATE)
           </div>
-          <div style={{ fontSize: 10, color: 'var(--muted)', fontFamily: 'var(--mono)' }}>
+          <div style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--mono)' }}>
             4% 이하 = 완전고용 · 월간 데이터
           </div>
         </div>
@@ -191,10 +191,10 @@ function JoblessChart() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
+          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
             주간 신규 실업수당 청구 (ICSA)
           </div>
-          <div style={{ fontSize: 10, color: 'var(--muted)', fontFamily: 'var(--mono)' }}>
+          <div style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--mono)' }}>
             30만+ 급증 = 고용 냉각 신호 · 주간 데이터
           </div>
         </div>

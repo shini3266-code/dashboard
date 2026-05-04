@@ -196,11 +196,11 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
       </div>
       <div>
         <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-        <StockLineChart symbol={ticker} color={color} range="1mo" height={120} formatValue={fmt} />
+        <StockLineChart symbol={ticker} color={color} range="1mo" height={150} formatValue={fmt} />
       </div>
       <div>
         <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-        <StockLineChart symbol={ticker} color={color} range="1y" height={120} formatValue={fmt} />
+        <StockLineChart symbol={ticker} color={color} range="1y" height={150} formatValue={fmt} />
       </div>
     </div>
   )
@@ -281,11 +281,11 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
       </div>
       <div>
         <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-        <StockLineChart symbol={series} color={color} range="1mo" height={120} formatValue={fmt} externalData={data1mo} />
+        <StockLineChart symbol={series} color={color} range="1mo" height={150} formatValue={fmt} externalData={data1mo} />
       </div>
       <div>
         <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-        <StockLineChart symbol={series} color={color} range="1y" height={120} formatValue={fmt} externalData={data1y} />
+        <StockLineChart symbol={series} color={color} range="1y" height={150} formatValue={fmt} externalData={data1y} />
       </div>
     </div>
   )
@@ -387,9 +387,9 @@ export default function Page() {
         borderRadius: 10, padding: '16px', marginBottom: 8,
       }}>
         <div>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
+          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
           <div style={{
-            fontSize: 42, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1,
+            fontSize: 36, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1,
             color: vix >= 30 ? 'var(--down)' : vix >= 20 ? 'var(--gold)' : 'var(--up)'
           }}>
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
@@ -403,11 +403,11 @@ export default function Page() {
         </div>
         <div>
           <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-          <StockLineChart symbol="^VIX" color="#f59e0b" range="1mo" height={120} formatValue={(v) => v.toFixed(1)} />
+          <StockLineChart symbol="^VIX" color="#f59e0b" range="1mo" height={150} formatValue={(v) => v.toFixed(1)} />
         </div>
         <div>
           <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-          <StockLineChart symbol="^VIX" color="#f59e0b" range="1y" height={120} formatValue={(v) => v.toFixed(1)} />
+          <StockLineChart symbol="^VIX" color="#f59e0b" range="1y" height={150} formatValue={(v) => v.toFixed(1)} />
         </div>
       </div>
 

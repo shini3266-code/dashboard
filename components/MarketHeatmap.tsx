@@ -42,10 +42,10 @@ export default function MarketHeatmap() {
       padding: '16px',
       marginBottom: 8,
     }}>
-      <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 4 }}>
+      <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 4 }}>
         S&P 500 섹터 히트맵
       </div>
-      <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 16 }}>
+      <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 16 }}>
         시가총액 가중 · 색상 = 전일 대비 등락률
       </div>
       <div
