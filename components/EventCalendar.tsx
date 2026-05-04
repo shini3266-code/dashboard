@@ -117,7 +117,7 @@ export default function EventCalendar() {
       borderRadius: 10, padding: '16px', marginBottom: 8,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em' }}>
+        <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em' }}>
           📅 이벤트 캘린더 · Supabase 연동
         </div>
         <button
@@ -236,7 +236,7 @@ export default function EventCalendar() {
               const isToday = ds === today
               return (
                 <div key={i} style={{
-                  minHeight: 52,
+                  minHeight: 65,
                   background: isToday ? 'rgba(59,130,246,0.15)' : 'var(--surface2)',
                   border: isToday ? '1px solid var(--accent)' : '1px solid var(--border)',
                   borderRadius: 6, padding: '4px 5px',
@@ -253,7 +253,7 @@ export default function EventCalendar() {
                       key={ev.id}
                       title={`${ev.title}${ev.memo ? '\n' + ev.memo : ''}`}
                       style={{
-                        fontSize: 9, fontFamily: 'var(--mono)',
+                        fontSize: 11, fontFamily: 'var(--mono)',
                         background: CATEGORY_COLORS[ev.category],
                         color: '#fff', borderRadius: 3,
                         padding: '1px 4px', marginBottom: 2,
