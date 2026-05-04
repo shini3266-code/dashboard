@@ -73,16 +73,19 @@ function getKrwComment(val: number | null) {
 function getFedAssetComment(val: number | null) {
   if (val === null) return null
   const t = val / 1000000
-  if (t >= 8) return { keyword: 'QT 진행 중', text: `$${t.toFixed(2)}T. 대규모 자산 보유 중이에요.` }
-  if (t >= 7) return { keyword: '자산 축소 중', text: `$${t.toFixed(2)}T. 유동성 위축 압력이 있어요.` }
-  return { keyword: '정상화', text: `$${t.toFixed(2)}T. 코로나 이전 수준으로 복귀 중이에요.` }
+  if (t >= 8) return { keyword: 'QT 진행 중', text: `$${t.toFixed(2)}T. 아직 높은 수준이에요. 계속 축소 중이에요.` }
+  if (t >= 7) return { keyword: 'QT 중반', text: `$${t.toFixed(2)}T. 코로나 고점($9T) 대비 많이 줄었어요.` }
+  if (t >= 6) return { keyword: 'QT 후반', text: `$${t.toFixed(2)}T. 코로나 이전 수준에 근접하고 있어요.` }
+  return { keyword: '정상화', text: `$${t.toFixed(2)}T. 코로나 이전 수준으로 복귀했어요.` }
 }
 
 function getReservesComment(val: number | null) {
   if (val === null) return null
-  if (val > 3000000) return { keyword: '충분', text: `$${Math.round(val / 1000).toLocaleString()}B. 은행 시스템이 안정적이에요.` }
-  if (val > 2000000) return { keyword: '감소 중', text: `$${Math.round(val / 1000).toLocaleString()}B. 주의가 필요해요.` }
-  return { keyword: '위험', text: `$${Math.round(val / 1000).toLocaleString()}B. QT 중단 가능성이 있어요.` }
+  const b = Math.round(val / 1000)
+  if (val > 3000000) return { keyword: '충분', text: `$${b.toLocaleString()}B. 은행 시스템이 안정적이에요. 유동성 위기 우려 낮아요.` }
+  if (val > 2500000) return { keyword: '양호', text: `$${b.toLocaleString()}B. 아직 안전 수준이에요.` }
+  if (val > 2000000) return { keyword: '주의', text: `$${b.toLocaleString()}B. 감소 추세예요. 모니터링이 필요해요.` }
+  return { keyword: '위험', text: `$${b.toLocaleString()}B. 2019년 레포사태 수준이에요. QT 중단 가능성이 있어요.` }
 }
 
 function getRrpComment(val: number | null) {
@@ -94,9 +97,11 @@ function getRrpComment(val: number | null) {
 
 function getTgaComment(val: number | null) {
   if (val === null) return null
-  if (val > 700) return { keyword: '잔고 높음', text: `$${Math.round(val)}B. 지출 시 유동성 공급 가능성이 있어요.` }
-  if (val > 300) return { keyword: '정상', text: `$${Math.round(val)}B. 정상 수준이에요.` }
-  return { keyword: '잔고 낮음', text: `$${Math.round(val)}B. 부채한도 이슈 주의가 필요해요.` }
+  const b = Math.round(val)
+  if (val > 800) return { keyword: '잔고 풍부', text: `$${b.toLocaleString()}B. 정부 지출 시 시중에 유동성이 대거 공급될 수 있어요.` }
+  if (val > 500) return { keyword: '정상', text: `$${b.toLocaleString()}B. 정상 운영 수준이에요.` }
+  if (val > 200) return { keyword: '감소 중', text: `$${b.toLocaleString()}B. 지출이 늘거나 세수가 줄고 있어요.` }
+  return { keyword: '부채한도 주의', text: `$${b.toLocaleString()}B. 잔고가 매우 낮아요. 부채한도 협상 이슈를 주목하세요.` }
 }
 
 // ── 공통 컴포넌트 ─────────────────────────────────
@@ -287,8 +292,10 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
     if (!val) return 'neutral'
     if (series === 'T10Y2Y') return val < 0 ? 'bad' : val < 0.5 ? 'warn' : 'good'
     if (series === 'DGS10') return val >= 5 ? 'bad' : val >= 4 ? 'warn' : 'good'
+    if (series === 'WRESBAL') return val > 3000000 ? 'good' : val > 2000000 ? 'warn' : 'bad'
     if (series === 'RRPONTSYD') return val < 100 ? 'warn' : 'neutral'
-    if (series === 'WTREGEN') return val < 300 ? 'warn' : 'neutral'
+    if (series === 'WALCL') return 'neutral'  // 방향성으로 판단해야 해서 neutral
+    if (series === 'WTREGEN') return 'neutral' // 방향성으로 판단해야 해서 neutral
     return 'neutral'
   }
 
