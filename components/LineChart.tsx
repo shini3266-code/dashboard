@@ -16,7 +16,7 @@ interface Props {
   range?: string
   height?: number
   formatValue?: (v: number) => string
-  externalData?: { date: string; value: number }[]  // ← 이거 추가
+  externalData?: { date: string; value: number }[]
 }
 
 export default function StockLineChart({
@@ -25,7 +25,7 @@ export default function StockLineChart({
   range = '1y',
   height = 200,
   formatValue = (v) => v.toLocaleString(),
-  externalData,  // ← 이거 추가
+  externalData,
 }: Props) {
   const [data, setData] = useState<ChartData[]>([])
   const [loading, setLoading] = useState(true)

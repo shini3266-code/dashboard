@@ -316,7 +316,7 @@ export default function Page() {
   const vix = quotes['^VIX']?.price ?? 0
 
   return (
-    <main style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
+    <main style={{ maxWidth: 1200, margin: '0 auto', padding: 24, zoom: 1.1 }}>
 
       {/* 헤더 */}
       <div style={{
