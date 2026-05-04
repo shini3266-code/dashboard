@@ -130,6 +130,7 @@ export default function Watchlist() {
             padding: '10px 18px',
             cursor: loading ? 'not-allowed' : 'pointer',
             fontWeight: 700,
+            fontSize: 13,
             opacity: loading ? 0.7 : 1,
           }}
         >
