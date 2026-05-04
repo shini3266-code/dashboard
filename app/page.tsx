@@ -126,7 +126,7 @@ function CommentBox({ text, level = 'neutral' }: {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
-      fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)',
+      fontSize: 13, fontFamily: 'var(--mono)', color: 'var(--muted)',
       letterSpacing: '0.12em', textTransform: 'uppercase',
       marginBottom: 10, marginTop: 28,
     }}>
@@ -195,12 +195,12 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
         {comment && <CommentBox text={comment} level={commentLevel} />}
       </div>
       <div>
-        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-        <StockLineChart symbol={ticker} color={color} range="1mo" height={90} formatValue={fmt} />
+        <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+        <StockLineChart symbol={ticker} color={color} range="1mo" height={120} formatValue={fmt} />
       </div>
       <div>
-        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-        <StockLineChart symbol={ticker} color={color} range="1y" height={90} formatValue={fmt} />
+        <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+        <StockLineChart symbol={ticker} color={color} range="1y" height={120} formatValue={fmt} />
       </div>
     </div>
   )
@@ -280,12 +280,12 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
         {getComment && <CommentBox text={getComment(latest)} level={getLevel(latest)} />}
       </div>
       <div>
-        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-        <StockLineChart symbol={series} color={color} range="1mo" height={90} formatValue={fmt} externalData={data1mo} />
+        <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+        <StockLineChart symbol={series} color={color} range="1mo" height={120} formatValue={fmt} externalData={data1mo} />
       </div>
       <div>
-        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-        <StockLineChart symbol={series} color={color} range="1y" height={90} formatValue={fmt} externalData={data1y} />
+        <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+        <StockLineChart symbol={series} color={color} range="1y" height={120} formatValue={fmt} externalData={data1y} />
       </div>
     </div>
   )
@@ -402,12 +402,12 @@ export default function Page() {
           />
         </div>
         <div>
-          <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-          <StockLineChart symbol="^VIX" color="#f59e0b" range="1mo" height={90} formatValue={(v) => v.toFixed(1)} />
+          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+          <StockLineChart symbol="^VIX" color="#f59e0b" range="1mo" height={120} formatValue={(v) => v.toFixed(1)} />
         </div>
         <div>
-          <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-          <StockLineChart symbol="^VIX" color="#f59e0b" range="1y" height={90} formatValue={(v) => v.toFixed(1)} />
+          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+          <StockLineChart symbol="^VIX" color="#f59e0b" range="1y" height={120} formatValue={(v) => v.toFixed(1)} />
         </div>
       </div>
 
