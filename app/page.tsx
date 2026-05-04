@@ -23,6 +23,138 @@ async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   } catch { return null }
 }
 
+const [freds, setFreds] = useState<Record<string, { value: number | null } | null>>({})
+
+function MarketSummaryBar({ quotes, freds }: {
+  quotes: Record<string, QuoteData | null>
+  freds?: Record<string, { value: number | null } | null>
+}) {
+  const items: { label: string; keyword: string; level: 'good' | 'warn' | 'bad' | 'neutral' }[] = []
+
+  // ETF
+  const etfs = [
+    { sym: 'SPY', label: 'SPY' },
+    { sym: 'QQQ', label: 'QQQ' },
+    { sym: 'SOXX', label: 'SOXX' },
+  ]
+  etfs.forEach(({ sym, label }) => {
+    const price = quotes[sym]?.price ?? null
+    // high는 없으니까 change로 간단히 판단
+    const change = quotes[sym]?.change ?? null
+    if (change !== null) {
+      const keyword = change >= 1 ? '강세' : change >= 0 ? '보합' : change >= -1 ? '약세' : '급락'
+      const level = change >= 1 ? 'good' : change >= 0 ? 'neutral' : change >= -1 ? 'warn' : 'bad'
+      items.push({ label, keyword, level })
+    }
+  })
+
+  // 자산
+  const assets = [
+    { sym: 'GC=F', label: '금' },
+    { sym: 'BTC-USD', label: 'BTC' },
+    { sym: 'CL=F', label: 'WTI' },
+    { sym: 'KRW=X', label: '환율' },
+  ]
+  assets.forEach(({ sym, label }) => {
+    const change = quotes[sym]?.change ?? null
+    if (change !== null) {
+      const keyword = change >= 1 ? '강세' : change >= 0 ? '보합' : change >= -1 ? '약세' : '급락'
+      const level = change >= 1 ? 'good' : change >= 0 ? 'neutral' : change >= -1 ? 'warn' : 'bad'
+      items.push({ label, keyword, level })
+    }
+  })
+
+  // VIX
+  const vix = quotes['^VIX']?.price ?? null
+  if (vix !== null) {
+    const keyword = vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정'
+    const level = vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'
+    items.push({ label: 'VIX', keyword, level })
+  }
+
+  // FRED
+  if (freds) {
+    const t10y2y = freds['T10Y2Y']?.value ?? null
+    if (t10y2y !== null) {
+      const keyword = t10y2y < 0 ? '역전' : t10y2y < 0.5 ? '회복 초입' : '정상'
+      const level = t10y2y < 0 ? 'bad' : t10y2y < 0.5 ? 'warn' : 'good'
+      items.push({ label: '금리차', keyword, level })
+    }
+
+    const dgs10 = freds['DGS10']?.value ?? null
+    if (dgs10 !== null) {
+      const keyword = dgs10 >= 5 ? '고금리' : dgs10 >= 4 ? '제한적' : '중립'
+      const level = dgs10 >= 5 ? 'bad' : dgs10 >= 4 ? 'warn' : 'good'
+      items.push({ label: '10Y금리', keyword, level })
+    }
+
+    const rrp = freds['RRPONTSYD']?.value ?? null
+    if (rrp !== null) {
+      const keyword = rrp < 100 ? '거의 소진' : rrp < 500 ? '대폭 감소' : '잔존'
+      const level = rrp < 100 ? 'warn' : 'neutral'
+      items.push({ label: '역레포', keyword, level })
+    }
+
+    const tga = freds['WTREGEN']?.value ?? null
+    if (tga !== null) {
+      const keyword = tga > 800 ? '잔고 풍부' : tga > 500 ? '정상' : tga > 200 ? '감소 중' : '부채한도 주의'
+      const level = tga > 500 ? 'neutral' : 'warn'
+      items.push({ label: 'TGA', keyword, level })
+    }
+  }
+
+  if (items.length === 0) return null
+
+  return (
+    <div style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 8,
+      padding: '12px 16px',
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
+      borderRadius: 10,
+      marginBottom: 20,
+    }}>
+      {items.map(({ label, keyword, level }, i) => {
+        const color = level === 'good' ? '#22c55e'
+          : level === 'warn' ? '#f59e0b'
+          : level === 'bad' ? '#ef4444'
+          : '#64748b'
+        return (
+          <div key={i} style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 5,
+          }}>
+            <span style={{
+              fontSize: 11,
+              fontFamily: 'var(--mono)',
+              color: 'var(--muted)',
+            }}>
+              {label}
+            </span>
+            <span style={{
+              fontSize: 11,
+              fontFamily: 'var(--mono)',
+              fontWeight: 700,
+              color,
+              border: `1px solid ${color}`,
+              borderRadius: 4,
+              padding: '1px 6px',
+            }}>
+              {keyword}
+            </span>
+            {i < items.length - 1 && (
+              <span style={{ color: 'var(--border)', fontSize: 11, marginLeft: 2 }}>·</span>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ── 멘트 함수들 ──────────────────────────────────
 function getDrawdownComment(current: number | null, high: number | null) {
   if (!current || !high) return null
@@ -354,11 +486,16 @@ export default function Page() {
     async function loadAll() {
       setLoading(true)
       const syms = ['SPY', 'QQQ', 'SOXX', 'GC=F', 'BTC-USD', 'KRW=X', 'CL=F', 'DX-Y.NYB', '^VIX']
+      const fredSeries = ['T10Y2Y', 'DGS10', 'RRPONTSYD', 'WTREGEN']
+      const fredResults = await Promise.all(fredSeries.map(s => fetchFred(s)))
       const results = await Promise.all(syms.map(s => fetchQuote(s)))
       const map: Record<string, QuoteData | null> = {}
+      const fredMap: Record<string, { value: number | null } | null> = {}
+      fredSeries.forEach((s, i) => { fredMap[s] = fredResults[i] })
       syms.forEach((s, i) => { map[s] = results[i] })
       setQuotes(map)
       setLoading(false)
+      setFreds(fredMap)
     }
     loadAll()
     const interval = setInterval(loadAll, 60000)

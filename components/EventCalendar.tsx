@@ -117,9 +117,6 @@ export default function EventCalendar() {
       borderRadius: 10, padding: '16px', marginBottom: 8,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em' }}>
-          📅 이벤트 캘린더 · Supabase 연동
-        </div>
         <button
           onClick={() => setShowForm(!showForm)}
           style={{
