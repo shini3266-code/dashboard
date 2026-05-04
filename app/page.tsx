@@ -40,83 +40,97 @@ function getDrawdownComment(current: number | null, high: number | null) {
   return { drawdown, status, comment }
 }
 
-function getYieldComment(val: number | null): string | null {
+function getYieldComment(val: number | null) {
   if (val === null) return null
-  if (val < 0) return `${val.toFixed(2)}% — 역전 중이에요. 경기침체 선행신호예요.`
-  if (val < 0.5) return `${val.toFixed(2)}% — 역전에서 막 회복됐어요. 실제 침체는 역전 해소 후 올 수 있어요.`
-  return `${val.toFixed(2)}% — 정상 구간이에요. 장기금리가 단기금리보다 높아요.`
+  if (val < 0) return { keyword: '역전', text: `${val.toFixed(2)}%. 경기침체 선행신호예요. 역전 해소 시점을 주목하세요.` }
+  if (val < 0.5) return { keyword: '회복 초입', text: `${val.toFixed(2)}%. 실제 침체는 역전 해소 후 올 수 있어요.` }
+  return { keyword: '정상', text: `${val.toFixed(2)}%. 장기금리가 단기금리보다 높아요.` }
 }
 
-function getBondComment(val: number | null): string | null {
+function getBondComment(val: number | null) {
   if (val === null) return null
-  if (val >= 5) return `${val.toFixed(2)}% — 고금리 구간이에요. 주식 밸류에이션 압박이 커요.`
-  if (val >= 4) return `${val.toFixed(2)}% — 제한적 구간이에요. 성장주에 부담이에요.`
-  if (val >= 3) return `${val.toFixed(2)}% — 중립 구간이에요.`
-  return `${val.toFixed(2)}% — 저금리 구간이에요. 성장주에 유리해요.`
+  if (val >= 5) return { keyword: '고금리', text: `${val.toFixed(2)}%. 주식 밸류에이션 압박이 커요.` }
+  if (val >= 4) return { keyword: '제한적', text: `${val.toFixed(2)}%. 성장주에 부담이에요.` }
+  if (val >= 3) return { keyword: '중립', text: `${val.toFixed(2)}%. 시장 영향은 제한적이에요.` }
+  return { keyword: '저금리', text: `${val.toFixed(2)}%. 성장주에 유리해요.` }
 }
 
-function getDxyComment(val: number | null): string | null {
+function getDxyComment(val: number | null) {
   if (val === null) return null
-  if (val >= 105) return `${val.toFixed(2)} — 강달러 구간이에요. 신흥국·원자재에 부담이에요.`
-  if (val >= 100) return `${val.toFixed(2)} — 달러 강세예요. 글로벌 유동성 위축 압력이 있어요.`
-  if (val >= 95) return `${val.toFixed(2)} — 중립 구간이에요.`
-  return `${val.toFixed(2)} — 달러 약세예요. 위험자산·신흥국에 우호적이에요.`
+  if (val >= 105) return { keyword: '강달러', text: `${val.toFixed(2)}. 신흥국·원자재에 부담이에요.` }
+  if (val >= 100) return { keyword: '달러 강세', text: `${val.toFixed(2)}. 글로벌 유동성 위축 압력이 있어요.` }
+  if (val >= 95) return { keyword: '중립', text: `${val.toFixed(2)}. 달러 방향성이 중립이에요.` }
+  return { keyword: '달러 약세', text: `${val.toFixed(2)}. 위험자산·신흥국에 우호적이에요.` }
 }
 
-function getKrwComment(val: number | null): string | null {
+function getKrwComment(val: number | null) {
   if (val === null) return null
-  if (val >= 1400) return `${Math.round(val)}원 — 원화 약세 구간이에요. 외국인 자금유출 압력이 있어요.`
-  if (val >= 1300) return `${Math.round(val)}원 — 원화 소폭 약세예요. 환율 변동성에 주의하세요.`
-  return `${Math.round(val)}원 — 원화 강세 구간이에요. 외국인 자금유입에 우호적이에요.`
+  if (val >= 1400) return { keyword: '원화 약세', text: `${Math.round(val)}원. 외국인 자금유출 압력이 있어요.` }
+  if (val >= 1300) return { keyword: '주의', text: `${Math.round(val)}원. 환율 변동성에 주의하세요.` }
+  return { keyword: '원화 강세', text: `${Math.round(val)}원. 외국인 자금유입에 우호적이에요.` }
 }
 
-function getFedAssetComment(val: number | null): string | null {
+function getFedAssetComment(val: number | null) {
   if (val === null) return null
   const t = val / 1000000
-  if (t >= 8) return `$${t.toFixed(2)}T — 대규모 자산 보유 중이에요. QT 진행 중이에요.`
-  if (t >= 7) return `$${t.toFixed(2)}T — QT로 자산이 축소 중이에요. 유동성 위축 압력이 있어요.`
-  return `$${t.toFixed(2)}T — 코로나 이전 수준으로 복귀 중이에요.`
+  if (t >= 8) return { keyword: 'QT 진행 중', text: `$${t.toFixed(2)}T. 대규모 자산 보유 중이에요.` }
+  if (t >= 7) return { keyword: '자산 축소 중', text: `$${t.toFixed(2)}T. 유동성 위축 압력이 있어요.` }
+  return { keyword: '정상화', text: `$${t.toFixed(2)}T. 코로나 이전 수준으로 복귀 중이에요.` }
 }
 
-function getReservesComment(val: number | null): string | null {
+function getReservesComment(val: number | null) {
   if (val === null) return null
-  if (val > 3000000) return `$${Math.round(val / 1000).toLocaleString()}B — 충분한 수준이에요.`
-  if (val > 2000000) return `$${Math.round(val / 1000).toLocaleString()}B — 감소 중이에요. 주의가 필요해요.`
-  return `$${Math.round(val / 1000).toLocaleString()}B — 위험 수준이에요. QT 중단 가능성이 있어요.`
+  if (val > 3000000) return { keyword: '충분', text: `$${Math.round(val / 1000).toLocaleString()}B. 은행 시스템이 안정적이에요.` }
+  if (val > 2000000) return { keyword: '감소 중', text: `$${Math.round(val / 1000).toLocaleString()}B. 주의가 필요해요.` }
+  return { keyword: '위험', text: `$${Math.round(val / 1000).toLocaleString()}B. QT 중단 가능성이 있어요.` }
 }
 
-function getRrpComment(val: number | null): string | null {
+function getRrpComment(val: number | null) {
   if (val === null) return null
-  if (val < 100) return `$${Math.round(val)}B — 거의 소진됐어요. 시장 초과유동성이 없어요.`
-  if (val < 500) return `$${Math.round(val)}B — 많이 줄었어요. 시장으로 유동성이 유입됐어요.`
-  return `$${(val / 1000).toFixed(2)}T — 아직 초과유동성이 남아있어요.`
+  if (val < 100) return { keyword: '거의 소진', text: `$${Math.round(val)}B. 시장 초과유동성이 없어요.` }
+  if (val < 500) return { keyword: '대폭 감소', text: `$${Math.round(val)}B. 시장으로 유동성이 유입됐어요.` }
+  return { keyword: '잔존', text: `$${(val / 1000).toFixed(2)}T. 아직 초과유동성이 남아있어요.` }
 }
 
-function getTgaComment(val: number | null): string | null {
+function getTgaComment(val: number | null) {
   if (val === null) return null
-  if (val > 700) return `$${Math.round(val)}B — 잔고가 높아요. 지출 시 유동성 공급 가능성이 있어요.`
-  if (val > 300) return `$${Math.round(val)}B — 정상 수준이에요.`
-  return `$${Math.round(val)}B — 잔고가 낮아요. 부채한도 이슈 주의가 필요해요.`
+  if (val > 700) return { keyword: '잔고 높음', text: `$${Math.round(val)}B. 지출 시 유동성 공급 가능성이 있어요.` }
+  if (val > 300) return { keyword: '정상', text: `$${Math.round(val)}B. 정상 수준이에요.` }
+  return { keyword: '잔고 낮음', text: `$${Math.round(val)}B. 부채한도 이슈 주의가 필요해요.` }
 }
 
 // ── 공통 컴포넌트 ─────────────────────────────────
-function CommentBox({ text, level = 'neutral' }: {
+function CommentBox({ keyword, text, level = 'neutral' }: {
+  keyword?: string
   text: string | null
   level?: 'good' | 'warn' | 'bad' | 'neutral'
 }) {
   if (!text) return null
-  const color = level === 'good' ? 'var(--up)'
-    : level === 'warn' ? 'var(--gold)'
-    : level === 'bad' ? 'var(--down)'
-    : 'var(--muted)'
-  const border = level === 'neutral' ? 'var(--border)' : color
+
+  const color = level === 'good' ? '#22c55e'
+    : level === 'warn' ? '#f59e0b'
+    : level === 'bad' ? '#ef4444'
+    : '#64748b'
+
   return (
-    <div style={{
-      marginTop: 8, background: 'var(--surface2)',
-      borderRadius: 6, padding: '6px 8px',
-      borderLeft: `2px solid ${border}`,
-    }}>
-      <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color, lineHeight: 1.6 }}>
+    <div style={{ marginTop: 8 }}>
+      {keyword && (
+        <div style={{ marginBottom: 4 }}>
+          <span style={{
+            fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700,
+            color,
+            border: `1px solid ${color}`,
+            borderRadius: 6,
+            padding: '2px 8px',
+          }}>
+            {keyword}
+          </span>
+        </div>
+      )}
+      <div style={{
+        fontSize: 11, fontFamily: 'var(--mono)',
+        color: 'var(--muted)', lineHeight: 1.6,
+      }}>
         {text}
       </div>
     </div>
@@ -180,7 +194,7 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
   data: QuoteData | null
   formatValue?: (v: number) => string
   showDrawdown?: boolean
-  comment?: string | null
+  comment?: { keyword: string; text: string } | null
   commentLevel?: 'good' | 'warn' | 'bad' | 'neutral'
 }) {
   const [high, setHigh] = useState<number | null>(null)
@@ -222,7 +236,7 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
         </div>
         {sub && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
         {dd && <DrawdownBadge dd={dd} />}
-        {comment && <CommentBox text={comment} level={commentLevel} />}
+        {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
       <div>
         <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
@@ -243,7 +257,7 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
   desc?: string
   color: string
   unit?: string
-  getComment?: (val: number | null) => string | null
+  getComment?: (val: number | null) => { keyword: string; text: string } | null
 }) {
   const [data, setData] = useState<{ date: string; value: number }[]>([])
   const [latest, setLatest] = useState<number | null>(null)
@@ -307,7 +321,10 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
           </div>
         )}
         {desc && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
-        {getComment && <CommentBox text={getComment(latest)} level={getLevel(latest)} />}
+        {getComment && (() => {
+          const c = getComment(latest)
+          return c ? <CommentBox keyword={c.keyword} text={c.text} level={getLevel(latest)} /> : null
+        })()}
       </div>
       <div>
         <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
@@ -425,9 +442,10 @@ export default function Page() {
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox
-            text={vix >= 30 ? `${vix.toFixed(1)} — 경계 구간이에요. 시장 패닉 상태예요.`
-              : vix >= 20 ? `${vix.toFixed(1)} — 주의 구간이에요. 변동성이 확대되고 있어요.`
-              : `${vix.toFixed(1)} — 안정 구간이에요. 투자자들이 편안한 상태예요.`}
+            keyword={vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정'}
+            text={vix >= 30 ? '시장 패닉 상태예요. 방어적 접근이 필요해요.'
+              : vix >= 20 ? '변동성이 확대되고 있어요.'
+              : '투자자들이 편안한 상태예요. 위험자산에 우호적이에요.'}
             level={vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'}
           />
         </div>
@@ -471,9 +489,9 @@ export default function Page() {
 }
 
 // WTI 원유 멘트 (페이지 밖에 선언)
-function getOilComment(val: number | null): string | null {
+function getOilComment(val: number | null) {
   if (val === null) return null
-  if (val >= 90) return `고유가 구간이에요. 인플레이션 압력이 커요.`
-  if (val >= 70) return `중립 구간이에요. 경기 회복 수요를 반영해요.`
-  return `저유가 구간이에요. 경기 둔화 우려가 있어요.`
+  if (val >= 90) return { keyword: '고유가', text: `$${val.toFixed(1)}. 인플레이션 압력이 커요.` }
+  if (val >= 70) return { keyword: '중립', text: `$${val.toFixed(1)}. 경기 회복 수요를 반영해요.` }
+  return { keyword: '저유가', text: `$${val.toFixed(1)}. 경기 둔화 우려가 있어요.` }
 }
