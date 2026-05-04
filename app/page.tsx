@@ -23,6 +23,17 @@ async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   } catch { return null }
 }
 
+async function fetchFred(series: string): Promise<{ value: number | null } | null> {
+  try {
+    const res = await fetch(`/api/fred?series=${series}`)
+    if (!res.ok) return null
+    const data = await res.json()
+    const obs = data.observations?.filter((o: any) => o.value !== '.')
+    const value = obs?.length ? parseFloat(obs[0].value) : null
+    return { value }
+  } catch { return null }
+}
+
 function MarketSummaryBar({ quotes, freds }: {
   quotes: Record<string, QuoteData | null>
   freds?: Record<string, { value: number | null } | null>
