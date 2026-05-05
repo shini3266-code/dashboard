@@ -7,32 +7,157 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-// 기기마다 고유 ID 생성 (로그인 없이 구분)
 function getDeviceId() {
-  let id = localStorage.getItem('device_id')
-  if (!id) {
-    id = crypto.randomUUID()
-    localStorage.setItem('device_id', id)
-  }
-  return id
+  return 'my-dashboard-user'
 }
 
 interface WatchItem {
   id: string
   symbol: string
   price: number
-  change_pct: number  // change → change_pct
+  change_pct: number
   memo: string
-  addedAt: string
+  added_at: string
 }
 
+// ── 메모 팝업 ──────────────────────────────────────
+function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void }) {
+  const [memo, setMemo] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    // 기존 메모 불러오기
+    supabase
+      .from('watchlist_memos')
+      .select('memo')
+      .eq('symbol', symbol)
+      .single()
+      .then(({ data }) => {
+        if (data?.memo) setMemo(data.memo)
+      })
+  }, [symbol])
+
+  async function saveMemo() {
+    setSaving(true)
+    await supabase
+      .from('watchlist_memos')
+      .upsert({ symbol, memo, updated_at: new Date().toISOString() }, { onConflict: 'symbol' })
+    setSaving(false)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }
+
+  // 바깥 클릭 시 닫기
+  function handleBackdrop(e: React.MouseEvent) {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  return (
+    <div
+      onClick={handleBackdrop}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1000,
+        background: 'rgba(0,0,0,0.7)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 16,
+      }}
+    >
+      <div style={{
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        borderRadius: 12,
+        padding: 24,
+        width: '100%',
+        maxWidth: 560,
+        maxHeight: '80vh',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+      }}>
+        {/* 헤더 */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'var(--mono)' }}>
+              📌 {symbol}
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--mono)', marginTop: 2 }}>
+              매수 근거 · 목표가 · 임박 이벤트 등
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none', border: 'none',
+              color: 'var(--muted)', cursor: 'pointer', fontSize: 20,
+            }}
+          >✕</button>
+        </div>
+
+        {/* 메모장 */}
+        <textarea
+          value={memo}
+          onChange={e => setMemo(e.target.value)}
+          placeholder={`${symbol} 메모를 입력하세요.\n\n예시:\n- 매수 근거: AI 반도체 수요 지속\n- 목표가: $600\n- 손절가: $480\n- 다음 실적: 2025년 7월`}
+          spellCheck={false}
+          style={{
+            flex: 1,
+            minHeight: 300,
+            background: 'var(--surface2)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            padding: '12px 14px',
+            color: 'var(--text)',
+            fontFamily: 'var(--mono)',
+            fontSize: 13,
+            lineHeight: 1.8,
+            resize: 'vertical',
+          }}
+        />
+
+        {/* 버튼 */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none', border: '1px solid var(--border)',
+              borderRadius: 8, padding: '8px 16px',
+              color: 'var(--muted)', cursor: 'pointer',
+              fontFamily: 'var(--mono)', fontSize: 12,
+            }}
+          >
+            닫기
+          </button>
+          <button
+            onClick={saveMemo}
+            disabled={saving}
+            style={{
+              background: saved ? '#22c55e' : 'var(--accent)',
+              color: '#fff', border: 'none',
+              borderRadius: 8, padding: '8px 20px',
+              cursor: saving ? 'not-allowed' : 'pointer',
+              fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700,
+              transition: 'background 0.3s',
+              opacity: saving ? 0.7 : 1,
+            }}
+          >
+            {saving ? '저장 중...' : saved ? '✓ 저장됨' : '저장'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── 메인 Watchlist ─────────────────────────────────
 export default function Watchlist() {
   const [input, setInput] = useState('')
   const [watchlist, setWatchlist] = useState<WatchItem[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [memoSymbol, setMemoSymbol] = useState<string | null>(null)
+  const [memoPreview, setMemoPreview] = useState<Record<string, string>>({})
 
-  // DB에서 불러오기
   useEffect(() => {
     async function load() {
       const deviceId = getDeviceId()
@@ -41,12 +166,28 @@ export default function Watchlist() {
         .select('*')
         .eq('device_id', deviceId)
         .order('added_at', { ascending: true })
-      if (data) setWatchlist(data)
+      if (data) {
+        setWatchlist(data)
+        // 메모 미리보기 로드
+        loadMemoPreviews(data.map(d => d.symbol))
+      }
     }
     load()
   }, [])
 
-  // 종목 추가
+  async function loadMemoPreviews(symbols: string[]) {
+    if (!symbols.length) return
+    const { data } = await supabase
+      .from('watchlist_memos')
+      .select('symbol, memo')
+      .in('symbol', symbols)
+    if (data) {
+      const map: Record<string, string> = {}
+      data.forEach(d => { map[d.symbol] = d.memo })
+      setMemoPreview(map)
+    }
+  }
+
   async function addTicker() {
     const sym = input.toUpperCase().trim()
     if (!sym) return
@@ -54,16 +195,16 @@ export default function Watchlist() {
       setError('이미 추가된 종목이에요')
       return
     }
-  
+
     setLoading(true)
     setError('')
-  
+
     try {
       const res = await fetch(`/api/quote?symbol=${sym}`)
       if (!res.ok) throw new Error()
       const data = await res.json()
       if (!data || !data.price) throw new Error()
-  
+
       const deviceId = getDeviceId()
       const { data: inserted, error: dbError } = await supabase
         .from('watchlist')
@@ -76,7 +217,7 @@ export default function Watchlist() {
         })
         .select()
         .single()
-  
+
       if (dbError) throw dbError
       setWatchlist(prev => [...prev, inserted])
       setInput('')
@@ -87,20 +228,32 @@ export default function Watchlist() {
     }
   }
 
-  // 메모 수정
-  async function updateMemo(id: string, memo: string) {
-    setWatchlist(prev => prev.map(w => w.id === id ? { ...w, memo } : w))
-    await supabase.from('watchlist').update({ memo }).eq('id', id)
-  }
-
-  // 종목 삭제
-  async function removeTicker(id: string) {
+  async function removeTicker(id: string, symbol: string) {
+    // 메모 있으면 확인
+    const hasMemo = memoPreview[symbol] && memoPreview[symbol].trim().length > 0
+    if (hasMemo) {
+      const ok = confirm(`${symbol}에 메모가 있어요. 종목을 삭제해도 메모는 보관돼요. 계속할까요?`)
+      if (!ok) return
+    }
     setWatchlist(prev => prev.filter(w => w.id !== id))
     await supabase.from('watchlist').delete().eq('id', id)
+    // 메모는 삭제 안 함 (watchlist_memos 테이블에 보존)
   }
 
   return (
     <div>
+      {/* 메모 팝업 */}
+      {memoSymbol && (
+        <MemoModal
+          symbol={memoSymbol}
+          onClose={() => {
+            setMemoSymbol(null)
+            // 팝업 닫을 때 미리보기 새로고침
+            loadMemoPreviews(watchlist.map(w => w.symbol))
+          }}
+        />
+      )}
+
       {/* 입력칸 */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
         <input
@@ -123,15 +276,11 @@ export default function Watchlist() {
           onClick={addTicker}
           disabled={loading}
           style={{
-            background: 'var(--accent)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            padding: '10px 18px',
+            background: 'var(--accent)', color: '#fff', border: 'none',
+            borderRadius: 8, padding: '10px 18px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            fontWeight: 700,
-            fontSize: 13,
-            opacity: loading ? 0.7 : 1,
+            fontWeight: 700, opacity: loading ? 0.7 : 1,
+            fontFamily: 'var(--mono)',
           }}
         >
           {loading ? '...' : '추가'}
@@ -153,7 +302,8 @@ export default function Watchlist() {
           padding: 16,
           marginBottom: 12,
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+          {/* 헤더 */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
             <div>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 16, fontWeight: 700 }}>
                 {item.symbol}
@@ -170,38 +320,54 @@ export default function Watchlist() {
                 </span>
               </div>
             </div>
-            <button onClick={() => removeTicker(item.id)} style={{
-              background: 'none', border: 'none',
-              color: 'var(--muted)', cursor: 'pointer', fontSize: 18,
-            }}>✕</button>
+            <button
+              onClick={() => removeTicker(item.id, item.symbol)}
+              style={{
+                background: 'none', border: 'none',
+                color: 'var(--muted)', cursor: 'pointer', fontSize: 18,
+              }}
+            >✕</button>
           </div>
 
-          {/* 캔들차트 */}
+          {/* 차트 */}
           <iframe
             src={`https://s.tradingview.com/widgetembed/?symbol=${item.symbol}&interval=D&hidesidetoolbar=1&theme=dark&style=1&timezone=Asia%2FSeoul&withdateranges=1&locale=kr`}
             style={{ width: '100%', height: 300, border: 'none', borderRadius: 8, marginBottom: 10 }}
           />
 
-          {/* 메모 */}
-          <textarea
-            value={item.memo}
-            onChange={e => updateMemo(item.id, e.target.value)}
-            placeholder="📌 메모 — 임박한 이벤트, 매수 근거, 목표가 등"
-            rows={3}
-            spellCheck={false}
-            style={{
-              width: '100%',
-              background: 'var(--surface2)',
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              padding: '10px 12px',
-              color: 'var(--text)',
-              resize: 'vertical',
-              fontFamily: 'var(--mono)',
-              fontSize: 12,
-              lineHeight: 1.6,
-            }}
-          />
+          {/* 메모 미리보기 + 더보기 버튼 */}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            background: 'var(--surface2)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            padding: '8px 12px',
+            cursor: 'pointer',
+          }}
+            onClick={() => setMemoSymbol(item.symbol)}
+          >
+            <div style={{
+              fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)',
+              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              flex: 1, marginRight: 8,
+            }}>
+              {memoPreview[item.symbol]
+                ? memoPreview[item.symbol].split('\n')[0]  // 첫줄만 미리보기
+                : '📌 메모 없음 — 클릭해서 추가하세요'}
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); setMemoSymbol(item.symbol) }}
+              style={{
+                background: 'var(--surface)', border: '1px solid var(--border)',
+                borderRadius: 6, padding: '4px 10px',
+                color: 'var(--text)', cursor: 'pointer',
+                fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              📝 더보기
+            </button>
+          </div>
         </div>
       ))}
 

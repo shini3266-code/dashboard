@@ -8,12 +8,7 @@ const supabase = createClient(
 )
 
 function getDeviceId() {
-  let id = localStorage.getItem('device_id')
-  if (!id) {
-    id = crypto.randomUUID()
-    localStorage.setItem('device_id', id)
-  }
-  return id
+  return 'my-dashboard-user'
 }
 
 interface CalEvent {

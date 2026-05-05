@@ -541,6 +541,9 @@ export default function Page() {
         </div>
       </div>
 
+      {/* 요약 바 */}
+      <MarketSummaryBar quotes={quotes} freds={freds} />
+
       {/* 관심종목 */}
       <SectionLabel>⭐ 관심종목</SectionLabel>
       <Watchlist />
