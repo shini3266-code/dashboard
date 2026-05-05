@@ -34,82 +34,150 @@ async function fetchFred(series: string): Promise<{ value: number | null } | nul
   } catch { return null }
 }
 
+function getOilLevel(val: number) {
+  if (val >= 90) return { keyword: '고유가', level: 'bad' as const }
+  if (val >= 70) return { keyword: '중립', level: 'neutral' as const }
+  return { keyword: '저유가', level: 'warn' as const }
+}
+
+function getKrwLevel(val: number) {
+  if (val >= 1400) return { keyword: '원화 약세', level: 'bad' as const }
+  if (val >= 1300) return { keyword: '주의', level: 'warn' as const }
+  return { keyword: '원화 강세', level: 'good' as const }
+}
+
+function getDxyLevel(val: number) {
+  if (val >= 105) return { keyword: '강달러', level: 'bad' as const }
+  if (val >= 100) return { keyword: '달러 강세', level: 'warn' as const }
+  if (val >= 95) return { keyword: '중립', level: 'neutral' as const }
+  return { keyword: '달러 약세', level: 'good' as const }
+}
+
+function getGoldLevelFromPrice(val: number) {
+  // 금은 절대가보다 등락으로 판단
+  if (val >= 3000) return { keyword: '강세', level: 'good' as const }
+  if (val >= 2500) return { keyword: '보합', level: 'neutral' as const }
+  return { keyword: '약세', level: 'warn' as const }
+}
+
 function MarketSummaryBar({ quotes, freds }: {
   quotes: Record<string, QuoteData | null>
-  freds?: Record<string, { value: number | null } | null>
+  freds: Record<string, { value: number | null } | null>
 }) {
   const items: { label: string; keyword: string; level: 'good' | 'warn' | 'bad' | 'neutral' }[] = []
 
-  // ETF
-  const etfs = [
+  // ── ETF (drawdown 없이 당일 등락으로 판단) ──
+  const etfMap = [
     { sym: 'SPY', label: 'SPY' },
     { sym: 'QQQ', label: 'QQQ' },
     { sym: 'SOXX', label: 'SOXX' },
   ]
-  etfs.forEach(({ sym, label }) => {
-    const price = quotes[sym]?.price ?? null
-    // high는 없으니까 change로 간단히 판단
+  etfMap.forEach(({ sym, label }) => {
     const change = quotes[sym]?.change ?? null
-    if (change !== null) {
-      const keyword = change >= 1 ? '강세' : change >= 0 ? '보합' : change >= -1 ? '약세' : '급락'
-      const level = change >= 1 ? 'good' : change >= 0 ? 'neutral' : change >= -1 ? 'warn' : 'bad'
-      items.push({ label, keyword, level })
-    }
+    if (change === null) return
+    const keyword = change >= 1.5 ? '강세' : change >= 0 ? '보합' : change >= -1.5 ? '약세' : '급락'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      change >= 1.5 ? 'good' : change >= 0 ? 'neutral' : change >= -1.5 ? 'warn' : 'bad'
+    items.push({ label, keyword, level })
   })
 
-  // 자산
-  const assets = [
-    { sym: 'GC=F', label: '금' },
-    { sym: 'BTC-USD', label: 'BTC' },
-    { sym: 'CL=F', label: 'WTI' },
-    { sym: 'KRW=X', label: '환율' },
-  ]
-  assets.forEach(({ sym, label }) => {
-    const change = quotes[sym]?.change ?? null
-    if (change !== null) {
-      const keyword = change >= 1 ? '강세' : change >= 0 ? '보합' : change >= -1 ? '약세' : '급락'
-      const level = change >= 1 ? 'good' : change >= 0 ? 'neutral' : change >= -1 ? 'warn' : 'bad'
-      items.push({ label, keyword, level })
-    }
-  })
+  // ── 금 ──
+  const gold = quotes['GC=F']?.price ?? null
+  if (gold !== null) {
+    const c = getGoldLevelFromPrice(gold)
+    items.push({ label: '금', keyword: c.keyword, level: c.level })
+  }
 
-  // VIX
+  // ── 비트코인 ──
+  const btc = quotes['BTC-USD']?.change ?? null
+  if (btc !== null) {
+    const keyword = btc >= 3 ? '강세' : btc >= 0 ? '보합' : btc >= -3 ? '약세' : '급락'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      btc >= 3 ? 'good' : btc >= 0 ? 'neutral' : btc >= -3 ? 'warn' : 'bad'
+    items.push({ label: 'BTC', keyword, level })
+  }
+
+  // ── WTI 원유 ──
+  const oil = quotes['CL=F']?.price ?? null
+  if (oil !== null) {
+    const c = getOilLevel(oil)
+    items.push({ label: 'WTI', keyword: c.keyword, level: c.level })
+  }
+
+  // ── 원달러 환율 ──
+  const krw = quotes['KRW=X']?.price ?? null
+  if (krw !== null) {
+    const c = getKrwLevel(krw)
+    items.push({ label: '환율', keyword: c.keyword, level: c.level })
+  }
+
+  // ── VIX ──
   const vix = quotes['^VIX']?.price ?? null
   if (vix !== null) {
     const keyword = vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정'
-    const level = vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'
     items.push({ label: 'VIX', keyword, level })
   }
 
-  // FRED
-  if (freds) {
-    const t10y2y = freds['T10Y2Y']?.value ?? null
-    if (t10y2y !== null) {
-      const keyword = t10y2y < 0 ? '역전' : t10y2y < 0.5 ? '회복 초입' : '정상'
-      const level = t10y2y < 0 ? 'bad' : t10y2y < 0.5 ? 'warn' : 'good'
-      items.push({ label: '금리차', keyword, level })
-    }
+  // ── DXY ──
+  const dxy = quotes['DX-Y.NYB']?.price ?? null
+  if (dxy !== null) {
+    const c = getDxyLevel(dxy)
+    items.push({ label: 'DXY', keyword: c.keyword, level: c.level })
+  }
 
-    const dgs10 = freds['DGS10']?.value ?? null
-    if (dgs10 !== null) {
-      const keyword = dgs10 >= 5 ? '고금리' : dgs10 >= 4 ? '제한적' : '중립'
-      const level = dgs10 >= 5 ? 'bad' : dgs10 >= 4 ? 'warn' : 'good'
-      items.push({ label: '10Y금리', keyword, level })
-    }
+  // ── 장단기 금리차 ──
+  const t10y2y = freds['T10Y2Y']?.value ?? null
+  if (t10y2y !== null) {
+    const keyword = t10y2y < 0 ? '역전' : t10y2y < 0.5 ? '회복 초입' : '정상'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      t10y2y < 0 ? 'bad' : t10y2y < 0.5 ? 'warn' : 'good'
+    items.push({ label: '금리차', keyword, level })
+  }
 
-    const rrp = freds['RRPONTSYD']?.value ?? null
-    if (rrp !== null) {
-      const keyword = rrp < 100 ? '거의 소진' : rrp < 500 ? '대폭 감소' : '잔존'
-      const level = rrp < 100 ? 'warn' : 'neutral'
-      items.push({ label: '역레포', keyword, level })
-    }
+  // ── 10년물 금리 ──
+  const dgs10 = freds['DGS10']?.value ?? null
+  if (dgs10 !== null) {
+    const keyword = dgs10 >= 5 ? '고금리' : dgs10 >= 4 ? '제한적' : dgs10 >= 3 ? '중립' : '저금리'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      dgs10 >= 5 ? 'bad' : dgs10 >= 4 ? 'warn' : 'good'
+    items.push({ label: '10Y금리', keyword, level })
+  }
 
-    const tga = freds['WTREGEN']?.value ?? null
-    if (tga !== null) {
-      const keyword = tga > 800 ? '잔고 풍부' : tga > 500 ? '정상' : tga > 200 ? '감소 중' : '부채한도 주의'
-      const level = tga > 500 ? 'neutral' : 'warn'
-      items.push({ label: 'TGA', keyword, level })
-    }
+  // ── 연준 총자산 ──
+  const walcl = freds['WALCL']?.value ?? null
+  if (walcl !== null) {
+    const t = walcl / 1000000
+    const keyword = t >= 8 ? 'QT 진행 중' : t >= 7 ? 'QT 중반' : t >= 6 ? 'QT 후반' : '정상화'
+    items.push({ label: '연준자산', keyword, level: 'neutral' })
+  }
+
+  // ── 지준금 ──
+  const wresbal = freds['WRESBAL']?.value ?? null
+  if (wresbal !== null) {
+    const keyword = wresbal > 3000000 ? '충분' : wresbal > 2500000 ? '양호' : wresbal > 2000000 ? '주의' : '위험'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      wresbal > 3000000 ? 'good' : wresbal > 2500000 ? 'neutral' : wresbal > 2000000 ? 'warn' : 'bad'
+    items.push({ label: '지준금', keyword, level })
+  }
+
+  // ── 역레포 ──
+  const rrp = freds['RRPONTSYD']?.value ?? null
+  if (rrp !== null) {
+    const keyword = rrp < 100 ? '거의 소진' : rrp < 500 ? '대폭 감소' : '잔존'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      rrp < 100 ? 'warn' : 'neutral'
+    items.push({ label: '역레포', keyword, level })
+  }
+
+  // ── TGA ──
+  const tga = freds['WTREGEN']?.value ?? null
+  if (tga !== null) {
+    const keyword = tga > 800 ? '잔고 풍부' : tga > 500 ? '정상' : tga > 200 ? '감소 중' : '부채한도 주의'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      tga > 500 ? 'neutral' : 'warn'
+    items.push({ label: 'TGA', keyword, level })
   }
 
   if (items.length === 0) return null
@@ -131,22 +199,12 @@ function MarketSummaryBar({ quotes, freds }: {
           : level === 'bad' ? '#ef4444'
           : '#64748b'
         return (
-          <div key={i} style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 5,
-          }}>
-            <span style={{
-              fontSize: 11,
-              fontFamily: 'var(--mono)',
-              color: 'var(--muted)',
-            }}>
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
               {label}
             </span>
             <span style={{
-              fontSize: 11,
-              fontFamily: 'var(--mono)',
-              fontWeight: 700,
+              fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700,
               color,
               border: `1px solid ${color}`,
               borderRadius: 4,
@@ -198,17 +256,19 @@ function getBondComment(val: number | null) {
 
 function getDxyComment(val: number | null) {
   if (val === null) return null
-  if (val >= 105) return { keyword: '강달러', text: `신흥국·원자재에 부담이에요.` }
-  if (val >= 100) return { keyword: '달러 강세', text: `글로벌 유동성 위축 압력이 있어요.` }
-  if (val >= 95) return { keyword: '중립', text: `달러 방향성이 중립이에요.` }
-  return { keyword: '달러 약세', text: `위험자산·신흥국에 우호적이에요.` }
+  const { keyword } = getDxyLevel(val)
+  if (val >= 105) return { keyword, text: `신흥국·원자재에 부담이에요.` }
+  if (val >= 100) return { keyword, text: `글로벌 유동성 위축 압력이 있어요.` }
+  if (val >= 95) return { keyword, text: `달러 방향성이 중립이에요.` }
+  return { keyword, text: `위험자산·신흥국에 우호적이에요.` }
 }
 
 function getKrwComment(val: number | null) {
   if (val === null) return null
-  if (val >= 1400) return { keyword: '원화 약세', text: `외국인 자금유출 압력이 있어요.` }
-  if (val >= 1300) return { keyword: '주의', text: `환율 변동성에 주의하세요.` }
-  return { keyword: '원화 강세', text: `외국인 자금유입에 우호적이에요.` }
+  const { keyword } = getKrwLevel(val)
+  if (val >= 1400) return { keyword, text: `외국인 자금유출 압력이 있어요.` }
+  if (val >= 1300) return { keyword, text: `환율 변동성에 주의하세요.` }
+  return { keyword, text: `외국인 자금유입에 우호적이에요.` }
 }
 
 function getFedAssetComment(val: number | null) {
@@ -648,7 +708,8 @@ export default function Page() {
 // WTI 원유 멘트 (페이지 밖에 선언)
 function getOilComment(val: number | null) {
   if (val === null) return null
-  if (val >= 90) return { keyword: '고유가', text: `인플레이션 압력이 커요.` }
-  if (val >= 70) return { keyword: '중립', text: `경기 회복 수요를 반영해요.` }
-  return { keyword: '저유가', text: `경기 둔화 우려가 있어요.` }
+  const { keyword } = getOilLevel(val)
+  if (val >= 90) return { keyword, text: `인플레이션 압력이 커요.` }
+  if (val >= 70) return { keyword, text: `경기 회복 수요를 반영해요.` }
+  return { keyword, text: `경기 둔화 우려가 있어요.` }
 }
