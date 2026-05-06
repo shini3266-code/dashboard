@@ -66,65 +66,50 @@ function MarketSummaryBar({ quotes, freds }: {
 }) {
   const items: { label: string; keyword: string; level: 'good' | 'warn' | 'bad' | 'neutral' }[] = []
 
-  // ── ETF (drawdown 없이 당일 등락으로 판단) ──
-  const etfMap = [
+  // ── SPY QQQ SOXX (drawdown 기반 — 카드와 동일하게 하려면 high 필요해서 change로 근사) ──
+  ;[
     { sym: 'SPY', label: 'SPY' },
     { sym: 'QQQ', label: 'QQQ' },
     { sym: 'SOXX', label: 'SOXX' },
-  ]
-  etfMap.forEach(({ sym, label }) => {
+  ].forEach(({ sym, label }) => {
     const change = quotes[sym]?.change ?? null
     if (change === null) return
-    const keyword = change >= 1.5 ? '강세' : change >= 0 ? '보합' : change >= -1.5 ? '약세' : '급락'
+    const keyword = change >= 1.5 ? '강세장' : change >= 0 ? '보합' : change >= -1.5 ? '조정 초입' : '조정장'
     const level: 'good' | 'warn' | 'bad' | 'neutral' =
       change >= 1.5 ? 'good' : change >= 0 ? 'neutral' : change >= -1.5 ? 'warn' : 'bad'
     items.push({ label, keyword, level })
   })
 
-  // ── 금 ──
-  const gold = quotes['GC=F']?.price ?? null
-  if (gold !== null) {
-    const c = getGoldLevelFromPrice(gold)
-    items.push({ label: '금', keyword: c.keyword, level: c.level })
+  // ── 금 (카드와 동일: getDrawdownComment 기반 → change로 근사) ──
+  const goldChange = quotes['GC=F']?.change ?? null
+  if (goldChange !== null) {
+    const keyword = goldChange >= 1 ? '강세장' : goldChange >= 0 ? '보합' : goldChange >= -1 ? '조정 초입' : goldChange >= -3 ? '조정장' : '급락장'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      goldChange >= 0 ? 'good' : goldChange >= -1 ? 'neutral' : goldChange >= -3 ? 'warn' : 'bad'
+    items.push({ label: '금', keyword, level })
   }
 
   // ── 비트코인 ──
-  const btc = quotes['BTC-USD']?.change ?? null
-  if (btc !== null) {
-    const keyword = btc >= 3 ? '강세' : btc >= 0 ? '보합' : btc >= -3 ? '약세' : '급락'
+  const btcChange = quotes['BTC-USD']?.change ?? null
+  if (btcChange !== null) {
+    const keyword = btcChange >= 3 ? '강세장' : btcChange >= 0 ? '보합' : btcChange >= -3 ? '조정장' : '급락장'
     const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      btc >= 3 ? 'good' : btc >= 0 ? 'neutral' : btc >= -3 ? 'warn' : 'bad'
+      btcChange >= 0 ? 'good' : btcChange >= -3 ? 'warn' : 'bad'
     items.push({ label: 'BTC', keyword, level })
   }
 
   // ── WTI 원유 ──
   const oil = quotes['CL=F']?.price ?? null
   if (oil !== null) {
-    const c = getOilLevel(oil)
-    items.push({ label: 'WTI', keyword: c.keyword, level: c.level })
+    const { keyword, level } = getOilLevel(oil)
+    items.push({ label: 'WTI', keyword, level })
   }
 
   // ── 원달러 환율 ──
   const krw = quotes['KRW=X']?.price ?? null
   if (krw !== null) {
-    const c = getKrwLevel(krw)
-    items.push({ label: '환율', keyword: c.keyword, level: c.level })
-  }
-
-  // ── VIX ──
-  const vix = quotes['^VIX']?.price ?? null
-  if (vix !== null) {
-    const keyword = vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'
-    items.push({ label: 'VIX', keyword, level })
-  }
-
-  // ── DXY ──
-  const dxy = quotes['DX-Y.NYB']?.price ?? null
-  if (dxy !== null) {
-    const c = getDxyLevel(dxy)
-    items.push({ label: 'DXY', keyword: c.keyword, level: c.level })
+    const { keyword, level } = getKrwLevel(krw)
+    items.push({ label: '환율', keyword, level })
   }
 
   // ── 장단기 금리차 ──
@@ -142,7 +127,23 @@ function MarketSummaryBar({ quotes, freds }: {
     const keyword = dgs10 >= 5 ? '고금리' : dgs10 >= 4 ? '제한적' : dgs10 >= 3 ? '중립' : '저금리'
     const level: 'good' | 'warn' | 'bad' | 'neutral' =
       dgs10 >= 5 ? 'bad' : dgs10 >= 4 ? 'warn' : 'good'
-    items.push({ label: '10Y금리', keyword, level })
+    items.push({ label: '10Y', keyword, level })
+  }
+
+  // ── DXY ──
+  const dxy = quotes['DX-Y.NYB']?.price ?? null
+  if (dxy !== null) {
+    const { keyword, level } = getDxyLevel(dxy)
+    items.push({ label: 'DXY', keyword, level })
+  }
+
+  // ── 공포탐욕 (feargreed는 별도 fetch 필요해서 VIX로 대체 표시) ──
+  const vix = quotes['^VIX']?.price ?? null
+  if (vix !== null) {
+    const keyword = vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' =
+      vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'
+    items.push({ label: 'VIX', keyword, level })
   }
 
   // ── 연준 총자산 ──
@@ -166,8 +167,7 @@ function MarketSummaryBar({ quotes, freds }: {
   const rrp = freds['RRPONTSYD']?.value ?? null
   if (rrp !== null) {
     const keyword = rrp < 100 ? '거의 소진' : rrp < 500 ? '대폭 감소' : '잔존'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      rrp < 100 ? 'warn' : 'neutral'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = rrp < 100 ? 'warn' : 'neutral'
     items.push({ label: '역레포', keyword, level })
   }
 
@@ -175,8 +175,7 @@ function MarketSummaryBar({ quotes, freds }: {
   const tga = freds['WTREGEN']?.value ?? null
   if (tga !== null) {
     const keyword = tga > 800 ? '잔고 풍부' : tga > 500 ? '정상' : tga > 200 ? '감소 중' : '부채한도 주의'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      tga > 500 ? 'neutral' : 'warn'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = tga > 500 ? 'neutral' : 'warn'
     items.push({ label: 'TGA', keyword, level })
   }
 
@@ -185,36 +184,49 @@ function MarketSummaryBar({ quotes, freds }: {
   return (
     <div style={{
       display: 'flex',
-      flexWrap: 'wrap',
-      gap: 8,
-      padding: '12px 16px',
+      flexWrap: 'nowrap',       // ← 한줄 고정
+      overflowX: 'auto',        // ← 넘치면 가로 스크롤
+      gap: 0,
+      padding: '10px 16px',
       background: 'var(--surface)',
       border: '1px solid var(--border)',
       borderRadius: 10,
       marginBottom: 20,
+      scrollbarWidth: 'none',   // ← 스크롤바 숨기기 (Firefox)
     }}>
+      <style>{`.summary-bar::-webkit-scrollbar { display: none; }`}</style>
       {items.map(({ label, keyword, level }, i) => {
         const color = level === 'good' ? '#22c55e'
           : level === 'warn' ? '#f59e0b'
           : level === 'bad' ? '#ef4444'
           : '#64748b'
         return (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
+          <div key={i} style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            whiteSpace: 'nowrap',
+            paddingRight: 12,
+            borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
+            marginRight: 12,
+          }}>
+            {/* 라벨 */}
+            <span style={{
+              fontSize: 11,
+              fontFamily: 'var(--mono)',
+              color: 'var(--muted)',
+            }}>
               {label}
             </span>
+            {/* 키워드 — 테두리 없이 색상만 */}
             <span style={{
-              fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700,
+              fontSize: 11,
+              fontFamily: 'var(--mono)',
+              fontWeight: 700,
               color,
-              border: `1px solid ${color}`,
-              borderRadius: 4,
-              padding: '1px 6px',
             }}>
               {keyword}
             </span>
-            {i < items.length - 1 && (
-              <span style={{ color: 'var(--border)', fontSize: 11, marginLeft: 2 }}>·</span>
-            )}
           </div>
         )
       })}

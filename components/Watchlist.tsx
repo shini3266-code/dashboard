@@ -280,6 +280,7 @@ export default function Watchlist() {
             borderRadius: 8, padding: '10px 18px',
             cursor: loading ? 'not-allowed' : 'pointer',
             fontWeight: 700, opacity: loading ? 0.7 : 1,
+            fontSize: 12,
             fontFamily: 'var(--mono)',
           }}
         >
