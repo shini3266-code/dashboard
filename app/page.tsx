@@ -485,8 +485,8 @@ function MarketSummaryBar({ quotes, freds }: {
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
             marginRight: 8,
           }}>
-            <span style={{ fontSize: '0.5rem', color: 'var(--muted)' }}>{label}</span>
-            <span style={{ fontSize: '0.5rem', fontWeight: 700, color }}>{keyword}</span>
+            <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{label}</span>
+            <span style={{ fontSize: '0.6rem', fontWeight: 700, color }}>{keyword}</span>
           </div>
         )
       })}
