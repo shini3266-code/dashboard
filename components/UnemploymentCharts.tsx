@@ -18,7 +18,6 @@ function CustomTooltip({ active, payload, label, color, suffix = '' }: any) {
         border: '1px solid var(--border)',
         borderRadius: 8,
         padding: '10px 14px',
-        fontFamily: 'var(--mono)',
         fontSize: '0.6rem',
         boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
       }}>
@@ -44,7 +43,7 @@ function UnempChart() {
       borderLeft: `2px solid ${latest <= 4 ? 'var(--up)' : latest <= 5 ? 'var(--gold)' : 'var(--down)'}`,
     }}>
       <div style={{
-        fontSize: '0.6rem', fontFamily: 'var(--mono)', lineHeight: 1.6,
+        fontSize: '0.6rem', lineHeight: 1.6,
         color: latest <= 4 ? 'var(--up)' : latest <= 5 ? 'var(--gold)' : 'var(--down)',
       }}>
         {latest <= 4
@@ -82,20 +81,20 @@ function UnempChart() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
+          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
             미국 실업률 (UNRATE)
           </div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>
+          <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
             4% 이하 = 완전고용 · 월간 데이터
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '1.2rem', fontWeight: 700, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text)' }}>
             {latest !== null ? `${latest.toFixed(1)}%` : '--'}
           </div>
           {change !== null && (
             <div style={{
-              fontSize: '0.6rem', fontFamily: 'var(--mono)', marginTop: 2,
+              fontSize: '0.6rem', marginTop: 2,
               color: change > 0 ? 'var(--down)' : change < 0 ? 'var(--up)' : 'var(--muted)',
             }}>
               {change > 0 ? '▲ +' : change < 0 ? '▼ ' : ''}{change.toFixed(1)}%p
@@ -105,7 +104,7 @@ function UnempChart() {
       </div>
 
       {loading ? (
-        <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: '0.6rem' }}>
+        <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.6rem' }}>
           로딩 중...
         </div>
       ) : (
@@ -121,11 +120,11 @@ function UnempChart() {
             <XAxis
               dataKey="date"
               tickFormatter={tickFormatter}
-              tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
+              tick={{ fill: '#64748b', fontSize: '0.6rem' }}
               axisLine={false} tickLine={false} interval="preserveStartEnd"
             />
             <YAxis
-              tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
+              tick={{ fill: '#64748b', fontSize: '0.6rem' }}
               axisLine={false} tickLine={false}
               tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`}
               width={36}
@@ -158,7 +157,7 @@ function JoblessChart() {
       borderLeft: `2px solid ${latest > 300000 ? 'var(--down)' : latest > 250000 ? 'var(--gold)' : 'var(--up)'}`,
     }}>
       <div style={{
-        fontSize: '0.6rem', fontFamily: 'var(--mono)', lineHeight: 1.6,
+        fontSize: '0.6rem', lineHeight: 1.6,
         color: latest > 300000 ? 'var(--down)' : latest > 250000 ? 'var(--gold)' : 'var(--up)',
       }}>
         {latest > 300000
@@ -196,20 +195,20 @@ function JoblessChart() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
+          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
             주간 신규 실업수당 청구 (ICSA)
           </div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>
+          <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
             30만+ 급증 = 고용 냉각 신호 · 주간 데이터
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '1.2rem', fontWeight: 700, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text)' }}>
             {latest !== null ? `${Math.round(latest).toLocaleString()}건` : '--'}
           </div>
           {change !== null && (
             <div style={{
-              fontSize: '0.6rem', fontFamily: 'var(--mono)', marginTop: 2,
+              fontSize: '0.6rem', marginTop: 2,
               color: change > 0 ? 'var(--down)' : 'var(--up)',
             }}>
               {change > 0 ? '▲ +' : '▼ '}{Math.abs(Math.round(change)).toLocaleString()}건
@@ -219,7 +218,7 @@ function JoblessChart() {
       </div>
   
       {loading ? (
-        <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: '0.6rem' }}>
+        <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.6rem' }}>
           로딩 중...
         </div>
       ) : (
@@ -235,11 +234,11 @@ function JoblessChart() {
             <XAxis
               dataKey="date"
               tickFormatter={tickFormatter}
-              tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
+              tick={{ fill: '#64748b', fontSize: '0.6rem' }}
               axisLine={false} tickLine={false} interval="preserveStartEnd"
             />
             <YAxis
-              tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
+              tick={{ fill: '#64748b', fontSize: '0.6rem' }}
               axisLine={false} tickLine={false}
               tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`}
               width={36}

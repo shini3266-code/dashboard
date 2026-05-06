@@ -78,10 +78,10 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
         {/* 헤더 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontSize: '0.7rem', fontWeight: 700, fontFamily: 'var(--mono)' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700 }}>
               📌 {symbol}
             </div>
-            <div style={{ fontSize: '0.6rem', color: 'var(--muted)', fontFamily: 'var(--mono)', marginTop: 2 }}>
+            <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 2 }}>
               매수 근거 · 목표가 · 임박 이벤트 등
             </div>
           </div>
@@ -108,7 +108,6 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
             borderRadius: 8,
             padding: '12px 14px',
             color: 'var(--text)',
-            fontFamily: 'var(--mono)',
             fontSize: '0.7rem',
             lineHeight: 1.8,
             resize: 'vertical',
@@ -123,7 +122,7 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
               background: 'none', border: '1px solid var(--border)',
               borderRadius: 8, padding: '8px 16px',
               color: 'var(--muted)', cursor: 'pointer',
-              fontFamily: 'var(--mono)', fontSize: '0.6rem',
+              fontSize: '0.6rem'
             }}
           >
             닫기
@@ -136,7 +135,7 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
               color: '#fff', border: 'none',
               borderRadius: 8, padding: '8px 20px',
               cursor: saving ? 'not-allowed' : 'pointer',
-              fontFamily: 'var(--mono)', fontSize: '0.6rem', fontWeight: 700,
+              fontSize: '0.6rem', fontWeight: 700,
               transition: 'background 0.3s',
               opacity: saving ? 0.7 : 1,
             }}
@@ -279,8 +278,7 @@ export default function Watchlist() {
             borderRadius: 8, padding: '10px 18px',
             cursor: loading ? 'not-allowed' : 'pointer',
             fontWeight: 700, opacity: loading ? 0.7 : 1,
-            fontSize: '0.6rem',
-            fontFamily: 'var(--mono)',
+            fontSize: '0.6rem'
           }}
         >
           {loading ? '...' : '추가'}
@@ -288,7 +286,7 @@ export default function Watchlist() {
       </div>
 
       {error && (
-        <div style={{ color: 'var(--down)', fontFamily: 'var(--mono)', fontSize: '0.6rem', marginBottom: 12 }}>
+        <div style={{ color: 'var(--down)', fontSize: '0.6rem', marginBottom: 12 }}>
           {error}
         </div>
       )}
@@ -305,15 +303,15 @@ export default function Watchlist() {
           {/* 헤더 */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
             <div>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: '0.8rem', fontWeight: 700 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>
                 {item.symbol}
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 4, alignItems: 'baseline' }}>
-                <span style={{ fontFamily: 'var(--mono)', fontSize: '1rem', fontWeight: 700 }}>
+                <span style={{ fontSize: '1rem', fontWeight: 700 }}>
                   ${item.price?.toFixed(2)}
                 </span>
                 <span style={{
-                  fontFamily: 'var(--mono)', fontSize: '0.6rem',
+                  fontSize: '0.6rem',
                   color: item.change_pct >= 0 ? 'var(--up)' : 'var(--down)',
                 }}>
                   {item.change_pct >= 0 ? '▲ +' : '▼ '}{item.change_pct?.toFixed(2)}%
@@ -347,7 +345,7 @@ export default function Watchlist() {
             onClick={() => setMemoSymbol(item.symbol)}
           >
             <div style={{
-              fontSize: '0.7rem', fontFamily: 'var(--mono)', color: 'var(--muted)',
+              fontSize: '0.7rem', color: 'var(--text)',
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
               flex: 1, marginRight: 8,
             }}>
@@ -361,7 +359,7 @@ export default function Watchlist() {
                 background: 'var(--surface)', border: '1px solid var(--border)',
                 borderRadius: 6, padding: '4px 10px',
                 color: 'var(--text)', cursor: 'pointer',
-                fontFamily: 'var(--mono)', fontSize: '0.6rem', fontWeight: 700,
+                fontSize: '0.6rem', fontWeight: 700,
                 whiteSpace: 'nowrap',
               }}
             >
@@ -373,8 +371,7 @@ export default function Watchlist() {
 
       {/* {watchlist.length === 0 && (
         <div style={{
-          color: 'var(--text)', fontFamily: 'var(--mono)',
-          fontSize: '0.6rem', textAlign: 'center', padding: 40,
+          color: 'var(--text)', fontSize: '0.6rem', textAlign: 'center', padding: 40,
         }}>
           티커를 입력해서 관심종목을 추가하세요
         </div>
