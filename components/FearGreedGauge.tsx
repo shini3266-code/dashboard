@@ -136,7 +136,7 @@ export default function FearGreedGauge() {
 
               {/* 숫자 */}
               <div style={{ textAlign: 'center', marginTop: -8 }}>
-                <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--mono)', color, lineHeight: 1 }}>
+                <div style={{ fontSize: 48, fontWeight: 700, fontFamily: 'var(--mono)', color, lineHeight: 1 }}>
                   {score ?? '--'}
                 </div>
                 <div style={{ fontSize: 13, fontFamily: 'var(--mono)', color, marginTop: 6 }}>

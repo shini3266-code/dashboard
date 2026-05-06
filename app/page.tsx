@@ -607,7 +607,7 @@ export default function Page() {
       }}>
         <div>
           <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
-          <div style={{ fontSize: 48, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1, color: 'var(--text)' }}>
+          <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1, color: 'var(--text)' }}>
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox
