@@ -468,7 +468,7 @@ function MarketSummaryBar({ quotes, freds }: {
   return (
     <div style={{
       display: 'flex', flexWrap: 'nowrap', overflowX: 'auto',
-      gap: 0, padding: '10px 16px',
+      gap: 0, padding: '8px 14px',
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, marginBottom: 20,
       msOverflowStyle: 'none', scrollbarWidth: 'none',
@@ -532,7 +532,7 @@ export default function Page() {
   const vix = quotes['^VIX']?.price ?? 0
 
   return (
-    <main style={{ maxWidth: 1440, margin: '0 auto', padding: 24 }}>
+    <main style={{ maxWidth: 1300, margin: '0 auto', padding: 24 }}>
 
       {/* 헤더 */}
       <div style={{
