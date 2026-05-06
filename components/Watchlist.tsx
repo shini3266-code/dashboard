@@ -109,7 +109,7 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
             padding: '12px 14px',
             color: 'var(--text)',
             fontFamily: 'var(--mono)',
-            fontSize: '0.6rem',
+            fontSize: '0.8rem',
             lineHeight: 1.8,
             resize: 'vertical',
           }}
@@ -268,7 +268,7 @@ export default function Watchlist() {
             borderRadius: 8,
             padding: '10px 14px',
             color: 'var(--text)',
-            fontSize: '0.6rem',
+            fontSize: '0.8rem',
           }}
         />
         <button
@@ -309,7 +309,7 @@ export default function Watchlist() {
                 {item.symbol}
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 4, alignItems: 'baseline' }}>
-                <span style={{ fontFamily: 'var(--mono)', fontSize: '1.2rem', fontWeight: 700 }}>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: '1rem', fontWeight: 700 }}>
                   ${item.price?.toFixed(2)}
                 </span>
                 <span style={{
@@ -347,7 +347,7 @@ export default function Watchlist() {
             onClick={() => setMemoSymbol(item.symbol)}
           >
             <div style={{
-              fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)',
+              fontSize: '0.8rem', fontFamily: 'var(--mono)', color: 'var(--muted)',
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
               flex: 1, marginRight: 8,
             }}>
