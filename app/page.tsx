@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import Watchlist from '@/components/Watchlist'
 import StockLineChart from '@/components/LineChart'
 import FearGreedGauge from '@/components/FearGreedGauge'
-import LiquidityCharts from '@/components/LiquidityCharts'
 import UnemploymentCharts from '@/components/UnemploymentCharts'
 import SectorFlow from '@/components/SectorFlow'
 import MarketHeatmap from '@/components/MarketHeatmap'
@@ -15,6 +14,18 @@ interface QuoteData {
   change: number
 }
 
+interface FredData {
+  value: number | null
+}
+
+const COLORS = {
+  etf: '#38bdf8',
+  asset: '#f59e0b',
+  macro: '#22c55e',
+  fear: '#ef4444',
+  liquidity: '#3b82f6',
+}
+
 async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   try {
     const res = await fetch(`/api/quote?symbol=${symbol}`)
@@ -23,7 +34,7 @@ async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   } catch { return null }
 }
 
-async function fetchFred(series: string): Promise<{ value: number | null } | null> {
+async function fetchFred(series: string): Promise<FredData | null> {
   try {
     const res = await fetch(`/api/fred?series=${series}`)
     if (!res.ok) return null
@@ -34,6 +45,7 @@ async function fetchFred(series: string): Promise<{ value: number | null } | nul
   } catch { return null }
 }
 
+// ── 레벨 함수 ──────────────────────────────────────
 function getOilLevel(val: number) {
   if (val >= 90) return { keyword: '고유가', level: 'bad' as const }
   if (val >= 70) return { keyword: '중립', level: 'neutral' as const }
@@ -53,188 +65,7 @@ function getDxyLevel(val: number) {
   return { keyword: '달러 약세', level: 'good' as const }
 }
 
-function getGoldLevelFromPrice(val: number) {
-  // 금은 절대가보다 등락으로 판단
-  if (val >= 3000) return { keyword: '강세', level: 'good' as const }
-  if (val >= 2500) return { keyword: '보합', level: 'neutral' as const }
-  return { keyword: '약세', level: 'warn' as const }
-}
-
-function MarketSummaryBar({ quotes, freds }: {
-  quotes: Record<string, QuoteData | null>
-  freds: Record<string, { value: number | null } | null>
-}) {
-  const items: { label: string; keyword: string; level: 'good' | 'warn' | 'bad' | 'neutral' }[] = []
-
-  // ── SPY QQQ SOXX (drawdown 기반 — 카드와 동일하게 하려면 high 필요해서 change로 근사) ──
-  ;[
-    { sym: 'SPY', label: 'SPY' },
-    { sym: 'QQQ', label: 'QQQ' },
-    { sym: 'SOXX', label: 'SOXX' },
-  ].forEach(({ sym, label }) => {
-    const change = quotes[sym]?.change ?? null
-    if (change === null) return
-    const keyword = change >= 1.5 ? '강세장' : change >= 0 ? '보합' : change >= -1.5 ? '조정 초입' : '조정장'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      change >= 1.5 ? 'good' : change >= 0 ? 'neutral' : change >= -1.5 ? 'warn' : 'bad'
-    items.push({ label, keyword, level })
-  })
-
-  // ── 금 (카드와 동일: getDrawdownComment 기반 → change로 근사) ──
-  const goldChange = quotes['GC=F']?.change ?? null
-  if (goldChange !== null) {
-    const keyword = goldChange >= 1 ? '강세장' : goldChange >= 0 ? '보합' : goldChange >= -1 ? '조정 초입' : goldChange >= -3 ? '조정장' : '급락장'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      goldChange >= 0 ? 'good' : goldChange >= -1 ? 'neutral' : goldChange >= -3 ? 'warn' : 'bad'
-    items.push({ label: '금', keyword, level })
-  }
-
-  // ── 비트코인 ──
-  const btcChange = quotes['BTC-USD']?.change ?? null
-  if (btcChange !== null) {
-    const keyword = btcChange >= 3 ? '강세장' : btcChange >= 0 ? '보합' : btcChange >= -3 ? '조정장' : '급락장'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      btcChange >= 0 ? 'good' : btcChange >= -3 ? 'warn' : 'bad'
-    items.push({ label: 'BTC', keyword, level })
-  }
-
-  // ── WTI 원유 ──
-  const oil = quotes['CL=F']?.price ?? null
-  if (oil !== null) {
-    const { keyword, level } = getOilLevel(oil)
-    items.push({ label: 'WTI', keyword, level })
-  }
-
-  // ── 원달러 환율 ──
-  const krw = quotes['KRW=X']?.price ?? null
-  if (krw !== null) {
-    const { keyword, level } = getKrwLevel(krw)
-    items.push({ label: '환율', keyword, level })
-  }
-
-  // ── 장단기 금리차 ──
-  const t10y2y = freds['T10Y2Y']?.value ?? null
-  if (t10y2y !== null) {
-    const keyword = t10y2y < 0 ? '역전' : t10y2y < 0.5 ? '회복 초입' : '정상'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      t10y2y < 0 ? 'bad' : t10y2y < 0.5 ? 'warn' : 'good'
-    items.push({ label: '금리차', keyword, level })
-  }
-
-  // ── 10년물 금리 ──
-  const dgs10 = freds['DGS10']?.value ?? null
-  if (dgs10 !== null) {
-    const keyword = dgs10 >= 5 ? '고금리' : dgs10 >= 4 ? '제한적' : dgs10 >= 3 ? '중립' : '저금리'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      dgs10 >= 5 ? 'bad' : dgs10 >= 4 ? 'warn' : 'good'
-    items.push({ label: '10Y', keyword, level })
-  }
-
-  // ── DXY ──
-  const dxy = quotes['DX-Y.NYB']?.price ?? null
-  if (dxy !== null) {
-    const { keyword, level } = getDxyLevel(dxy)
-    items.push({ label: 'DXY', keyword, level })
-  }
-
-  // ── 공포탐욕 (feargreed는 별도 fetch 필요해서 VIX로 대체 표시) ──
-  const vix = quotes['^VIX']?.price ?? null
-  if (vix !== null) {
-    const keyword = vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'
-    items.push({ label: 'VIX', keyword, level })
-  }
-
-  // ── 연준 총자산 ──
-  const walcl = freds['WALCL']?.value ?? null
-  if (walcl !== null) {
-    const t = walcl / 1000000
-    const keyword = t >= 8 ? 'QT 진행 중' : t >= 7 ? 'QT 중반' : t >= 6 ? 'QT 후반' : '정상화'
-    items.push({ label: '연준자산', keyword, level: 'neutral' })
-  }
-
-  // ── 지준금 ──
-  const wresbal = freds['WRESBAL']?.value ?? null
-  if (wresbal !== null) {
-    const keyword = wresbal > 3000000 ? '충분' : wresbal > 2500000 ? '양호' : wresbal > 2000000 ? '주의' : '위험'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' =
-      wresbal > 3000000 ? 'good' : wresbal > 2500000 ? 'neutral' : wresbal > 2000000 ? 'warn' : 'bad'
-    items.push({ label: '지준금', keyword, level })
-  }
-
-  // ── 역레포 ──
-  const rrp = freds['RRPONTSYD']?.value ?? null
-  if (rrp !== null) {
-    const keyword = rrp < 100 ? '거의 소진' : rrp < 500 ? '대폭 감소' : '잔존'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' = rrp < 100 ? 'warn' : 'neutral'
-    items.push({ label: '역레포', keyword, level })
-  }
-
-  // ── TGA ──
-  const tga = freds['WTREGEN']?.value ?? null
-  if (tga !== null) {
-    const keyword = tga > 800 ? '잔고 풍부' : tga > 500 ? '정상' : tga > 200 ? '감소 중' : '부채한도 주의'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' = tga > 500 ? 'neutral' : 'warn'
-    items.push({ label: 'TGA', keyword, level })
-  }
-
-  if (items.length === 0) return null
-
-  return (
-    <div style={{
-      display: 'flex',
-      flexWrap: 'nowrap',       // ← 한줄 고정
-      overflowX: 'auto',        // ← 넘치면 가로 스크롤
-      gap: 0,
-      padding: '10px 16px',
-      background: 'var(--surface)',
-      border: '1px solid var(--border)',
-      borderRadius: 10,
-      marginBottom: 20,
-      scrollbarWidth: 'none',   // ← 스크롤바 숨기기 (Firefox)
-    }}>
-      <style>{`.summary-bar::-webkit-scrollbar { display: none; }`}</style>
-      {items.map(({ label, keyword, level }, i) => {
-        const color = level === 'good' ? '#22c55e'
-          : level === 'warn' ? '#f59e0b'
-          : level === 'bad' ? '#ef4444'
-          : '#64748b'
-        return (
-          <div key={i} style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            whiteSpace: 'nowrap',
-            paddingRight: 12,
-            borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
-            marginRight: 12,
-          }}>
-            {/* 라벨 */}
-            <span style={{
-              fontSize: 11,
-              fontFamily: 'var(--mono)',
-              color: 'var(--muted)',
-            }}>
-              {label}
-            </span>
-            {/* 키워드 — 테두리 없이 색상만 */}
-            <span style={{
-              fontSize: 11,
-              fontFamily: 'var(--mono)',
-              fontWeight: 700,
-              color,
-            }}>
-              {keyword}
-            </span>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-// ── 멘트 함수들 ──────────────────────────────────
+// ── 멘트 함수 ──────────────────────────────────────
 function getDrawdownComment(current: number | null, high: number | null) {
   if (!current || !high) return null
   const drawdown = ((current - high) / high) * 100
@@ -248,107 +79,109 @@ function getDrawdownComment(current: number | null, high: number | null) {
     : drawdown >= -20 ? '조정 구간이에요. 리스크 관리가 필요해요.'
     : drawdown >= -30 ? '약세장이에요. 방어적 접근이 필요해요.'
     : '급락 구간이에요. 현금 비중을 높이세요.'
-  return { drawdown, status, comment }
+  const level = drawdown >= -2 ? 'good' as const
+    : drawdown >= -10 ? 'warn' as const
+    : 'bad' as const
+  return { drawdown, status, comment, level }
 }
 
 function getYieldComment(val: number | null) {
   if (val === null) return null
-  if (val < 0) return { keyword: '역전', text: `경기침체 선행신호예요. 역전 해소 시점을 주목하세요.` }
-  if (val < 0.5) return { keyword: '회복 초입', text: `실제 침체는 역전 해소 후 올 수 있어요.` }
-  return { keyword: '정상', text: `장기금리가 단기금리보다 높아요.` }
+  if (val < 0) return { keyword: '역전', text: `${val.toFixed(2)}%. 경기침체 선행신호예요. 역전 해소 시점을 주목하세요.` }
+  if (val < 0.5) return { keyword: '회복 초입', text: `${val.toFixed(2)}%. 실제 침체는 역전 해소 후 올 수 있어요.` }
+  return { keyword: '정상', text: `${val.toFixed(2)}%. 장기금리가 단기금리보다 높아요.` }
 }
 
 function getBondComment(val: number | null) {
   if (val === null) return null
-  if (val >= 5) return { keyword: '고금리', text: `주식 밸류에이션 압박이 커요.` }
-  if (val >= 4) return { keyword: '제한적', text: `성장주에 부담이에요.` }
-  if (val >= 3) return { keyword: '중립', text: `시장 영향은 제한적이에요.` }
-  return { keyword: '저금리', text: `성장주에 유리해요.` }
+  if (val >= 5) return { keyword: '고금리', text: `${val.toFixed(2)}%. 주식 밸류에이션 압박이 커요.` }
+  if (val >= 4) return { keyword: '제한적', text: `${val.toFixed(2)}%. 성장주에 부담이에요.` }
+  if (val >= 3) return { keyword: '중립', text: `${val.toFixed(2)}%. 시장 영향은 제한적이에요.` }
+  return { keyword: '저금리', text: `${val.toFixed(2)}%. 성장주에 유리해요.` }
 }
 
 function getDxyComment(val: number | null) {
   if (val === null) return null
   const { keyword } = getDxyLevel(val)
-  if (val >= 105) return { keyword, text: `신흥국·원자재에 부담이에요.` }
-  if (val >= 100) return { keyword, text: `글로벌 유동성 위축 압력이 있어요.` }
-  if (val >= 95) return { keyword, text: `달러 방향성이 중립이에요.` }
-  return { keyword, text: `위험자산·신흥국에 우호적이에요.` }
+  if (val >= 105) return { keyword, text: `${val.toFixed(2)}. 신흥국·원자재에 부담이에요.` }
+  if (val >= 100) return { keyword, text: `${val.toFixed(2)}. 글로벌 유동성 위축 압력이 있어요.` }
+  if (val >= 95) return { keyword, text: `${val.toFixed(2)}. 달러 방향성이 중립이에요.` }
+  return { keyword, text: `${val.toFixed(2)}. 위험자산·신흥국에 우호적이에요.` }
+}
+
+function getOilComment(val: number | null) {
+  if (val === null) return null
+  const { keyword } = getOilLevel(val)
+  if (val >= 90) return { keyword, text: `$${val.toFixed(1)}. 인플레이션 압력이 커요.` }
+  if (val >= 70) return { keyword, text: `$${val.toFixed(1)}. 경기 회복 수요를 반영해요.` }
+  return { keyword, text: `$${val.toFixed(1)}. 경기 둔화 우려가 있어요.` }
 }
 
 function getKrwComment(val: number | null) {
   if (val === null) return null
   const { keyword } = getKrwLevel(val)
-  if (val >= 1400) return { keyword, text: `외국인 자금유출 압력이 있어요.` }
-  if (val >= 1300) return { keyword, text: `환율 변동성에 주의하세요.` }
-  return { keyword, text: `외국인 자금유입에 우호적이에요.` }
+  if (val >= 1400) return { keyword, text: `${Math.round(val)}원. 외국인 자금유출 압력이 있어요.` }
+  if (val >= 1300) return { keyword, text: `${Math.round(val)}원. 환율 변동성에 주의하세요.` }
+  return { keyword, text: `${Math.round(val)}원. 외국인 자금유입에 우호적이에요.` }
 }
 
 function getFedAssetComment(val: number | null) {
   if (val === null) return null
   const t = val / 1000000
-  if (t >= 8) return { keyword: 'QT 진행 중', text: `아직 높은 수준이에요. 계속 축소 중이에요.` }
-  if (t >= 7) return { keyword: 'QT 중반', text: `코로나 고점($9T) 대비 많이 줄었어요.` }
-  if (t >= 6) return { keyword: 'QT 후반', text: `코로나 이전 수준에 근접하고 있어요.` }
-  return { keyword: '정상화', text: `코로나 이전 수준으로 복귀했어요.` }
+  if (t >= 8) return { keyword: 'QT 진행 중', text: `$${t.toFixed(2)}T. 대규모 자산 보유 중이에요.` }
+  if (t >= 7) return { keyword: 'QT 중반', text: `$${t.toFixed(2)}T. 코로나 고점 대비 많이 줄었어요.` }
+  if (t >= 6) return { keyword: 'QT 후반', text: `$${t.toFixed(2)}T. 코로나 이전 수준에 근접하고 있어요.` }
+  return { keyword: '정상화', text: `$${t.toFixed(2)}T. 코로나 이전 수준으로 복귀했어요.` }
 }
 
 function getReservesComment(val: number | null) {
   if (val === null) return null
   const b = Math.round(val / 1000)
-  if (val > 3000000) return { keyword: '충분', text: `은행 시스템이 안정적이에요. 유동성 위기 우려 낮아요.` }
-  if (val > 2500000) return { keyword: '양호', text: `아직 안전 수준이에요.` }
-  if (val > 2000000) return { keyword: '주의', text: `감소 추세예요. 모니터링이 필요해요.` }
-  return { keyword: '위험', text: `2019년 레포사태 수준이에요. QT 중단 가능성이 있어요.` }
+  if (val > 3000000) return { keyword: '충분', text: `$${b.toLocaleString()}B. 은행 시스템이 안정적이에요.` }
+  if (val > 2500000) return { keyword: '양호', text: `$${b.toLocaleString()}B. 아직 안전 수준이에요.` }
+  if (val > 2000000) return { keyword: '주의', text: `$${b.toLocaleString()}B. 감소 추세예요. 모니터링이 필요해요.` }
+  return { keyword: '위험', text: `$${b.toLocaleString()}B. QT 중단 가능성이 있어요.` }
 }
 
 function getRrpComment(val: number | null) {
   if (val === null) return null
-  if (val < 100) return { keyword: '거의 소진', text: `시장 초과유동성이 없어요.` }
-  if (val < 500) return { keyword: '대폭 감소', text: `시장으로 유동성이 유입됐어요.` }
-  return { keyword: '잔존', text: `아직 초과유동성이 남아있어요.` }
+  if (val < 100) return { keyword: '거의 소진', text: `$${Math.round(val)}B. 시장 초과유동성이 없어요.` }
+  if (val < 500) return { keyword: '대폭 감소', text: `$${Math.round(val)}B. 시장으로 유동성이 유입됐어요.` }
+  return { keyword: '잔존', text: `$${(val / 1000).toFixed(2)}T. 아직 초과유동성이 남아있어요.` }
 }
 
 function getTgaComment(val: number | null) {
   if (val === null) return null
-  const b = Math.round(val)
-  if (val > 800) return { keyword: '잔고 풍부', text: `정부 지출 시 시중에 유동성이 대거 공급될 수 있어요.` }
-  if (val > 500) return { keyword: '정상', text: `정상 운영 수준이에요.` }
-  if (val > 200) return { keyword: '감소 중', text: `지출이 늘거나 세수가 줄고 있어요.` }
-  return { keyword: '부채한도 주의', text: `잔고가 매우 낮아요. 부채한도 협상 이슈를 주목하세요.` }
+  if (val > 800) return { keyword: '잔고 풍부', text: `$${Math.round(val)}B. 지출 시 유동성 공급 가능성이 있어요.` }
+  if (val > 500) return { keyword: '정상', text: `$${Math.round(val)}B. 정상 수준이에요.` }
+  if (val > 200) return { keyword: '감소 중', text: `$${Math.round(val)}B. 지출이 늘거나 세수가 줄고 있어요.` }
+  return { keyword: '부채한도 주의', text: `$${Math.round(val)}B. 잔고가 매우 낮아요.` }
 }
 
-// ── 공통 컴포넌트 ─────────────────────────────────
+// ── 공통 컴포넌트 ──────────────────────────────────
 function CommentBox({ keyword, text, level = 'neutral' }: {
   keyword?: string
   text: string | null
   level?: 'good' | 'warn' | 'bad' | 'neutral'
 }) {
   if (!text) return null
-
   const color = level === 'good' ? '#22c55e'
     : level === 'warn' ? '#f59e0b'
     : level === 'bad' ? '#ef4444'
     : '#64748b'
-
   return (
     <div style={{ marginTop: 8 }}>
       {keyword && (
         <div style={{ marginBottom: 4 }}>
           <span style={{
             fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700,
-            color,
-            border: `1px solid ${color}`,
-            borderRadius: 6,
-            padding: '2px 8px',
+            color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
           }}>
             {keyword}
           </span>
         </div>
       )}
-      <div style={{
-        fontSize: 11, fontFamily: 'var(--mono)',
-        color: 'var(--muted)', lineHeight: 1.6,
-      }}>
+      <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', lineHeight: 1.6 }}>
         {text}
       </div>
     </div>
@@ -356,25 +189,16 @@ function CommentBox({ keyword, text, level = 'neutral' }: {
 }
 
 function DrawdownBadge({ dd }: {
-  dd: { drawdown: number; status: string; comment: string } | null
+  dd: { drawdown: number; status: string; comment: string; level: 'good' | 'warn' | 'bad' } | null
 }) {
   if (!dd) return null
-
-  const color = dd.drawdown >= -2 ? '#22c55e'
-    : dd.drawdown >= -10 ? '#f59e0b'
-    : dd.drawdown >= -20 ? '#f97316'
-    : '#ef4444'
-
+  const color = dd.level === 'good' ? '#22c55e' : dd.level === 'warn' ? '#f59e0b' : '#ef4444'
   return (
     <div style={{ marginTop: 8 }}>
-      {/* 상태 배지 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
         <span style={{
           fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700,
-          color,
-          border: `1px solid ${color}`,
-          borderRadius: 6,
-          padding: '2px 8px',
+          color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
         }}>
           {dd.status}
         </span>
@@ -382,7 +206,6 @@ function DrawdownBadge({ dd }: {
           ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
         </span>
       </div>
-      {/* 설명 텍스트 */}
       <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', lineHeight: 1.6 }}>
         {dd.comment}
       </div>
@@ -402,7 +225,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   )
 }
 
-// ── 가격 + 1개월 + 1년 차트 한줄 ────────────────────
+// ── 가격 + 1개월 + 1년 차트 ────────────────────────
 function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel }: {
   ticker: string
   label: string
@@ -430,18 +253,12 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
   const isUp = (data?.change ?? 0) >= 0
   const fmt = formatValue ?? ((v: number) => `${unit}${v.toLocaleString()}`)
   const dd = showDrawdown ? getDrawdownComment(data?.price ?? null, high) : null
-  const ddLevel = dd ? (dd.drawdown >= -2 ? 'good' : dd.drawdown >= -10 ? 'warn' : 'bad') : 'neutral'
 
   return (
     <div style={{
-      display: 'grid',
-      gridTemplateColumns: '200px 1fr 2fr',
-      gap: 12,
-      background: 'var(--surface)',
-      border: '1px solid var(--border)',
-      borderRadius: 10,
-      padding: '16px',
-      marginBottom: 8,
+      display: 'grid', gridTemplateColumns: '200px 1fr 2fr',
+      gap: 12, background: 'var(--surface)', border: '1px solid var(--border)',
+      borderRadius: 10, padding: '16px', marginBottom: 8,
     }}>
       <div>
         <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
@@ -457,18 +274,18 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
         {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
       <div>
-        <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-        <StockLineChart symbol={ticker} color={color} range="1mo" height={150} formatValue={fmt} />
+        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+        <StockLineChart symbol={ticker} color={color} range="1mo" height={120} formatValue={fmt} />
       </div>
       <div>
-        <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-        <StockLineChart symbol={ticker} color={color} range="1y" height={150} formatValue={fmt} />
+        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+        <StockLineChart symbol={ticker} color={color} range="1y" height={120} formatValue={fmt} />
       </div>
     </div>
   )
 }
 
-// ── FRED 가격 + 차트 한줄 ───────────────────────────
+// ── FRED 가격 + 차트 ────────────────────────────────
 function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
   series: string
   label: string
@@ -501,30 +318,24 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
     return `${n.toFixed(2)}${unit}`
   }
 
-  function getLevel(val: number | null): 'good' | 'warn' | 'bad' | 'neutral' {
-    if (!val) return 'neutral'
-    if (series === 'T10Y2Y') return val < 0 ? 'bad' : val < 0.5 ? 'warn' : 'good'
-    if (series === 'DGS10') return val >= 5 ? 'bad' : val >= 4 ? 'warn' : 'good'
-    if (series === 'WRESBAL') return val > 3000000 ? 'good' : val > 2000000 ? 'warn' : 'bad'
-    if (series === 'RRPONTSYD') return val < 100 ? 'warn' : 'neutral'
-    if (series === 'WALCL') return 'neutral'  // 방향성으로 판단해야 해서 neutral
-    if (series === 'WTREGEN') return 'neutral' // 방향성으로 판단해야 해서 neutral
+  function getLevel(): 'good' | 'warn' | 'bad' | 'neutral' {
+    if (!latest) return 'neutral'
+    if (series === 'T10Y2Y') return latest < 0 ? 'bad' : latest < 0.5 ? 'warn' : 'good'
+    if (series === 'DGS10') return latest >= 5 ? 'bad' : latest >= 4 ? 'warn' : 'good'
+    if (series === 'WRESBAL') return latest > 3000000 ? 'good' : latest > 2500000 ? 'neutral' : latest > 2000000 ? 'warn' : 'bad'
+    if (series === 'RRPONTSYD') return latest < 100 ? 'warn' : 'neutral'
     return 'neutral'
   }
 
   const data1mo = data.slice(-22)
   const data1y = data.slice(-252)
+  const c = getComment?.(latest) ?? null
 
   return (
     <div style={{
-      display: 'grid',
-      gridTemplateColumns: '200px 1fr 2fr',
-      gap: 12,
-      background: 'var(--surface)',
-      border: '1px solid var(--border)',
-      borderRadius: 10,
-      padding: '16px',
-      marginBottom: 8,
+      display: 'grid', gridTemplateColumns: '200px 1fr 2fr',
+      gap: 12, background: 'var(--surface)', border: '1px solid var(--border)',
+      borderRadius: 10, padding: '16px', marginBottom: 8,
     }}>
       <div>
         <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
@@ -541,44 +352,176 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
           </div>
         )}
         {desc && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
-        {getComment && (() => {
-          const c = getComment(latest)
-          return c ? <CommentBox keyword={c.keyword} text={c.text} level={getLevel(latest)} /> : null
-        })()}
+        {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
       </div>
       <div>
-        <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-        <StockLineChart symbol={series} color={color} range="1mo" height={150} formatValue={fmt} externalData={data1mo} />
+        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+        <StockLineChart symbol={series} color={color} range="1mo" height={120} formatValue={fmt} externalData={data1mo} />
       </div>
       <div>
-        <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-        <StockLineChart symbol={series} color={color} range="1y" height={150} formatValue={fmt} externalData={data1y} />
+        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+        <StockLineChart symbol={series} color={color} range="1y" height={120} formatValue={fmt} externalData={data1y} />
       </div>
     </div>
   )
 }
 
-// ── 메인 페이지 ──────────────────────────────────────
+// ── Summary Bar ────────────────────────────────────
+function MarketSummaryBar({ quotes, freds }: {
+  quotes: Record<string, QuoteData | null>
+  freds: Record<string, FredData | null>
+}) {
+  const items: { label: string; keyword: string; level: 'good' | 'warn' | 'bad' | 'neutral' }[] = []
+
+  ;[{ sym: 'SPY', label: 'SPY' }, { sym: 'QQQ', label: 'QQQ' }, { sym: 'SOXX', label: 'SOXX' }]
+    .forEach(({ sym, label }) => {
+      const change = quotes[sym]?.change ?? null
+      if (change === null) return
+      const keyword = change >= 1.5 ? '강세장' : change >= 0 ? '보합' : change >= -1.5 ? '조정 초입' : '조정장'
+      const level: 'good' | 'warn' | 'bad' | 'neutral' = change >= 1.5 ? 'good' : change >= 0 ? 'neutral' : change >= -1.5 ? 'warn' : 'bad'
+      items.push({ label, keyword, level })
+    })
+
+  const goldChange = quotes['GC=F']?.change ?? null
+  if (goldChange !== null) {
+    const keyword = goldChange >= 1 ? '강세장' : goldChange >= 0 ? '보합' : goldChange >= -1 ? '조정 초입' : '조정장'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = goldChange >= 0 ? 'good' : goldChange >= -1 ? 'neutral' : 'warn'
+    items.push({ label: '금', keyword, level })
+  }
+
+  const btcChange = quotes['BTC-USD']?.change ?? null
+  if (btcChange !== null) {
+    const keyword = btcChange >= 3 ? '강세장' : btcChange >= 0 ? '보합' : btcChange >= -3 ? '조정장' : '급락장'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = btcChange >= 0 ? 'good' : btcChange >= -3 ? 'warn' : 'bad'
+    items.push({ label: 'BTC', keyword, level })
+  }
+
+  const oil = quotes['CL=F']?.price ?? null
+  if (oil !== null) {
+    const { keyword, level } = getOilLevel(oil)
+    items.push({ label: 'WTI', keyword, level })
+  }
+
+  const krw = quotes['KRW=X']?.price ?? null
+  if (krw !== null) {
+    const { keyword, level } = getKrwLevel(krw)
+    items.push({ label: '환율', keyword, level })
+  }
+
+  const t10y2y = freds['T10Y2Y']?.value ?? null
+  if (t10y2y !== null) {
+    const keyword = t10y2y < 0 ? '역전' : t10y2y < 0.5 ? '회복 초입' : '정상'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = t10y2y < 0 ? 'bad' : t10y2y < 0.5 ? 'warn' : 'good'
+    items.push({ label: '금리차', keyword, level })
+  }
+
+  const dgs10 = freds['DGS10']?.value ?? null
+  if (dgs10 !== null) {
+    const keyword = dgs10 >= 5 ? '고금리' : dgs10 >= 4 ? '제한적' : dgs10 >= 3 ? '중립' : '저금리'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = dgs10 >= 5 ? 'bad' : dgs10 >= 4 ? 'warn' : 'good'
+    items.push({ label: '10Y', keyword, level })
+  }
+
+  const dxy = quotes['DX-Y.NYB']?.price ?? null
+  if (dxy !== null) {
+    const { keyword, level } = getDxyLevel(dxy)
+    items.push({ label: 'DXY', keyword, level })
+  }
+
+  const vix = quotes['^VIX']?.price ?? null
+  if (vix !== null) {
+    const keyword = vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'
+    items.push({ label: 'VIX', keyword, level })
+  }
+
+  const walcl = freds['WALCL']?.value ?? null
+  if (walcl !== null) {
+    const t = walcl / 1000000
+    const keyword = t >= 8 ? 'QT 진행 중' : t >= 7 ? 'QT 중반' : t >= 6 ? 'QT 후반' : '정상화'
+    items.push({ label: '연준자산', keyword, level: 'neutral' })
+  }
+
+  const wresbal = freds['WRESBAL']?.value ?? null
+  if (wresbal !== null) {
+    const keyword = wresbal > 3000000 ? '충분' : wresbal > 2500000 ? '양호' : wresbal > 2000000 ? '주의' : '위험'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = wresbal > 3000000 ? 'good' : wresbal > 2500000 ? 'neutral' : wresbal > 2000000 ? 'warn' : 'bad'
+    items.push({ label: '지준금', keyword, level })
+  }
+
+  const rrp = freds['RRPONTSYD']?.value ?? null
+  if (rrp !== null) {
+    const keyword = rrp < 100 ? '거의 소진' : rrp < 500 ? '대폭 감소' : '잔존'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = rrp < 100 ? 'warn' : 'neutral'
+    items.push({ label: '역레포', keyword, level })
+  }
+
+  const tga = freds['WTREGEN']?.value ?? null
+  if (tga !== null) {
+    const keyword = tga > 800 ? '잔고 풍부' : tga > 500 ? '정상' : tga > 200 ? '감소 중' : '부채한도 주의'
+    const level: 'good' | 'warn' | 'bad' | 'neutral' = tga > 500 ? 'neutral' : 'warn'
+    items.push({ label: 'TGA', keyword, level })
+  }
+
+  if (items.length === 0) return null
+
+  return (
+    <div style={{
+      display: 'flex', flexWrap: 'nowrap', overflowX: 'auto',
+      gap: 0, padding: '10px 16px',
+      background: 'var(--surface)', border: '1px solid var(--border)',
+      borderRadius: 10, marginBottom: 20,
+      msOverflowStyle: 'none', scrollbarWidth: 'none',
+    } as React.CSSProperties}>
+      {items.map(({ label, keyword, level }, i) => {
+        const color = level === 'good' ? '#22c55e'
+          : level === 'warn' ? '#f59e0b'
+          : level === 'bad' ? '#ef4444'
+          : '#64748b'
+        return (
+          <div key={i} style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            whiteSpace: 'nowrap', paddingRight: 12,
+            borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
+            marginRight: 12,
+          }}>
+            <span style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>{label}</span>
+            <span style={{ fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700, color }}>{keyword}</span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ── 메인 페이지 ────────────────────────────────────
 export default function Page() {
   const [quotes, setQuotes] = useState<Record<string, QuoteData | null>>({})
+  const [freds, setFreds] = useState<Record<string, FredData | null>>({})
   const [loading, setLoading] = useState(true)
-  const [freds, setFreds] = useState<Record<string, { value: number | null } | null>>({})
 
   useEffect(() => {
     async function loadAll() {
       setLoading(true)
-      const syms = ['SPY', 'QQQ', 'SOXX', 'GC=F', 'BTC-USD', 'KRW=X', 'CL=F', 'DX-Y.NYB', '^VIX']
-      const fredSeries = ['T10Y2Y', 'DGS10', 'RRPONTSYD', 'WTREGEN']
-      const fredResults = await Promise.all(fredSeries.map(s => fetchFred(s)))
-      const results = await Promise.all(syms.map(s => fetchQuote(s)))
-      const map: Record<string, QuoteData | null> = {}
-      const fredMap: Record<string, { value: number | null } | null> = {}
+      const quoteSymbols = ['SPY', 'QQQ', 'SOXX', 'GC=F', 'BTC-USD', 'KRW=X', 'CL=F', 'DX-Y.NYB', '^VIX']
+      const fredSeries = ['T10Y2Y', 'DGS10', 'WALCL', 'WRESBAL', 'RRPONTSYD', 'WTREGEN']
+
+      const [quoteResults, fredResults] = await Promise.all([
+        Promise.all(quoteSymbols.map(s => fetchQuote(s))),
+        Promise.all(fredSeries.map(s => fetchFred(s))),
+      ])
+
+      const quoteMap: Record<string, QuoteData | null> = {}
+      quoteSymbols.forEach((s, i) => { quoteMap[s] = quoteResults[i] })
+
+      const fredMap: Record<string, FredData | null> = {}
       fredSeries.forEach((s, i) => { fredMap[s] = fredResults[i] })
-      syms.forEach((s, i) => { map[s] = results[i] })
-      setQuotes(map)
-      setLoading(false)
+
+      setQuotes(quoteMap)
       setFreds(fredMap)
+      setLoading(false)
     }
+
     loadAll()
     const interval = setInterval(loadAll, 60000)
     return () => clearInterval(interval)
@@ -589,12 +532,12 @@ export default function Page() {
   const vix = quotes['^VIX']?.price ?? 0
 
   return (
-    <main style={{ maxWidth: 1200, margin: '0 auto', padding: 24, zoom: 1.1 }}>
+    <main style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
 
       {/* 헤더 */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        marginBottom: 32, paddingBottom: 16, borderBottom: '1px solid var(--border)'
+        marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
@@ -613,7 +556,7 @@ export default function Page() {
         </div>
       </div>
 
-      {/* 요약 바 */}
+      {/* Summary Bar */}
       <MarketSummaryBar quotes={quotes} freds={freds} />
 
       {/* 관심종목 */}
@@ -626,32 +569,32 @@ export default function Page() {
 
       {/* ETF */}
       <SectionLabel>📊 글로벌 ETF</SectionLabel>
-      <PriceChartRow ticker="SPY" label="S&P 500 ETF" color="#8b5cf6" data={quotes['SPY']} showDrawdown />
-      <PriceChartRow ticker="QQQ" label="나스닥 100 ETF" color="#3b82f6" data={quotes['QQQ']} showDrawdown />
-      <PriceChartRow ticker="SOXX" label="반도체 ETF" color="#06b6d4" data={quotes['SOXX']} showDrawdown />
+      <PriceChartRow ticker="SPY" label="S&P 500 ETF" color={COLORS.etf} data={quotes['SPY']} showDrawdown />
+      <PriceChartRow ticker="QQQ" label="나스닥 100 ETF" color={COLORS.etf} data={quotes['QQQ']} showDrawdown />
+      <PriceChartRow ticker="SOXX" label="반도체 ETF" color={COLORS.etf} data={quotes['SOXX']} showDrawdown />
 
       {/* 안전자산 & 위험자산 */}
       <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
-      <PriceChartRow ticker="GC=F" label="금 Gold" color="#f59e0b" unit="$" sub="USD / 온스" data={quotes['GC=F']} showDrawdown />
-      <PriceChartRow ticker="BTC-USD" label="비트코인" color="#f97316" unit="$" sub="BTC / USD" data={quotes['BTC-USD']} showDrawdown />
-      <PriceChartRow ticker="CL=F" label="WTI 원유" color="#10b981" unit="$" sub="USD / 배럴" data={quotes['CL=F']}
+      <PriceChartRow ticker="GC=F" label="금 Gold" color={COLORS.asset} unit="$" sub="USD / 온스" data={quotes['GC=F']} showDrawdown />
+      <PriceChartRow ticker="BTC-USD" label="비트코인" color={COLORS.asset} unit="$" sub="BTC / USD" data={quotes['BTC-USD']} showDrawdown />
+      <PriceChartRow ticker="CL=F" label="WTI 원유" color={COLORS.asset} unit="$" sub="USD / 배럴" data={quotes['CL=F']}
         comment={getOilComment(quotes['CL=F']?.price ?? null)}
-        commentLevel={(() => { const v = quotes['CL=F']?.price ?? 0; return v >= 90 ? 'bad' : v >= 70 ? 'neutral' : 'warn' })()}
+        commentLevel={(() => { const v = quotes['CL=F']?.price ?? 0; return getOilLevel(v).level })()}
       />
-      <PriceChartRow ticker="KRW=X" label="원달러 환율" color="#6366f1" unit="" sub="KRW / USD" data={quotes['KRW=X']}
+      <PriceChartRow ticker="KRW=X" label="원달러 환율" color={COLORS.asset} unit="" sub="KRW / USD" data={quotes['KRW=X']}
         formatValue={(v) => v.toLocaleString()}
         comment={getKrwComment(krw)}
-        commentLevel={krw ? (krw >= 1400 ? 'bad' : krw >= 1300 ? 'warn' : 'good') : 'neutral'}
+        commentLevel={krw ? getKrwLevel(krw).level : 'neutral'}
       />
 
       {/* 매크로 */}
       <SectionLabel>🌐 매크로 지표</SectionLabel>
-      <FredChartRow series="T10Y2Y" label="장단기 금리차 (10Y-2Y)" desc="음수 = 역전 = 경기침체 선행신호" color="#ef4444" getComment={getYieldComment} />
-      <FredChartRow series="DGS10" label="10년물 미국채 금리" desc="미국 장기금리 기준" color="#3b82f6" getComment={getBondComment} />
-      <PriceChartRow ticker="DX-Y.NYB" label="달러 인덱스 (DXY)" color="#f59e0b" unit="" data={quotes['DX-Y.NYB']}
+      <FredChartRow series="T10Y2Y" label="장단기 금리차 (10Y-2Y)" desc="음수 = 역전 = 경기침체 선행신호" color={COLORS.macro} getComment={getYieldComment} />
+      <FredChartRow series="DGS10" label="10년물 미국채 금리" desc="미국 장기금리 기준" color={COLORS.macro} getComment={getBondComment} />
+      <PriceChartRow ticker="DX-Y.NYB" label="달러 인덱스 (DXY)" color={COLORS.macro} unit="" data={quotes['DX-Y.NYB']}
         formatValue={(v) => v.toFixed(2)}
         comment={getDxyComment(dxy)}
-        commentLevel={dxy ? (dxy >= 105 ? 'bad' : dxy >= 100 ? 'warn' : 'good') : 'neutral'}
+        commentLevel={dxy ? getDxyLevel(dxy).level : 'neutral'}
       />
 
       {/* 시장 심리 */}
@@ -663,11 +606,8 @@ export default function Page() {
         borderRadius: 10, padding: '16px', marginBottom: 8,
       }}>
         <div>
-          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
-          <div style={{
-            fontSize: 24, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1,
-            color: vix >= 30 ? 'var(--down)' : vix >= 20 ? 'var(--gold)' : 'var(--up)'
-          }}>
+          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
+          <div style={{ fontSize: 48, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1, color: 'var(--text)' }}>
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox
@@ -679,21 +619,21 @@ export default function Page() {
           />
         </div>
         <div>
-          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-          <StockLineChart symbol="^VIX" color="#f59e0b" range="1mo" height={150} formatValue={(v) => v.toFixed(1)} />
+          <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+          <StockLineChart symbol="^VIX" color={COLORS.fear} range="1mo" height={120} formatValue={(v) => v.toFixed(1)} />
         </div>
         <div>
-          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-          <StockLineChart symbol="^VIX" color="#f59e0b" range="1y" height={150} formatValue={(v) => v.toFixed(1)} />
+          <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+          <StockLineChart symbol="^VIX" color={COLORS.fear} range="1y" height={120} formatValue={(v) => v.toFixed(1)} />
         </div>
       </div>
 
       {/* 연준 유동성 */}
       <SectionLabel>💧 연준 유동성</SectionLabel>
-      <FredChartRow series="WALCL" label="연준 총자산" desc="QE = 자산 증가 · QT = 자산 감소" color="#3b82f6" unit="B" getComment={getFedAssetComment} />
-      <FredChartRow series="WRESBAL" label="연준 지급준비금" desc="은행 시스템 총 준비금" color="#8b5cf6" unit="B" getComment={getReservesComment} />
-      <FredChartRow series="RRPONTSYD" label="역레포 잔액 (RRP)" desc="초과유동성 흡수액" color="#f59e0b" unit="B" getComment={getRrpComment} />
-      <FredChartRow series="WTREGEN" label="TGA 잔고" desc="재무부 일반계정" color="#10b981" unit="B" getComment={getTgaComment} />
+      <FredChartRow series="WALCL" label="연준 총자산" desc="QE = 자산 증가 · QT = 자산 감소" color={COLORS.liquidity} unit="B" getComment={getFedAssetComment} />
+      <FredChartRow series="WRESBAL" label="연준 지급준비금" desc="은행 시스템 총 준비금" color={COLORS.liquidity} unit="B" getComment={getReservesComment} />
+      <FredChartRow series="RRPONTSYD" label="역레포 잔액 (RRP)" desc="초과유동성 흡수액" color={COLORS.liquidity} unit="B" getComment={getRrpComment} />
+      <FredChartRow series="WTREGEN" label="TGA 잔고" desc="재무부 일반계정" color={COLORS.liquidity} unit="B" getComment={getTgaComment} />
 
       {/* 고용 */}
       <SectionLabel>👷 고용 지표</SectionLabel>
@@ -715,13 +655,4 @@ export default function Page() {
       `}</style>
     </main>
   )
-}
-
-// WTI 원유 멘트 (페이지 밖에 선언)
-function getOilComment(val: number | null) {
-  if (val === null) return null
-  const { keyword } = getOilLevel(val)
-  if (val >= 90) return { keyword, text: `인플레이션 압력이 커요.` }
-  if (val >= 70) return { keyword, text: `경기 회복 수요를 반영해요.` }
-  return { keyword, text: `경기 둔화 우려가 있어요.` }
 }
