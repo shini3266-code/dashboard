@@ -197,16 +197,16 @@ function DrawdownBadge({ dd }: {
     <div style={{ marginTop: 8 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
         <span style={{
-          fontFamily: 'var(--mono)', fontWeight: 700,
+          fontSize: '0.6rem', fontFamily: 'var(--mono)', fontWeight: 700,
           color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
         }}>
           {dd.status}
         </span>
-        <span style={{ fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
+        <span style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
           ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
         </span>
       </div>
-      <div style={{ fontFamily: 'var(--mono)', color: 'var(--muted)', lineHeight: 1.6 }}>
+      <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', lineHeight: 1.6 }}>
         {dd.comment}
       </div>
     </div>
