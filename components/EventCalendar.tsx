@@ -117,7 +117,7 @@ export default function EventCalendar() {
           style={{
             background: 'var(--accent)', color: '#fff', border: 'none',
             borderRadius: 6, padding: '5px 12px', cursor: 'pointer',
-            fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700,
+            fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700,
           }}
         >
           + 이벤트 추가
@@ -181,13 +181,13 @@ export default function EventCalendar() {
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
             <button
               onClick={() => setShowForm(false)}
-              style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 12px', color: 'var(--muted)', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 11 }}
+              style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 12px', color: 'var(--muted)', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 12 }}
             >
               취소
             </button>
             <button
               onClick={addEvent}
-              style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700 }}
+              style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700 }}
             >
               저장
             </button>
@@ -234,7 +234,7 @@ export default function EventCalendar() {
                   borderRadius: 6, padding: '4px 5px',
                 }}>
                   <div style={{
-                    fontSize: 11, fontFamily: 'var(--mono)',
+                    fontSize: 12, fontFamily: 'var(--mono)',
                     color: isToday ? 'var(--accent)' : 'var(--muted)',
                     fontWeight: isToday ? 700 : 400, marginBottom: 2,
                   }}>

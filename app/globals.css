@@ -2,8 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;  /* ← 전체 폰트 통일 */
+  font-family: 'JetBrains Mono', monospace; /* ← 전체 폰트 통일 */
 }
 
 main * {
@@ -25,7 +24,7 @@ main * {
 }
 
 html {
-  font-size: 12px; /* 기본값, 여기서 18px로 바꾸면 전체 +2pt */
+  font-size: 16px; /* 기본값, 여기서 18px로 바꾸면 전체 +2pt */
 }
 
 body {
