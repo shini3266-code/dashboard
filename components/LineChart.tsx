@@ -53,7 +53,6 @@ export default function StockLineChart({
       alignItems: 'center',
       justifyContent: 'center',
       color: 'var(--muted)',
-      fontFamily: 'var(--mono)',
       fontSize: '0.6rem',
     }}>
       로딩 중...
@@ -67,7 +66,6 @@ export default function StockLineChart({
       alignItems: 'center',
       justifyContent: 'center',
       color: 'var(--muted)',
-      fontFamily: 'var(--mono)',
       fontSize: '0.6rem',
     }}>
       데이터 없음
@@ -88,7 +86,6 @@ export default function StockLineChart({
           border: '1px solid var(--border)',
           borderRadius: 8,
           padding: '10px 14px',
-          fontFamily: 'var(--mono)',
           fontSize: '0.6rem',
           boxShadow: '0 4px 12px rgba(0,0,0,0.4)',  // ← 그림자 추가
         }}>
