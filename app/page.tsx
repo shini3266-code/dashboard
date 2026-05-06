@@ -174,14 +174,14 @@ function CommentBox({ keyword, text, level = 'neutral' }: {
       {keyword && (
         <div style={{ marginBottom: 4 }}>
           <span style={{
-            fontSize: '0.6rem', fontFamily: 'var(--mono)', fontWeight: 700,
+            fontSize: '0.6rem', fontWeight: 700,
             color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
           }}>
             {keyword}
           </span>
         </div>
       )}
-      <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', lineHeight: 1.6 }}>
+      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>
         {text}
       </div>
     </div>
@@ -197,16 +197,16 @@ function DrawdownBadge({ dd }: {
     <div style={{ marginTop: 8 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
         <span style={{
-          fontSize: '0.6rem', fontFamily: 'var(--mono)', fontWeight: 700,
+          fontSize: '0.6rem', fontWeight: 700,
           color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
         }}>
           {dd.status}
         </span>
-        <span style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
+        <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
           ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
         </span>
       </div>
-      <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', lineHeight: 1.6 }}>
+      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>
         {dd.comment}
       </div>
     </div>
@@ -261,12 +261,12 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
       borderRadius: 10, padding: '16px', marginBottom: 8,
     }}>
       <div>
-        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
+        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
-        <div style={{ fontSize: '1.2rem', fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1 }}>
+        <div style={{ fontSize: '1.2rem', fontWeight: 700, lineHeight: 1 }}>
           {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
         </div>
-        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
+        <div style={{ fontSize: '0.6rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
           {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
         </div>
         {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
@@ -274,11 +274,11 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
         {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
       <div>
-        <div style={{ fontSize: '0.5rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
         <StockLineChart symbol={ticker} color={color} range="1mo" height={120} formatValue={fmt} />
       </div>
       <div>
-        <div style={{ fontSize: '0.5rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
         <StockLineChart symbol={ticker} color={color} range="1y" height={120} formatValue={fmt} />
       </div>
     </div>
@@ -338,16 +338,16 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
       borderRadius: 10, padding: '16px', marginBottom: 8,
     }}>
       <div>
-        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
+        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
         <div style={{
-          fontSize: '1.2rem', fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1,
+          fontSize: '1.2rem', fontWeight: 700, lineHeight: 1,
           color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)',
         }}>
           {latest !== null ? fmt(latest) : '--'}
         </div>
         {change !== null && (
-          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
+          <div style={{ fontSize: '0.6rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
             {isUp ? '▲ +' : '▼ '}{fmt(Math.abs(change))}
           </div>
         )}
@@ -355,11 +355,11 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
         {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
       </div>
       <div>
-        <div style={{ fontSize: '0.5rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
         <StockLineChart symbol={series} color={color} range="1mo" height={120} formatValue={fmt} externalData={data1mo} />
       </div>
       <div>
-        <div style={{ fontSize: '0.5rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
         <StockLineChart symbol={series} color={color} range="1y" height={120} formatValue={fmt} externalData={data1y} />
       </div>
     </div>
@@ -468,7 +468,7 @@ function MarketSummaryBar({ quotes, freds }: {
   return (
     <div style={{
       display: 'flex', flexWrap: 'nowrap', overflowX: 'auto',
-      gap: 0, padding: '3px 10px',
+      gap: 0, padding: '5px 5px',
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, marginBottom: 20,
       msOverflowStyle: 'none', scrollbarWidth: 'none',
@@ -480,13 +480,13 @@ function MarketSummaryBar({ quotes, freds }: {
           : '#64748b'
         return (
           <div key={i} style={{
-            display: 'flex', alignItems: 'center', gap: 4,
-            whiteSpace: 'nowrap', paddingRight: 12,
+            display: 'flex', alignItems: 'center', gap: 2,
+            whiteSpace: 'nowrap', paddingRight: 8,
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
-            marginRight: 12,
+            marginRight: 8,
           }}>
-            <span style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)' }}>{label}</span>
-            <span style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', fontWeight: 700, color }}>{keyword}</span>
+            <span style={{ fontSize: '0.5rem', color: 'var(--muted)' }}>{label}</span>
+            <span style={{ fontSize: '0.5rem', fontWeight: 700, color }}>{keyword}</span>
           </div>
         )
       })}
@@ -543,14 +543,14 @@ export default function Page() {
           <div style={{
             width: 36, height: 36, background: 'var(--accent)', borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontFamily: 'var(--mono)', fontWeight: 700, color: '#fff'
+            fontWeight: 700, color: '#fff'
           }}>M</div>
           <div>
             <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>Market Monitor</div>
-            <div style={{ fontSize: '0.6rem', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
+            <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.6rem', fontFamily: 'var(--mono)', color: loading ? 'var(--muted)' : 'var(--up)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.6rem', color: loading ? 'var(--muted)' : 'var(--up)' }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
           {loading ? 'LOADING...' : 'LIVE'}
         </div>
@@ -606,8 +606,8 @@ export default function Page() {
         borderRadius: 10, padding: '16px', marginBottom: 8,
       }}>
         <div>
-          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
-          <div style={{ fontSize: '1.2rem', fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1, color: 'var(--text)' }}>
+          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
+          <div style={{ fontSize: '1.2rem', fontWeight: 700, lineHeight: 1, color: 'var(--text)' }}>
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox
@@ -619,11 +619,11 @@ export default function Page() {
           />
         </div>
         <div>
-          <div style={{ fontSize: '0.5rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
           <StockLineChart symbol="^VIX" color={COLORS.fear} range="1mo" height={120} formatValue={(v) => v.toFixed(1)} />
         </div>
         <div>
-          <div style={{ fontSize: '0.5rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
           <StockLineChart symbol="^VIX" color={COLORS.fear} range="1y" height={120} formatValue={(v) => v.toFixed(1)} />
         </div>
       </div>
