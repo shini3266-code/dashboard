@@ -216,7 +216,7 @@ function DrawdownBadge({ dd }: {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
-      fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)',
+      fontSize: '1rem', fontFamily: 'var(--mono)', color: 'var(--text)',
       letterSpacing: '0.12em', textTransform: 'uppercase',
       marginBottom: 10, marginTop: 28,
     }}>

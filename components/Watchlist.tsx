@@ -268,7 +268,6 @@ export default function Watchlist() {
             borderRadius: 8,
             padding: '10px 14px',
             color: 'var(--text)',
-            fontFamily: 'var(--mono)',
             fontSize: '0.6rem',
           }}
         />
@@ -372,14 +371,14 @@ export default function Watchlist() {
         </div>
       ))}
 
-      {watchlist.length === 0 && (
+      {/* {watchlist.length === 0 && (
         <div style={{
-          color: 'var(--muted)', fontFamily: 'var(--mono)',
+          color: 'var(--text)', fontFamily: 'var(--mono)',
           fontSize: '0.6rem', textAlign: 'center', padding: 40,
         }}>
           티커를 입력해서 관심종목을 추가하세요
         </div>
-      )}
+      )} */}
     </div>
   )
 }
