@@ -117,7 +117,7 @@ export default function StockLineChart({
         <XAxis
           dataKey="date"
           tickFormatter={tickFormatter}
-          tick={{ fill: '#64748b', fontSize: 10 }}
+          tick={{ fill: '#64748b', fontSize: 8 }}
           axisLine={false}
           tickLine={false}
           interval="preserveStartEnd"
@@ -136,7 +136,7 @@ export default function StockLineChart({
         />
         <YAxis
           domain={[min - padding, max + padding]}
-          tick={{ fill: '#64748b', fontSize: 10 }}
+          tick={{ fill: '#64748b', fontSize: 8 }}
           axisLine={false}
           tickLine={false}
           tickFormatter={formatValue}
