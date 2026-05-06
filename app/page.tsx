@@ -468,7 +468,7 @@ function MarketSummaryBar({ quotes, freds }: {
   return (
     <div style={{
       display: 'flex', flexWrap: 'nowrap', overflowX: 'auto',
-      gap: 0, padding: '8px 14px',
+      gap: 0, padding: '3px 10px',
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, marginBottom: 20,
       msOverflowStyle: 'none', scrollbarWidth: 'none',

@@ -78,7 +78,7 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
         {/* 헤더 */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, fontFamily: 'var(--mono)' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, fontFamily: 'var(--mono)' }}>
               📌 {symbol}
             </div>
             <div style={{ fontSize: '0.6rem', color: 'var(--muted)', fontFamily: 'var(--mono)', marginTop: 2 }}>
@@ -109,7 +109,7 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
             padding: '12px 14px',
             color: 'var(--text)',
             fontFamily: 'var(--mono)',
-            fontSize: '0.8rem',
+            fontSize: '0.7rem',
             lineHeight: 1.8,
             resize: 'vertical',
           }}
@@ -268,7 +268,7 @@ export default function Watchlist() {
             borderRadius: 8,
             padding: '10px 14px',
             color: 'var(--text)',
-            fontSize: '0.8rem',
+            fontSize: '0.7rem',
           }}
         />
         <button
@@ -347,7 +347,7 @@ export default function Watchlist() {
             onClick={() => setMemoSymbol(item.symbol)}
           >
             <div style={{
-              fontSize: '0.8rem', fontFamily: 'var(--mono)', color: 'var(--muted)',
+              fontSize: '0.7rem', fontFamily: 'var(--mono)', color: 'var(--muted)',
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
               flex: 1, marginRight: 8,
             }}>
