@@ -136,7 +136,7 @@ export default function FearGreedGauge() {
 
               {/* 숫자 */}
               <div style={{ textAlign: 'center', marginTop: -8 }}>
-                <div style={{ fontSize: 48, fontWeight: 700, fontFamily: 'var(--mono)', color, lineHeight: 1 }}>
+                <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--mono)', color, lineHeight: 1 }}>
                   {score ?? '--'}
                 </div>
                 <div style={{ fontSize: 13, fontFamily: 'var(--mono)', color, marginTop: 6 }}>
@@ -186,7 +186,7 @@ function FearGreedChart() {
       return (
         <div style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px', fontFamily: 'var(--mono)', fontSize: 12 }}>
           <div style={{ color: 'var(--muted)', marginBottom: 2 }}>{label}</div>
-          <div style={{ color: c, fontWeight: 700 }}>{Math.round(v)}</div>
+          <div style={{ color: c, fontWeight: 700, fontSize: 13 }}>{Math.round(v)}</div>
         </div>
       )
     }
