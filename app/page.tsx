@@ -174,14 +174,14 @@ function CommentBox({ keyword, text, level = 'neutral' }: {
       {keyword && (
         <div style={{ marginBottom: 4 }}>
           <span style={{
-            fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700,
+            fontSize: '0.6rem', fontFamily: 'var(--mono)', fontWeight: 700,
             color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
           }}>
             {keyword}
           </span>
         </div>
       )}
-      <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', lineHeight: 1.6 }}>
+      <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', lineHeight: 1.6 }}>
         {text}
       </div>
     </div>
@@ -216,7 +216,7 @@ function DrawdownBadge({ dd }: {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
-      fontSize: 13, fontFamily: 'var(--mono)', color: 'var(--muted)',
+      fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)',
       letterSpacing: '0.12em', textTransform: 'uppercase',
       marginBottom: 10, marginTop: 28,
     }}>
@@ -261,24 +261,24 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
       borderRadius: 10, padding: '16px', marginBottom: 8,
     }}>
       <div>
-        <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
-        <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
-        <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1 }}>
+        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
+        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
+        <div style={{ fontSize: '1.2rem', fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1 }}>
           {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
         </div>
-        <div style={{ fontSize: 13, fontFamily: 'var(--mono)', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
+        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
           {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
         </div>
-        {sub && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
+        {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
         {dd && <DrawdownBadge dd={dd} />}
         {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
       <div>
-        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
         <StockLineChart symbol={ticker} color={color} range="1mo" height={120} formatValue={fmt} />
       </div>
       <div>
-        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
         <StockLineChart symbol={ticker} color={color} range="1y" height={120} formatValue={fmt} />
       </div>
     </div>
@@ -338,28 +338,28 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
       borderRadius: 10, padding: '16px', marginBottom: 8,
     }}>
       <div>
-        <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
-        <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
+        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
+        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
         <div style={{
-          fontSize: 24, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1,
+          fontSize: '1.2rem', fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1,
           color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)',
         }}>
           {latest !== null ? fmt(latest) : '--'}
         </div>
         {change !== null && (
-          <div style={{ fontSize: 13, fontFamily: 'var(--mono)', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
+          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
             {isUp ? '▲ +' : '▼ '}{fmt(Math.abs(change))}
           </div>
         )}
-        {desc && <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
+        {desc && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
         {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
       </div>
       <div>
-        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
         <StockLineChart symbol={series} color={color} range="1mo" height={120} formatValue={fmt} externalData={data1mo} />
       </div>
       <div>
-        <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
         <StockLineChart symbol={series} color={color} range="1y" height={120} formatValue={fmt} externalData={data1y} />
       </div>
     </div>
@@ -485,8 +485,8 @@ function MarketSummaryBar({ quotes, freds }: {
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
             marginRight: 12,
           }}>
-            <span style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>{label}</span>
-            <span style={{ fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700, color }}>{keyword}</span>
+            <span style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)' }}>{label}</span>
+            <span style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', fontWeight: 700, color }}>{keyword}</span>
           </div>
         )
       })}
@@ -546,11 +546,11 @@ export default function Page() {
             fontFamily: 'var(--mono)', fontWeight: 700, color: '#fff'
           }}>M</div>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 700 }}>Market Monitor</div>
-            <div style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--mono)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>Market Monitor</div>
+            <div style={{ fontSize: '0.6rem', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontFamily: 'var(--mono)', color: loading ? 'var(--muted)' : 'var(--up)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.6rem', fontFamily: 'var(--mono)', color: loading ? 'var(--muted)' : 'var(--up)' }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
           {loading ? 'LOADING...' : 'LIVE'}
         </div>
@@ -606,8 +606,8 @@ export default function Page() {
         borderRadius: 10, padding: '16px', marginBottom: 8,
       }}>
         <div>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
-          <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1, color: 'var(--text)' }}>
+          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
+          <div style={{ fontSize: '1.2rem', fontWeight: 700, fontFamily: 'var(--mono)', lineHeight: 1, color: 'var(--text)' }}>
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox
@@ -619,11 +619,11 @@ export default function Page() {
           />
         </div>
         <div>
-          <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
           <StockLineChart symbol="^VIX" color={COLORS.fear} range="1mo" height={120} formatValue={(v) => v.toFixed(1)} />
         </div>
         <div>
-          <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
+          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
           <StockLineChart symbol="^VIX" color={COLORS.fear} range="1y" height={120} formatValue={(v) => v.toFixed(1)} />
         </div>
       </div>

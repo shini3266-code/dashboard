@@ -32,11 +32,11 @@ function CustomTooltip({ active, payload, label, color, suffix = '' }: any) {
         borderRadius: 8,
         padding: '10px 14px',
         fontFamily: 'var(--mono)',
-        fontSize: 13,
+        fontSize: '0.6rem',
         boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
       }}>
-        <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: 11 }}>{label}</div>
-        <div style={{ color, fontWeight: 700, fontSize: 15 }}>{payload[0].value?.toLocaleString()}{suffix}</div>
+        <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: '0.6rem' }}>{label}</div>
+        <div style={{ color, fontWeight: 700, fontSize: '0.8rem' }}>{payload[0].value?.toLocaleString()}{suffix}</div>
       </div>
     )
   }
@@ -85,24 +85,24 @@ export default function SectorFlow() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div>
-          <div style={{ fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 4 }}>
+          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 4 }}>
             섹터별 자금 흐름 · S&P500 11개 섹터 ETF
           </div>
-          <div style={{ fontSize: 11, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)' }}>
             전일 대비 등락률 기준
           </div>
         </div>
         {!loading && data.length > 0 && (
           <div style={{ display: 'flex', gap: 12 }}>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>최강</div>
-              <div style={{ fontSize: 13, fontFamily: 'var(--mono)', color: 'var(--up)', fontWeight: 700 }}>
+              <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)' }}>최강</div>
+              <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--up)', fontWeight: 700 }}>
                 {best.name} +{best.change.toFixed(2)}%
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)' }}>최약</div>
-              <div style={{ fontSize: 13, fontFamily: 'var(--mono)', color: 'var(--down)', fontWeight: 700 }}>
+              <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)' }}>최약</div>
+              <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--down)', fontWeight: 700 }}>
                 {worst.name} {worst.change.toFixed(2)}%
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function SectorFlow() {
       </div>
 
       {loading ? (
-        <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: 12 }}>
+        <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: '0.6rem' }}>
           로딩 중...
         </div>
       ) : (
@@ -122,11 +122,11 @@ export default function SectorFlow() {
               <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
               <XAxis
                 dataKey="name"
-                tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'var(--mono)' }}
+                tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
                 axisLine={false} tickLine={false}
               />
               <YAxis
-                tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'var(--mono)' }}
+                tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
                 axisLine={false} tickLine={false}
                 tickFormatter={(v) => `${v > 0 ? '+' : ''}${v.toFixed(1)}%`}
                 width={48}
@@ -160,17 +160,17 @@ export default function SectorFlow() {
                 padding: '8px 10px',
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2 }}>
+                <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 2 }}>
                   {symbol}
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 4 }}>{name}</div>
+                <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4 }}>{name}</div>
                 <div style={{
-                  fontSize: 12, fontFamily: 'var(--mono)', fontWeight: 700,
+                  fontSize: '0.6rem', fontFamily: 'var(--mono)', fontWeight: 700,
                   color: change >= 0 ? 'var(--up)' : 'var(--down)',
                 }}>
                   {change >= 0 ? '+' : ''}{change.toFixed(2)}%
                 </div>
-                <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 2 }}>
+                <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 2 }}>
                   ${price.toFixed(2)}
                 </div>
               </div>

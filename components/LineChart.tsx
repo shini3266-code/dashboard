@@ -54,7 +54,7 @@ export default function StockLineChart({
       justifyContent: 'center',
       color: 'var(--muted)',
       fontFamily: 'var(--mono)',
-      fontSize: 12,
+      fontSize: '0.6rem',
     }}>
       로딩 중...
     </div>
@@ -68,7 +68,7 @@ export default function StockLineChart({
       justifyContent: 'center',
       color: 'var(--muted)',
       fontFamily: 'var(--mono)',
-      fontSize: 12,
+      fontSize: '0.6rem',
     }}>
       데이터 없음
     </div>
@@ -87,13 +87,13 @@ export default function StockLineChart({
           background: 'var(--surface2)',
           border: '1px solid var(--border)',
           borderRadius: 8,
-          padding: '10px 14px',        // ← 패딩 키움
+          padding: '10px 14px',
           fontFamily: 'var(--mono)',
-          fontSize: 13,                 // ← 12 → 13
+          fontSize: '0.6rem',
           boxShadow: '0 4px 12px rgba(0,0,0,0.4)',  // ← 그림자 추가
         }}>
-          <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: 11 }}>{label}</div>
-          <div style={{ color, fontWeight: 700, fontSize: 15 }}>{formatValue(payload[0].value)}</div>
+          <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: '0.6rem' }}>{label}</div>
+          <div style={{ color, fontWeight: 700, fontSize: '0.8rem' }}>{formatValue(payload[0].value)}</div>
         </div>
       )
     }
@@ -117,14 +117,14 @@ export default function StockLineChart({
         <XAxis
           dataKey="date"
           tickFormatter={tickFormatter}
-          tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'var(--mono)' }}
+          tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
           axisLine={false}
           tickLine={false}
           interval="preserveStartEnd"
         />
         <YAxis
           domain={[min - padding, max + padding]}
-          tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'var(--mono)' }}
+          tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
           axisLine={false}
           tickLine={false}
           tickFormatter={formatValue}

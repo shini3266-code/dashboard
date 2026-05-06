@@ -117,7 +117,7 @@ export default function EventCalendar() {
           style={{
             background: 'var(--accent)', color: '#fff', border: 'none',
             borderRadius: 6, padding: '5px 12px', cursor: 'pointer',
-            fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700,
+            fontFamily: 'var(--mono)', fontSize: '0.6rem', fontWeight: 700,
           }}
         >
           + 이벤트 추가
@@ -138,7 +138,7 @@ export default function EventCalendar() {
               style={{
                 background: 'var(--surface)', border: '1px solid var(--border)',
                 borderRadius: 6, padding: '7px 10px', color: 'var(--text)',
-                fontFamily: 'var(--mono)', fontSize: 12,
+                fontFamily: 'var(--mono)', fontSize: '0.6rem',
               }}
             />
             <select
@@ -147,7 +147,7 @@ export default function EventCalendar() {
               style={{
                 background: 'var(--surface)', border: '1px solid var(--border)',
                 borderRadius: 6, padding: '7px 10px', color: 'var(--text)',
-                fontFamily: 'var(--mono)', fontSize: 12,
+                fontFamily: 'var(--mono)', fontSize: '0.6rem',
               }}
             >
               <option>FOMC</option>
@@ -163,7 +163,7 @@ export default function EventCalendar() {
             style={{
               background: 'var(--surface)', border: '1px solid var(--border)',
               borderRadius: 6, padding: '7px 10px', color: 'var(--text)',
-              fontFamily: 'var(--mono)', fontSize: 12,
+              fontFamily: 'var(--mono)', fontSize: '0.6rem',
             }}
           />
           <textarea
@@ -175,19 +175,19 @@ export default function EventCalendar() {
             style={{
               background: 'var(--surface)', border: '1px solid var(--border)',
               borderRadius: 6, padding: '7px 10px', color: 'var(--text)',
-              fontFamily: 'var(--mono)', fontSize: 12, resize: 'none',
+              fontFamily: 'var(--mono)', fontSize: '0.6rem', resize: 'none',
             }}
           />
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
             <button
               onClick={() => setShowForm(false)}
-              style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 12px', color: 'var(--muted)', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 12 }}
+              style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 12px', color: 'var(--muted)', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: '0.6rem'}}
             >
               취소
             </button>
             <button
               onClick={addEvent}
-              style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700 }}
+              style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: '0.6rem', fontWeight: 700 }}
             >
               저장
             </button>
@@ -201,20 +201,20 @@ export default function EventCalendar() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <button
               onClick={() => setCurrentMonth(new Date(year, month - 1))}
-              style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16 }}
+              style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem' }}
             >‹</button>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: '0.6rem', fontWeight: 700 }}>
               {year}년 {month + 1}월
             </div>
             <button
               onClick={() => setCurrentMonth(new Date(year, month + 1))}
-              style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16 }}
+              style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem' }}
             >›</button>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
             {['일', '월', '화', '수', '목', '금', '토'].map(d => (
-              <div key={d} style={{ textAlign: 'center', fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', padding: '4px 0' }}>
+              <div key={d} style={{ textAlign: 'center', fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', padding: '4px 0' }}>
                 {d}
               </div>
             ))}
@@ -234,7 +234,7 @@ export default function EventCalendar() {
                   borderRadius: 6, padding: '4px 5px',
                 }}>
                   <div style={{
-                    fontSize: 12, fontFamily: 'var(--mono)',
+                    fontSize: '0.6rem', fontFamily: 'var(--mono)',
                     color: isToday ? 'var(--accent)' : 'var(--muted)',
                     fontWeight: isToday ? 700 : 400, marginBottom: 2,
                   }}>
@@ -245,7 +245,7 @@ export default function EventCalendar() {
                       key={ev.id}
                       title={`${ev.title}${ev.memo ? '\n' + ev.memo : ''}`}
                       style={{
-                        fontSize: 11, fontFamily: 'var(--mono)',
+                        fontSize: '0.6rem', fontFamily: 'var(--mono)',
                         background: CATEGORY_COLORS[ev.category],
                         color: '#fff', borderRadius: 3,
                         padding: '1px 4px', marginBottom: 2,
@@ -261,22 +261,22 @@ export default function EventCalendar() {
               )
             })}
           </div>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 6 }}>
+          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 6 }}>
             * 이벤트 클릭시 삭제
           </div>
         </div>
 
         {/* 임박한 이벤트 */}
         <div>
-          <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 10, letterSpacing: '0.08em' }}>
+          <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginBottom: 10, letterSpacing: '0.08em' }}>
             임박한 이벤트
           </div>
           {loadingDb ? (
-            <div style={{ color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: 12, textAlign: 'center', padding: 20 }}>
+            <div style={{ color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: '0.6rem', textAlign: 'center', padding: 20 }}>
               로딩 중...
             </div>
           ) : upcomingEvents.length === 0 ? (
-            <div style={{ color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: 12, textAlign: 'center', padding: 20 }}>
+            <div style={{ color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: '0.6rem', textAlign: 'center', padding: 20 }}>
               예정된 이벤트 없음
             </div>
           ) : (
@@ -290,18 +290,18 @@ export default function EventCalendar() {
                   borderRadius: 6, padding: '8px 10px', marginBottom: 6,
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 700, color: 'var(--text)' }}>
+                    <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', fontWeight: 700, color: 'var(--text)' }}>
                       {ev.title}
                     </div>
                     <div style={{
-                      fontSize: 10, fontFamily: 'var(--mono)',
+                      fontSize: '0.6rem', fontFamily: 'var(--mono)',
                       color: daysLeft <= 3 ? 'var(--down)' : daysLeft <= 7 ? 'var(--gold)' : 'var(--muted)',
                       fontWeight: daysLeft <= 7 ? 700 : 400,
                     }}>
                       {daysLeft === 0 ? '오늘' : daysLeft === 1 ? '내일' : `D-${daysLeft}`}
                     </div>
                   </div>
-                  <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 2 }}>
+                  <div style={{ fontSize: '0.6rem', fontFamily: 'var(--mono)', color: 'var(--muted)', marginTop: 2 }}>
                     {ev.date} · {ev.category}
                   </div>
                   {/* 메모 인라인 편집 */}
@@ -315,7 +315,7 @@ export default function EventCalendar() {
                       width: '100%', marginTop: 6,
                       background: 'var(--surface)', border: '1px solid var(--border)',
                       borderRadius: 4, padding: '4px 8px', color: 'var(--text)',
-                      fontFamily: 'var(--mono)', fontSize: 11, resize: 'none',
+                      fontFamily: 'var(--mono)', fontSize: '0.6rem', resize: 'none',
                     }}
                   />
                 </div>
