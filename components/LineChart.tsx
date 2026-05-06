@@ -117,18 +117,31 @@ export default function StockLineChart({
         <XAxis
           dataKey="date"
           tickFormatter={tickFormatter}
-          tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
+          tick={{ fill: '#64748b', fontSize: 10 }}
           axisLine={false}
           tickLine={false}
           interval="preserveStartEnd"
+          ticks={(() => {
+            // 월별로 첫번째 날짜만 추출
+            const seen = new Set<string>()
+            return data
+              .filter(d => {
+                const month = d.date.slice(0, 7) // "2024-01"
+                if (seen.has(month)) return false
+                seen.add(month)
+                return true
+              })
+              .map(d => d.date)
+          })()}
         />
         <YAxis
           domain={[min - padding, max + padding]}
-          tick={{ fill: '#64748b', fontSize: '0.6rem', fontFamily: 'var(--mono)' }}
+          tick={{ fill: '#64748b', fontSize: 10 }}
           axisLine={false}
           tickLine={false}
           tickFormatter={formatValue}
-          width={60}
+          width={0}
+          ticks={[min, max]}  // ← 최하단, 최상단만
         />
         <Tooltip content={<CustomTooltip />} />
         <Area
