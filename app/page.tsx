@@ -166,7 +166,7 @@ function CommentBox({ keyword, text, level = 'neutral' }: {
   const color = level === 'good' ? '#22c55e'
     : level === 'warn' ? '#f59e0b'
     : level === 'bad' ? '#ef4444'
-    : '#64748b'
+    : '#e2e8f0'
   return (
     <div style={{ marginTop: 8 }}>
       {keyword && (
