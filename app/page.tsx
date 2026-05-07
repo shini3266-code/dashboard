@@ -475,7 +475,7 @@ function MarketSummaryBar({ quotes, freds }: {
   return (
     <div style={{
       display: 'flex', flexWrap: 'nowrap', overflowX: 'auto',
-      gap: 5, padding: '10px 16px',
+      gap: 7, padding: '10px 16px',
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, marginBottom: 20,
       msOverflowStyle: 'none', scrollbarWidth: 'none',
@@ -484,7 +484,7 @@ function MarketSummaryBar({ quotes, freds }: {
         const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#64748b'
         return (
           <div key={i} style={{
-            display: 'flex', alignItems: 'center', gap: 6,
+            display: 'flex', alignItems: 'center', gap: 7,
             whiteSpace: 'nowrap', paddingRight: 6,
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
             marginRight: 6,
