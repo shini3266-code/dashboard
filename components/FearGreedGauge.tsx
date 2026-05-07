@@ -129,8 +129,8 @@ export default function FearGreedGauge() {
                 )}
 
                 {/* 레이블 */}
-                <text x="18" y="112" fill="#ef4444" fontSize="7" fontFamily="monospace">극단공포</text>
-                <text x="180" y="112" fill="#22c55e" fontSize="7" fontFamily="monospace">극단탐욕</text>
+                <text x="18" y="112" fill="#ef4444" fontSize="5" fontFamily="monospace">극단공포</text>
+                <text x="180" y="112" fill="#22c55e" fontSize="5" fontFamily="monospace">극단탐욕</text>
               </svg>
 
               {/* 숫자 */}
