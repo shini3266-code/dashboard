@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
+import RichEditor from '@/components/RichEditor'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -69,7 +70,7 @@ function CategoryModal({
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontSize: 15, fontWeight: 700 }}>카테고리 관리</div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 20 }}>✕</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
         </div>
 
         {/* 기존 카테고리 목록 */}
@@ -88,7 +89,7 @@ function CategoryModal({
                     autoFocus
                     style={{
                       flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
-                      borderRadius: 6, padding: '4px 8px', color: 'var(--text)', fontSize: 12,
+                      borderRadius: 6, padding: '4px 8px', color: 'var(--text)', fontSize: '0.6rem',
                     }}
                   />
                   <div style={{ display: 'flex', gap: 3 }}>
@@ -106,11 +107,11 @@ function CategoryModal({
                   </div>
                   <button
                     onClick={() => { onSave({ name: form.name, color: form.color }); setEditId(null) }}
-                    style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 8px', cursor: 'pointer', fontSize: 11 }}
+                    style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 8px', cursor: 'pointer', fontSize: '0.6rem' }}
                   >저장</button>
                   <button
                     onClick={() => setEditId(null)}
-                    style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '4px 8px', color: 'var(--muted)', cursor: 'pointer', fontSize: 11 }}
+                    style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '4px 8px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem' }}
                   >취소</button>
                 </div>
               ) : (
@@ -118,18 +119,18 @@ function CategoryModal({
                 <>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 10, height: 10, borderRadius: '50%', background: cat.color }} />
-                    <span style={{ fontSize: 13 }}>{cat.name}</span>
+                    <span style={{ fontSize: '0.6rem' }}>{cat.name}</span>
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button
                       onClick={() => startEdit(cat)}
-                      style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 12 }}
+                      style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem' }}
                     >✏️</button>
                     <button
                       onClick={() => {
                         if (confirm(`"${cat.name}" 카테고리를 삭제할까요?`)) onDelete(cat.id)
                       }}
-                      style={{ background: 'none', border: 'none', color: 'var(--down)', cursor: 'pointer', fontSize: 12 }}
+                      style={{ background: 'none', border: 'none', color: 'var(--down)', cursor: 'pointer', fontSize: '0.6rem' }}
                     >🗑️</button>
                   </div>
                 </>
@@ -140,7 +141,7 @@ function CategoryModal({
 
         {/* 새 카테고리 추가 */}
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
-          <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 8 }}>새 카테고리 추가</div>
+          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 8 }}>새 카테고리 추가</div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <input
               value={form.name}
@@ -149,14 +150,14 @@ function CategoryModal({
               placeholder="카테고리 이름"
               style={{
                 flex: 1, background: 'var(--surface2)', border: '1px solid var(--border)',
-                borderRadius: 8, padding: '8px 12px', color: 'var(--text)', fontSize: 13,
+                borderRadius: 8, padding: '8px 12px', color: 'var(--text)', fontSize: '0.6rem',
               }}
             />
             <button
               onClick={handleSave}
               style={{
                 background: 'var(--accent)', color: '#fff', border: 'none',
-                borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontSize: 13, fontWeight: 700,
+                borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontSize: '0.6rem', fontWeight: 700,
               }}
             >추가</button>
           </div>
@@ -208,12 +209,26 @@ export default function MemoPage() {
 
   // 카테고리 추가/수정
   async function saveCategory(data: Omit<Category, 'id'>) {
-    const { data: inserted } = await supabase
-      .from('memo_categories')
-      .insert({ ...data, created_at: new Date().toISOString() })
-      .select()
-      .single()
-    if (inserted) setCategories(prev => [...prev, inserted])
+    if (editId) {
+      // 수정
+      const { data: updated } = await supabase
+        .from('memo_categories')
+        .update({ name: data.name, color: data.color })
+        .eq('id', editId)
+        .select()
+        .single()
+      if (updated) setCategories(prev => prev.map(c => c.id === editId ? updated : c))
+      setEditId(null)
+    } else {
+      // 추가
+      const { data: inserted } = await supabase
+        .from('memo_categories')
+        .insert({ name: data.name, color: data.color })
+        .select()
+        .single()
+      if (inserted) setCategories(prev => [...prev, inserted])
+    }
+    setForm({ name: '', color: DEFAULT_COLORS[0] })
   }
 
   // 카테고리 삭제
@@ -283,7 +298,7 @@ export default function MemoPage() {
         {/* 상단 */}
         <div style={{ padding: '16px', borderBottom: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <Link href="/" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: 12 }}>
+            <Link href="/" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '0.6rem' }}>
               ← 대시보드
             </Link>
             <button
@@ -294,7 +309,7 @@ export default function MemoPage() {
               }}
               style={{
                 background: 'var(--accent)', color: '#fff', border: 'none',
-                borderRadius: 6, padding: '5px 10px', cursor: 'pointer', fontSize: 12, fontWeight: 700,
+                borderRadius: 6, padding: '5px 10px', cursor: 'pointer', fontSize: '0.6rem', fontWeight: 700,
               }}
             >
               + 새 메모
@@ -314,13 +329,13 @@ export default function MemoPage() {
                     background: selectedCategory === cat ? 'rgba(59,130,246,0.15)' : 'none',
                     color: selectedCategory === cat ? 'var(--text)' : 'var(--muted)',
                     border: 'none', borderRadius: 6, padding: '7px 10px',
-                    cursor: 'pointer', fontSize: 13, textAlign: 'left',
+                    cursor: 'pointer', fontSize: '0.6rem', textAlign: 'left',
                     borderLeft: selectedCategory === cat ? `3px solid ${catObj?.color ?? 'var(--accent)'}` : '3px solid transparent',
                   }}
                 >
                   {catObj && <div style={{ width: 8, height: 8, borderRadius: '50%', background: catObj.color }} />}
                   {cat}
-                  <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--muted)' }}>
+                  <span style={{ marginLeft: 'auto', fontSize: '0.6rem', color: 'var(--muted)' }}>
                     {cat === '전체' ? memos.length : memos.filter(m => m.category === cat).length}
                   </span>
                 </button>
@@ -335,7 +350,7 @@ export default function MemoPage() {
               width: '100%', marginTop: 8,
               background: 'none', border: '1px solid var(--border)',
               borderRadius: 6, padding: '6px', cursor: 'pointer',
-              color: 'var(--muted)', fontSize: 11,
+              color: 'var(--muted)', fontSize: '0.6rem',
             }}
           >
             ⚙️ 카테고리 관리
@@ -345,9 +360,9 @@ export default function MemoPage() {
         {/* 메모 목록 */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {loading ? (
-            <div style={{ padding: 20, color: 'var(--muted)', fontSize: 12, textAlign: 'center' }}>로딩 중...</div>
+            <div style={{ padding: 20, color: 'var(--muted)', fontSize: '0.6rem', textAlign: 'center' }}>로딩 중...</div>
           ) : filtered.length === 0 ? (
-            <div style={{ padding: 20, color: 'var(--muted)', fontSize: 12, textAlign: 'center' }}>메모 없음</div>
+            <div style={{ padding: 20, color: 'var(--muted)', fontSize: '0.6rem', textAlign: 'center' }}>메모 없음</div>
           ) : filtered.map(memo => {
             const catObj = categories.find(c => c.name === memo.category)
             return (
@@ -361,20 +376,20 @@ export default function MemoPage() {
                   borderLeft: selected?.id === memo.id ? `3px solid ${catObj?.color ?? 'var(--accent)'}` : '3px solid transparent',
                 }}
               >
-                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: '0.6rem', fontWeight: 700, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {memo.title}
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {memo.content.split('\n')[0] || '내용 없음'}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{
-                    fontSize: 10, color: catObj?.color ?? 'var(--accent)',
+                    fontSize: '0.6rem', color: catObj?.color ?? 'var(--accent)',
                     background: `${catObj?.color ?? '#3b82f6'}20`, borderRadius: 3, padding: '1px 6px',
                   }}>
                     {memo.category}
                   </span>
-                  <span style={{ fontSize: 10, color: 'var(--muted)' }}>
+                  <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
                     {new Date(memo.updated_at).toLocaleDateString('ko-KR')}
                   </span>
                 </div>
@@ -396,7 +411,7 @@ export default function MemoPage() {
                 autoFocus
                 style={{
                   flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
-                  borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: 16, fontWeight: 700,
+                  borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: '0.8rem', fontWeight: 700,
                 }}
               />
               <select
@@ -404,51 +419,46 @@ export default function MemoPage() {
                 onChange={e => setForm({ ...form, category: e.target.value })}
                 style={{
                   background: 'var(--surface)', border: '1px solid var(--border)',
-                  borderRadius: 8, padding: '10px 12px', color: 'var(--text)', fontSize: 13,
+                  borderRadius: 8, padding: '10px 12px', color: 'var(--text)', fontSize: '0.6rem',
                 }}
               >
                 {categories.map(c => <option key={c.id}>{c.name}</option>)}
               </select>
               <button
                 onClick={() => { setIsEditing(false); setSelected(null) }}
-                style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', color: 'var(--muted)', cursor: 'pointer', fontSize: 13 }}
+                style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem' }}
               >
                 취소
               </button>
               <button
                 onClick={saveMemo}
-                style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 18px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}
+                style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 18px', cursor: 'pointer', fontSize: '0.6rem', fontWeight: 700 }}
               >
                 저장
               </button>
             </div>
-            <textarea
-              value={form.content}
-              onChange={e => setForm({ ...form, content: e.target.value })}
-              placeholder="내용을 입력하세요..."
-              spellCheck={false}
-              style={{
-                flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
-                borderRadius: 8, padding: '16px', color: 'var(--text)', fontSize: 14,
-                lineHeight: 1.8, resize: 'none',
-              }}
+            {/* 기존 textarea 제거하고 RichEditor로 교체 */}
+            <RichEditor
+              content={form.content}
+              onChange={(html) => setForm({ ...form, content: html })}
+              editable={true}
             />
           </div>
         ) : selected ? (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 24, overflow: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div>
-                <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>{selected.title}</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 6 }}>{selected.title}</div>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                   {(() => {
                     const catObj = categories.find(c => c.name === selected.category)
                     return (
-                      <span style={{ fontSize: 11, color: catObj?.color ?? 'var(--accent)', background: `${catObj?.color ?? '#3b82f6'}20`, borderRadius: 3, padding: '2px 8px' }}>
+                      <span style={{ fontSize: '0.6rem', color: catObj?.color ?? 'var(--accent)', background: `${catObj?.color ?? '#3b82f6'}20`, borderRadius: 3, padding: '2px 8px' }}>
                         {selected.category}
                       </span>
                     )
                   })()}
-                  <span style={{ fontSize: 11, color: 'var(--muted)' }}>
+                  <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
                     {new Date(selected.updated_at).toLocaleString('ko-KR')}
                   </span>
                 </div>
@@ -456,26 +466,28 @@ export default function MemoPage() {
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   onClick={() => { setIsEditing(true); setForm({ title: selected.title, content: selected.content, category: selected.category }) }}
-                  style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px', color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}
+                  style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.6rem' }}
                 >
                   ✏️ 수정
                 </button>
                 <button
                   onClick={() => deleteMemo(selected.id)}
-                  style={{ background: 'none', border: '1px solid var(--down)', borderRadius: 8, padding: '7px 14px', color: 'var(--down)', cursor: 'pointer', fontSize: 12 }}
+                  style={{ background: 'none', border: '1px solid var(--down)', borderRadius: 8, padding: '7px 14px', color: 'var(--down)', cursor: 'pointer', fontSize: '0.6rem' }}
                 >
                   삭제
                 </button>
               </div>
             </div>
-            <div style={{ flex: 1, fontSize: 14, lineHeight: 1.9, color: 'var(--text)', whiteSpace: 'pre-wrap', borderTop: '1px solid var(--border)', paddingTop: 16 }}>
-              {selected.content}
-            </div>
+            <RichEditor
+              content={selected.content}
+              onChange={() => {}}
+              editable={false}
+            />
           </div>
         ) : (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', flexDirection: 'column', gap: 12 }}>
-            <div style={{ fontSize: 40 }}>📝</div>
-            <div style={{ fontSize: 14 }}>메모를 선택하거나 새 메모를 작성하세요</div>
+            <div style={{ fontSize: '2rem' }}>📝</div>
+            <div style={{ fontSize: '0.6rem' }}>메모를 선택하거나 새 메모를 작성하세요</div>
           </div>
         )}
       </div>
