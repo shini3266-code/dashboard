@@ -129,13 +129,13 @@ export default function FearGreedGauge() {
                 )}
 
                 {/* 레이블 */}
-                <text x="18" y="112" fill="#ef4444" fontSize="9" fontFamily="monospace">극단공포</text>
-                <text x="180" y="112" fill="#22c55e" fontSize="9" fontFamily="monospace">극단탐욕</text>
+                <text x="18" y="112" fill="#ef4444" fontSize="7" fontFamily="monospace">극단공포</text>
+                <text x="180" y="112" fill="#22c55e" fontSize="7" fontFamily="monospace">극단탐욕</text>
               </svg>
 
               {/* 숫자 */}
               <div style={{ textAlign: 'center', marginTop: -8 }}>
-                <div style={{ fontSize: '2.4rem', fontWeight: 700, color, lineHeight: 1 }}>
+                <div style={{ fontSize: '2rem', fontWeight: 700, color, lineHeight: 1 }}>
                   {score ?? '--'}
                 </div>
                 <div style={{ fontSize: '0.6rem', color, marginTop: 6 }}>

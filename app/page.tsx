@@ -7,6 +7,7 @@ import UnemploymentCharts from '@/components/UnemploymentCharts'
 import SectorFlow from '@/components/SectorFlow'
 import MarketHeatmap from '@/components/MarketHeatmap'
 import EventCalendar from '@/components/EventCalendar'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 interface QuoteData {
   symbol: string
@@ -45,7 +46,6 @@ async function fetchFred(series: string): Promise<FredData | null> {
   } catch { return null }
 }
 
-// ── 레벨 함수 ──────────────────────────────────────
 function getOilLevel(val: number) {
   if (val >= 90) return { keyword: '고유가', level: 'bad' as const }
   if (val >= 70) return { keyword: '중립', level: 'neutral' as const }
@@ -65,7 +65,6 @@ function getDxyLevel(val: number) {
   return { keyword: '달러 약세', level: 'good' as const }
 }
 
-// ── 멘트 함수 ──────────────────────────────────────
 function getDrawdownComment(current: number | null, high: number | null) {
   if (!current || !high) return null
   const drawdown = ((current - high) / high) * 100
@@ -87,7 +86,7 @@ function getDrawdownComment(current: number | null, high: number | null) {
 
 function getYieldComment(val: number | null) {
   if (val === null) return null
-  if (val < 0) return { keyword: '역전', text: `경기침체 선행신호예요. 역전 해소 시점을 주목하세요.` }
+  if (val < 0) return { keyword: '역전', text: `경기침체 선행신호예요.` }
   if (val < 0.5) return { keyword: '회복 초입', text: `실제 침체는 역전 해소 후 올 수 있어요.` }
   return { keyword: '정상', text: `장기금리가 단기금리보다 높아요.` }
 }
@@ -139,7 +138,7 @@ function getReservesComment(val: number | null) {
   const b = Math.round(val / 1000)
   if (val > 3000000) return { keyword: '충분', text: `은행 시스템이 안정적이에요.` }
   if (val > 2500000) return { keyword: '양호', text: `아직 안전 수준이에요.` }
-  if (val > 2000000) return { keyword: '주의', text: `감소 추세예요. 모니터링이 필요해요.` }
+  if (val > 2000000) return { keyword: '주의', text: `감소 추세예요.` }
   return { keyword: '위험', text: `QT 중단 가능성이 있어요.` }
 }
 
@@ -158,7 +157,6 @@ function getTgaComment(val: number | null) {
   return { keyword: '부채한도 주의', text: `잔고가 매우 낮아요.` }
 }
 
-// ── 공통 컴포넌트 ──────────────────────────────────
 function CommentBox({ keyword, text, level = 'neutral' }: {
   keyword?: string
   text: string | null
@@ -174,16 +172,14 @@ function CommentBox({ keyword, text, level = 'neutral' }: {
       {keyword && (
         <div style={{ marginBottom: 4 }}>
           <span style={{
-            fontSize: '0.6rem', fontWeight: 700,
-            color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
+            fontSize: '0.6rem', fontWeight: 700, color,
+            border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
           }}>
             {keyword}
           </span>
         </div>
       )}
-      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>
-        {text}
-      </div>
+      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>{text}</div>
     </div>
   )
 }
@@ -196,19 +192,14 @@ function DrawdownBadge({ dd }: {
   return (
     <div style={{ marginTop: 8 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-        <span style={{
-          fontSize: '0.6rem', fontWeight: 700,
-          color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
-        }}>
+        <span style={{ fontSize: '0.6rem', fontWeight: 700, color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px' }}>
           {dd.status}
         </span>
         <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
           ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
         </span>
       </div>
-      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>
-        {dd.comment}
-      </div>
+      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>{dd.comment}</div>
     </div>
   )
 }
@@ -216,7 +207,7 @@ function DrawdownBadge({ dd }: {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
-      fontSize: '0.8rem', color: 'var(--text)',
+        fontSize: '0.6rem', color: 'var(--text)',
       letterSpacing: '0.12em', textTransform: 'uppercase',
       marginBottom: 10, marginTop: 28,
     }}>
@@ -225,8 +216,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   )
 }
 
-// ── 가격 + 1개월 + 1년 차트 ────────────────────────
-function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel }: {
+function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel, isMobile }: {
   ticker: string
   label: string
   color: string
@@ -237,6 +227,7 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
   showDrawdown?: boolean
   comment?: { keyword: string; text: string } | null
   commentLevel?: 'good' | 'warn' | 'bad' | 'neutral'
+  isMobile: boolean
 }) {
   const [high, setHigh] = useState<number | null>(null)
 
@@ -256,14 +247,20 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
 
   return (
     <div style={{
-      display: 'grid', gridTemplateColumns: '200px 1fr 2fr',
-      gap: 12, background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 10, padding: '16px', marginBottom: 8,
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '200px 1fr 2fr',
+      gap: 12,
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
+      borderRadius: 10,
+      padding: isMobile ? '14px' : '16px',
+      marginBottom: 4,
     }}>
+      {/* 가격 */}
       <div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
-        <div style={{ fontSize: '1.2rem', fontWeight: 700, lineHeight: 1 }}>
+        <div style={{ fontSize: isMobile ? '1.2rem' : '1rem', fontWeight: 700, lineHeight: 1 }}>
           {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
         </div>
         <div style={{ fontSize: '0.6rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
@@ -273,26 +270,34 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
         {dd && <DrawdownBadge dd={dd} />}
         {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
+
+      {/* 1개월 차트 — 모바일 숨김 */}
+      {!isMobile && (
+        <div>
+          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+          <StockLineChart symbol={ticker} color={color} range="1mo" height={120} formatValue={fmt} />
+        </div>
+      )}
+
+      {/* 1년 차트 */}
       <div>
-        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-        <StockLineChart symbol={ticker} color={color} range="1mo" height={120} formatValue={fmt} />
-      </div>
-      <div>
-        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-        <StockLineChart symbol={ticker} color={color} range="1y" height={120} formatValue={fmt} />
+        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>
+          {isMobile ? '1년 차트' : '1년'}
+        </div>
+        <StockLineChart symbol={ticker} color={color} range="1y" height={isMobile ? 200 : 120} formatValue={fmt} />
       </div>
     </div>
   )
 }
 
-// ── FRED 가격 + 차트 ────────────────────────────────
-function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
+function FredChartRow({ series, label, desc, color, unit = '%', getComment, isMobile }: {
   series: string
   label: string
   desc?: string
   color: string
   unit?: string
   getComment?: (val: number | null) => { keyword: string; text: string } | null
+  isMobile: boolean
 }) {
   const [data, setData] = useState<{ date: string; value: number }[]>([])
   const [latest, setLatest] = useState<number | null>(null)
@@ -333,15 +338,21 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
 
   return (
     <div style={{
-      display: 'grid', gridTemplateColumns: '200px 1fr 2fr',
-      gap: 12, background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 10, padding: '16px', marginBottom: 8,
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '200px 1fr 2fr',
+      gap: 12,
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
+      borderRadius: 10,
+      padding: isMobile ? '14px' : '16px',
+      marginBottom: 4,
     }}>
+      {/* 가격 */}
       <div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
         <div style={{
-          fontSize: '1.2rem', fontWeight: 700, lineHeight: 1,
+          fontSize: isMobile ? '1.2rem' : '1rem', fontWeight: 700, lineHeight: 1,
           color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)',
         }}>
           {latest !== null ? fmt(latest) : '--'}
@@ -354,19 +365,26 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment }: {
         {desc && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
         {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
       </div>
+
+      {/* 1개월 차트 — 모바일 숨김 */}
+      {!isMobile && (
+        <div>
+          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+          <StockLineChart symbol={series} color={color} range="1mo" height={120} formatValue={fmt} externalData={data1mo} />
+        </div>
+      )}
+
+      {/* 1년 차트 */}
       <div>
-        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-        <StockLineChart symbol={series} color={color} range="1mo" height={120} formatValue={fmt} externalData={data1mo} />
-      </div>
-      <div>
-        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-        <StockLineChart symbol={series} color={color} range="1y" height={120} formatValue={fmt} externalData={data1y} />
+        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>
+          {isMobile ? '1년 차트' : '1년'}
+        </div>
+        <StockLineChart symbol={series} color={color} range="1y" height={isMobile ? 200 : 120} formatValue={fmt} externalData={data1y} />
       </div>
     </div>
   )
 }
 
-// ── Summary Bar ────────────────────────────────────
 function MarketSummaryBar({ quotes, freds }: {
   quotes: Record<string, QuoteData | null>
   freds: Record<string, FredData | null>
@@ -397,16 +415,10 @@ function MarketSummaryBar({ quotes, freds }: {
   }
 
   const oil = quotes['CL=F']?.price ?? null
-  if (oil !== null) {
-    const { keyword, level } = getOilLevel(oil)
-    items.push({ label: 'WTI', keyword, level })
-  }
+  if (oil !== null) { const { keyword, level } = getOilLevel(oil); items.push({ label: 'WTI', keyword, level }) }
 
   const krw = quotes['KRW=X']?.price ?? null
-  if (krw !== null) {
-    const { keyword, level } = getKrwLevel(krw)
-    items.push({ label: '환율', keyword, level })
-  }
+  if (krw !== null) { const { keyword, level } = getKrwLevel(krw); items.push({ label: '환율', keyword, level }) }
 
   const t10y2y = freds['T10Y2Y']?.value ?? null
   if (t10y2y !== null) {
@@ -423,10 +435,7 @@ function MarketSummaryBar({ quotes, freds }: {
   }
 
   const dxy = quotes['DX-Y.NYB']?.price ?? null
-  if (dxy !== null) {
-    const { keyword, level } = getDxyLevel(dxy)
-    items.push({ label: 'DXY', keyword, level })
-  }
+  if (dxy !== null) { const { keyword, level } = getDxyLevel(dxy); items.push({ label: 'DXY', keyword, level }) }
 
   const vix = quotes['^VIX']?.price ?? null
   if (vix !== null) {
@@ -452,15 +461,13 @@ function MarketSummaryBar({ quotes, freds }: {
   const rrp = freds['RRPONTSYD']?.value ?? null
   if (rrp !== null) {
     const keyword = rrp < 100 ? '거의소진' : rrp < 500 ? '대폭감소' : '잔존'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' = rrp < 100 ? 'warn' : 'neutral'
-    items.push({ label: '역레포', keyword, level })
+    items.push({ label: '역레포', keyword, level: rrp < 100 ? 'warn' : 'neutral' })
   }
 
   const tga = freds['WTREGEN']?.value ?? null
   if (tga !== null) {
     const keyword = tga > 800 ? '잔고풍부' : tga > 500 ? '정상' : tga > 200 ? '감소중' : '부채한도주의'
-    const level: 'good' | 'warn' | 'bad' | 'neutral' = tga > 500 ? 'neutral' : 'warn'
-    items.push({ label: 'TGA', keyword, level })
+    items.push({ label: 'TGA', keyword, level: tga > 500 ? 'neutral' : 'warn' })
   }
 
   if (items.length === 0) return null
@@ -468,22 +475,19 @@ function MarketSummaryBar({ quotes, freds }: {
   return (
     <div style={{
       display: 'flex', flexWrap: 'nowrap', overflowX: 'auto',
-      gap: 0, padding: '5px 5px',
+      gap: 0, padding: '10px 16px',
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, marginBottom: 20,
       msOverflowStyle: 'none', scrollbarWidth: 'none',
     } as React.CSSProperties}>
       {items.map(({ label, keyword, level }, i) => {
-        const color = level === 'good' ? '#22c55e'
-          : level === 'warn' ? '#f59e0b'
-          : level === 'bad' ? '#ef4444'
-          : '#64748b'
+        const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#64748b'
         return (
           <div key={i} style={{
-            display: 'flex', alignItems: 'center', gap: 2,
-            whiteSpace: 'nowrap', paddingRight: 8,
+            display: 'flex', alignItems: 'center', gap: 4,
+            whiteSpace: 'nowrap', paddingRight: 6,
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
-            marginRight: 8,
+            marginRight: 6,
           }}>
             <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{label}</span>
             <span style={{ fontSize: '0.6rem', fontWeight: 700, color }}>{keyword}</span>
@@ -494,8 +498,8 @@ function MarketSummaryBar({ quotes, freds }: {
   )
 }
 
-// ── 메인 페이지 ────────────────────────────────────
 export default function Page() {
+  const isMobile = useIsMobile()
   const [quotes, setQuotes] = useState<Record<string, QuoteData | null>>({})
   const [freds, setFreds] = useState<Record<string, FredData | null>>({})
   const [loading, setLoading] = useState(true)
@@ -505,23 +509,18 @@ export default function Page() {
       setLoading(true)
       const quoteSymbols = ['SPY', 'QQQ', 'SOXX', 'GC=F', 'BTC-USD', 'KRW=X', 'CL=F', 'DX-Y.NYB', '^VIX']
       const fredSeries = ['T10Y2Y', 'DGS10', 'WALCL', 'WRESBAL', 'RRPONTSYD', 'WTREGEN']
-
       const [quoteResults, fredResults] = await Promise.all([
         Promise.all(quoteSymbols.map(s => fetchQuote(s))),
         Promise.all(fredSeries.map(s => fetchFred(s))),
       ])
-
       const quoteMap: Record<string, QuoteData | null> = {}
       quoteSymbols.forEach((s, i) => { quoteMap[s] = quoteResults[i] })
-
       const fredMap: Record<string, FredData | null> = {}
       fredSeries.forEach((s, i) => { fredMap[s] = fredResults[i] })
-
       setQuotes(quoteMap)
       setFreds(fredMap)
       setLoading(false)
     }
-
     loadAll()
     const interval = setInterval(loadAll, 60000)
     return () => clearInterval(interval)
@@ -532,7 +531,7 @@ export default function Page() {
   const vix = quotes['^VIX']?.price ?? 0
 
   return (
-    <main style={{ maxWidth: 1300, margin: '0 auto', padding: 24 }}>
+    <main style={{ maxWidth: isMobile ? '100%' : 1440, margin: '0 auto', padding: isMobile ? 12 : 24 }}>
 
       {/* 헤더 */}
       <div style={{
@@ -543,40 +542,42 @@ export default function Page() {
           <div style={{
             width: 36, height: 36, background: 'var(--accent)', borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 700, color: '#fff'
+            fontWeight: 700, color: '#fff',
           }}>M</div>
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700 }}>Market Monitor</div>
-            <div style={{ fontSize: 11, color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
-          </div>
+          {!isMobile && (
+            <div>
+              <div style={{ fontSize: '0.7rem', fontWeight: 700 }}>Market Monitor</div>
+              <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
+            </div>
+          )}
         </div>
 
         {/* 우측 버튼들 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
           <a href="/memo" style={{
             display: 'flex', alignItems: 'center', gap: 5,
             background: 'var(--surface)', border: '1px solid var(--border)',
             borderRadius: 8, padding: '6px 12px',
-            color: 'var(--text)', textDecoration: 'none', fontSize: 12,
-          }}>📝 메모</a>
+            color: 'var(--text)', textDecoration: 'none', fontSize: '0.6rem',
+          }}>{isMobile ? '📝' : '📝 메모'}</a>
 
           <a href="https://usstocksigma.com/category/expected-move/" target="_blank" rel="noreferrer" style={{
             display: 'flex', alignItems: 'center', gap: 5,
             background: 'var(--surface)', border: '1px solid var(--border)',
             borderRadius: 8, padding: '6px 12px',
-            color: 'var(--text)', textDecoration: 'none', fontSize: 12,
-          }}>Σ 시그마 조회</a>
+            color: 'var(--text)', textDecoration: 'none', fontSize: '0.6rem',
+          }}>{isMobile ? 'Σ' : 'Σ 시그마 조회'}</a>
 
           <a href="https://usstocksigma.com/2026/02/08/index-leveraged-etf-calculator/" target="_blank" rel="noreferrer" style={{
             display: 'flex', alignItems: 'center', gap: 5,
             background: 'var(--surface)', border: '1px solid var(--border)',
             borderRadius: 8, padding: '6px 12px',
-            color: 'var(--text)', textDecoration: 'none', fontSize: 12,
-          }}>📊 레버리지 계산기</a>
+            color: 'var(--text)', textDecoration: 'none', fontSize: '0.6rem',
+          }}>{isMobile ? '📊' : '📊 레버리지 계산기'}</a>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.6rem', color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
-            {loading ? 'LOADING...' : 'LIVE'}
+            {!isMobile && (loading ? 'LOADING...' : 'LIVE')}
           </div>
         </div>
       </div>
@@ -590,49 +591,54 @@ export default function Page() {
 
       {/* 이벤트 캘린더 */}
       <SectionLabel>📅 이벤트 캘린더</SectionLabel>
-      <EventCalendar />
+      <EventCalendar isMobile={isMobile} />
 
       {/* ETF */}
       <SectionLabel>📊 글로벌 ETF</SectionLabel>
-      <PriceChartRow ticker="SPY" label="S&P 500 ETF" color={COLORS.etf} data={quotes['SPY']} showDrawdown />
-      <PriceChartRow ticker="QQQ" label="나스닥 100 ETF" color={COLORS.etf} data={quotes['QQQ']} showDrawdown />
-      <PriceChartRow ticker="SOXX" label="반도체 ETF" color={COLORS.etf} data={quotes['SOXX']} showDrawdown />
+      <PriceChartRow ticker="SPY" label="S&P 500 ETF" color={COLORS.etf} data={quotes['SPY']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="QQQ" label="나스닥 100 ETF" color={COLORS.etf} data={quotes['QQQ']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="SOXX" label="반도체 ETF" color={COLORS.etf} data={quotes['SOXX']} showDrawdown isMobile={isMobile} />
 
-      {/* 안전자산 & 위험자산 */}
+      {/* 안전자산 */}
       <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
-      <PriceChartRow ticker="GC=F" label="금 Gold" color={COLORS.asset} unit="$" sub="USD / 온스" data={quotes['GC=F']} showDrawdown />
-      <PriceChartRow ticker="BTC-USD" label="비트코인" color={COLORS.asset} unit="$" sub="BTC / USD" data={quotes['BTC-USD']} showDrawdown />
+      <PriceChartRow ticker="GC=F" label="금 Gold" color={COLORS.asset} unit="$" sub="USD / 온스" data={quotes['GC=F']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="BTC-USD" label="비트코인" color={COLORS.asset} unit="$" sub="BTC / USD" data={quotes['BTC-USD']} showDrawdown isMobile={isMobile} />
       <PriceChartRow ticker="CL=F" label="WTI 원유" color={COLORS.asset} unit="$" sub="USD / 배럴" data={quotes['CL=F']}
         comment={getOilComment(quotes['CL=F']?.price ?? null)}
         commentLevel={(() => { const v = quotes['CL=F']?.price ?? 0; return getOilLevel(v).level })()}
+        isMobile={isMobile}
       />
       <PriceChartRow ticker="KRW=X" label="원달러 환율" color={COLORS.asset} unit="" sub="KRW / USD" data={quotes['KRW=X']}
         formatValue={(v) => v.toLocaleString()}
         comment={getKrwComment(krw)}
         commentLevel={krw ? getKrwLevel(krw).level : 'neutral'}
+        isMobile={isMobile}
       />
 
       {/* 매크로 */}
       <SectionLabel>🌐 매크로 지표</SectionLabel>
-      <FredChartRow series="T10Y2Y" label="장단기 금리차 (10Y-2Y)" desc="음수 = 역전 = 경기침체 선행신호" color={COLORS.macro} getComment={getYieldComment} />
-      <FredChartRow series="DGS10" label="10년물 미국채 금리" desc="미국 장기금리 기준" color={COLORS.macro} getComment={getBondComment} />
+      <FredChartRow series="T10Y2Y" label="장단기 금리차 (10Y-2Y)" desc="음수 = 역전 = 경기침체 선행신호" color={COLORS.macro} getComment={getYieldComment} isMobile={isMobile} />
+      <FredChartRow series="DGS10" label="10년물 미국채 금리" desc="미국 장기금리 기준" color={COLORS.macro} getComment={getBondComment} isMobile={isMobile} />
       <PriceChartRow ticker="DX-Y.NYB" label="달러 인덱스 (DXY)" color={COLORS.macro} unit="" data={quotes['DX-Y.NYB']}
         formatValue={(v) => v.toFixed(2)}
         comment={getDxyComment(dxy)}
         commentLevel={dxy ? getDxyLevel(dxy).level : 'neutral'}
+        isMobile={isMobile}
       />
 
       {/* 시장 심리 */}
       <SectionLabel>😱 시장 심리</SectionLabel>
       <FearGreedGauge />
       <div style={{
-        display: 'grid', gridTemplateColumns: '200px 1fr 2fr', gap: 12,
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '200px 1fr 2fr',
+        gap: 12,
         background: 'var(--surface)', border: '1px solid var(--border)',
-        borderRadius: 10, padding: '16px', marginBottom: 8,
+        borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
       }}>
         <div>
           <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
-          <div style={{ fontSize: '1.2rem', fontWeight: 700, lineHeight: 1, color: 'var(--text)' }}>
+          <div style={{ fontSize: isMobile ? 48 : 42, fontWeight: 700, lineHeight: 1, color: 'var(--text)' }}>
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox
@@ -643,22 +649,24 @@ export default function Page() {
             level={vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'}
           />
         </div>
+        {!isMobile && (
+          <div>
+            <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+            <StockLineChart symbol="^VIX" color={COLORS.fear} range="1mo" height={120} formatValue={(v) => v.toFixed(1)} />
+          </div>
+        )}
         <div>
-          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-          <StockLineChart symbol="^VIX" color={COLORS.fear} range="1mo" height={120} formatValue={(v) => v.toFixed(1)} />
-        </div>
-        <div>
-          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1년</div>
-          <StockLineChart symbol="^VIX" color={COLORS.fear} range="1y" height={120} formatValue={(v) => v.toFixed(1)} />
+          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>{isMobile ? '1년 차트' : '1년'}</div>
+          <StockLineChart symbol="^VIX" color={COLORS.fear} range="1y" height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} />
         </div>
       </div>
 
       {/* 연준 유동성 */}
       <SectionLabel>💧 연준 유동성</SectionLabel>
-      <FredChartRow series="WALCL" label="연준 총자산" desc="QE = 자산 증가 · QT = 자산 감소" color={COLORS.liquidity} unit="B" getComment={getFedAssetComment} />
-      <FredChartRow series="WRESBAL" label="연준 지급준비금" desc="은행 시스템 총 준비금" color={COLORS.liquidity} unit="B" getComment={getReservesComment} />
-      <FredChartRow series="RRPONTSYD" label="역레포 잔액 (RRP)" desc="초과유동성 흡수액" color={COLORS.liquidity} unit="B" getComment={getRrpComment} />
-      <FredChartRow series="WTREGEN" label="TGA 잔고" desc="재무부 일반계정" color={COLORS.liquidity} unit="B" getComment={getTgaComment} />
+      <FredChartRow series="WALCL" label="연준 총자산" desc="QE = 자산 증가 · QT = 자산 감소" color={COLORS.liquidity} unit="B" getComment={getFedAssetComment} isMobile={isMobile} />
+      <FredChartRow series="WRESBAL" label="연준 지급준비금" desc="은행 시스템 총 준비금" color={COLORS.liquidity} unit="B" getComment={getReservesComment} isMobile={isMobile} />
+      <FredChartRow series="RRPONTSYD" label="역레포 잔액 (RRP)" desc="초과유동성 흡수액" color={COLORS.liquidity} unit="B" getComment={getRrpComment} isMobile={isMobile} />
+      <FredChartRow series="WTREGEN" label="TGA 잔고" desc="재무부 일반계정" color={COLORS.liquidity} unit="B" getComment={getTgaComment} isMobile={isMobile} />
 
       {/* 고용 */}
       <SectionLabel>👷 고용 지표</SectionLabel>
@@ -669,8 +677,12 @@ export default function Page() {
       <SectorFlow />
 
       {/* 미국 증시 히트맵 */}
-      <SectionLabel>🗺️ 미국 증시 히트맵</SectionLabel>
-      <MarketHeatmap />
+      {!isMobile && (
+        <>
+          <SectionLabel>🗺️ 미국 증시 히트맵</SectionLabel>
+          <MarketHeatmap />
+        </>
+      )}
 
       <style>{`
         @keyframes pulse {
