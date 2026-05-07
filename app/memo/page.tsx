@@ -68,7 +68,7 @@ function CategoryModal({
         display: 'flex', flexDirection: 'column', gap: 16,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: '0.7rem', fontWeight: 700 }}>카테고리 관리</div>
+          <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>카테고리 추가</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
         </div>
 
@@ -140,7 +140,6 @@ function CategoryModal({
 
         {/* 새 카테고리 추가 */}
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 8 }}>새 카테고리 추가</div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <input
               value={form.name}
