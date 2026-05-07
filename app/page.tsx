@@ -484,7 +484,7 @@ function MarketSummaryBar({ quotes, freds }: {
         const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#64748b'
         return (
           <div key={i} style={{
-            display: 'flex', alignItems: 'center', gap: 4,
+            display: 'flex', alignItems: 'center', gap: 0,
             whiteSpace: 'nowrap', paddingRight: 6,
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
             marginRight: 6,
