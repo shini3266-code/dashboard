@@ -377,14 +377,14 @@ function MarketSummaryBar({ quotes, freds }: {
     .forEach(({ sym, label }) => {
       const change = quotes[sym]?.change ?? null
       if (change === null) return
-      const keyword = change >= 1.5 ? '강세장' : change >= 0 ? '보합' : change >= -1.5 ? '조정 초입' : '조정장'
+      const keyword = change >= 1.5 ? '강세장' : change >= 0 ? '보합' : change >= -1.5 ? '조정초입' : '조정장'
       const level: 'good' | 'warn' | 'bad' | 'neutral' = change >= 1.5 ? 'good' : change >= 0 ? 'neutral' : change >= -1.5 ? 'warn' : 'bad'
       items.push({ label, keyword, level })
     })
 
   const goldChange = quotes['GC=F']?.change ?? null
   if (goldChange !== null) {
-    const keyword = goldChange >= 1 ? '강세장' : goldChange >= 0 ? '보합' : goldChange >= -1 ? '조정 초입' : '조정장'
+    const keyword = goldChange >= 1 ? '강세장' : goldChange >= 0 ? '보합' : goldChange >= -1 ? '조정초입' : '조정장'
     const level: 'good' | 'warn' | 'bad' | 'neutral' = goldChange >= 0 ? 'good' : goldChange >= -1 ? 'neutral' : 'warn'
     items.push({ label: '금', keyword, level })
   }
@@ -410,7 +410,7 @@ function MarketSummaryBar({ quotes, freds }: {
 
   const t10y2y = freds['T10Y2Y']?.value ?? null
   if (t10y2y !== null) {
-    const keyword = t10y2y < 0 ? '역전' : t10y2y < 0.5 ? '회복 초입' : '정상'
+    const keyword = t10y2y < 0 ? '역전' : t10y2y < 0.5 ? '회복초입' : '정상'
     const level: 'good' | 'warn' | 'bad' | 'neutral' = t10y2y < 0 ? 'bad' : t10y2y < 0.5 ? 'warn' : 'good'
     items.push({ label: '금리차', keyword, level })
   }
@@ -438,7 +438,7 @@ function MarketSummaryBar({ quotes, freds }: {
   const walcl = freds['WALCL']?.value ?? null
   if (walcl !== null) {
     const t = walcl / 1000000
-    const keyword = t >= 8 ? 'QT 진행 중' : t >= 7 ? 'QT 중반' : t >= 6 ? 'QT 후반' : '정상화'
+    const keyword = t >= 8 ? 'QT진행중' : t >= 7 ? 'QT중반' : t >= 6 ? 'QT후반' : '정상화'
     items.push({ label: '연준자산', keyword, level: 'neutral' })
   }
 
@@ -451,14 +451,14 @@ function MarketSummaryBar({ quotes, freds }: {
 
   const rrp = freds['RRPONTSYD']?.value ?? null
   if (rrp !== null) {
-    const keyword = rrp < 100 ? '거의 소진' : rrp < 500 ? '대폭 감소' : '잔존'
+    const keyword = rrp < 100 ? '거의소진' : rrp < 500 ? '대폭감소' : '잔존'
     const level: 'good' | 'warn' | 'bad' | 'neutral' = rrp < 100 ? 'warn' : 'neutral'
     items.push({ label: '역레포', keyword, level })
   }
 
   const tga = freds['WTREGEN']?.value ?? null
   if (tga !== null) {
-    const keyword = tga > 800 ? '잔고 풍부' : tga > 500 ? '정상' : tga > 200 ? '감소 중' : '부채한도 주의'
+    const keyword = tga > 800 ? '잔고풍부' : tga > 500 ? '정상' : tga > 200 ? '감소중' : '부채한도주의'
     const level: 'good' | 'warn' | 'bad' | 'neutral' = tga > 500 ? 'neutral' : 'warn'
     items.push({ label: 'TGA', keyword, level })
   }
@@ -579,13 +579,7 @@ export default function Page() {
             {loading ? 'LOADING...' : 'LIVE'}
           </div>
         </div>
-
-          {/* LIVE */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
-            {loading ? 'LOADING...' : 'LIVE'}
-          </div>
-        </div>
+      </div>
 
       {/* Summary Bar */}
       <MarketSummaryBar quotes={quotes} freds={freds} />
