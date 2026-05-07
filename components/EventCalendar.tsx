@@ -166,7 +166,7 @@ function EventModal({
 }
 
 // ── 메인 캘린더 ────────────────────────────────────
-export default function EventCalendar() {
+export default function EventCalendar({ isMobile = false }: { isMobile?: boolean }) {
   const [events, setEvents] = useState<CalEvent[]>([])
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [loadingDb, setLoadingDb] = useState(true)
@@ -275,7 +275,7 @@ export default function EventCalendar() {
         📅 이벤트 캘린더
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 260px', gap: 16 }}>
         {/* 달력 */}
         <div>
           {/* 월 네비게이션 */}
