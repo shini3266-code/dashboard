@@ -485,7 +485,7 @@ function MarketSummaryBar({ quotes, freds }: {
         return (
           <div key={i} style={{
             display: 'flex', alignItems: 'center', gap: 7,
-            whiteSpace: 'nowrap', paddingRight: 10,
+            whiteSpace: 'nowrap', paddingRight: 6,
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
             marginRight: 6,
           }}>
