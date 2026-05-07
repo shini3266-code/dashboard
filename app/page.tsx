@@ -481,7 +481,7 @@ function MarketSummaryBar({ quotes, freds }: {
       msOverflowStyle: 'none', scrollbarWidth: 'none',
     } as React.CSSProperties}>
       {items.map(({ label, keyword, level }, i) => {
-        const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#64748b'
+        const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#e2e8f0'
         return (
           <div key={i} style={{
             display: 'flex', alignItems: 'center', gap: 7,
