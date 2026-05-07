@@ -27,15 +27,10 @@ interface Category {
 const DEFAULT_COLORS = ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#f97316', '#06b6d4', '#64748b']
 
 // ── 카테고리 관리 모달 ─────────────────────────────
-function CategoryModal({
-  categories,
-  onClose,
-  onSave,
-  onDelete,
-}: {
+function CategoryModal({ categories, onClose, onSave, onDelete }: {
   categories: Category[]
   onClose: () => void
-  onSave: (cat: Omit<Category, 'id'>) => void
+  onSave: (cat: Omit<Category, 'id'>, editId?: string) => void
   onDelete: (id: string) => void
 }) {
   const [form, setForm] = useState({ name: '', color: DEFAULT_COLORS[0] })
@@ -208,7 +203,7 @@ export default function MemoPage() {
   }
 
   // 카테고리 추가/수정
-  async function saveCategory(data: Omit<Category, 'id'>) {
+  async function saveCategory(data: Omit<Category, 'id'>, editId?: string) {
     if (editId) {
       // 수정
       const { data: updated } = await supabase
