@@ -546,15 +546,46 @@ export default function Page() {
             fontWeight: 700, color: '#fff'
           }}>M</div>
           <div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>Market Monitor</div>
-            <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
+            <div style={{ fontSize: 15, fontWeight: 700 }}>Market Monitor</div>
+            <div style={{ fontSize: 11, color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.6rem', color: loading ? 'var(--muted)' : 'var(--up)' }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
-          {loading ? 'LOADING...' : 'LIVE'}
+
+        {/* 우측 버튼들 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <a href="/memo" style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            background: 'var(--surface)', border: '1px solid var(--border)',
+            borderRadius: 8, padding: '6px 12px',
+            color: 'var(--text)', textDecoration: 'none', fontSize: 12,
+          }}>📝 메모</a>
+
+          <a href="https://usstocksigma.com/category/expected-move/" target="_blank" rel="noreferrer" style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            background: 'var(--surface)', border: '1px solid var(--border)',
+            borderRadius: 8, padding: '6px 12px',
+            color: 'var(--text)', textDecoration: 'none', fontSize: 12,
+          }}>Σ 시그마 조회</a>
+
+          <a href="https://usstocksigma.com/2026/02/08/index-leveraged-etf-calculator/" target="_blank" rel="noreferrer" style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            background: 'var(--surface)', border: '1px solid var(--border)',
+            borderRadius: 8, padding: '6px 12px',
+            color: 'var(--text)', textDecoration: 'none', fontSize: 12,
+          }}>📊 레버리지 계산기</a>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
+            {loading ? 'LOADING...' : 'LIVE'}
+          </div>
         </div>
-      </div>
+
+          {/* LIVE */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
+            {loading ? 'LOADING...' : 'LIVE'}
+          </div>
+        </div>
 
       {/* Summary Bar */}
       <MarketSummaryBar quotes={quotes} freds={freds} />
