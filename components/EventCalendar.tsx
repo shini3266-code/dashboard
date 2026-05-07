@@ -314,7 +314,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
                   key={i}
                   onClick={() => setAddModal({ date: ds })}  // ← 날짜 클릭 시 추가 팝업
                   style={{
-                    minHeight: 70,
+                    minHeight: 80,
                     background: isToday ? 'rgba(59,130,246,0.15)' : 'var(--surface2)',
                     border: isToday ? '1px solid var(--accent)' : '1px solid var(--border)',
                     borderRadius: 6, padding: '4px 5px',
