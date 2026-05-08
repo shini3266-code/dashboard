@@ -256,7 +256,7 @@ function BookmarkMenu() {
           border: '1px solid var(--border)',
           borderRadius: 8, padding: '6px 12px',
           color: open ? '#fff' : 'var(--text)',
-          cursor: 'pointer', fontSize: '0.75rem',
+          cursor: 'pointer', fontSize: '0.7rem',
         }}
       >
         🔖 북마크
@@ -702,9 +702,9 @@ export default function Page() {
             display: 'flex', alignItems: 'center', gap: 5,
             background: 'var(--surface)', border: '1px solid var(--border)',
             borderRadius: 8, padding: '6px 12px',
-            color: 'var(--text)', textDecoration: 'none', fontSize: '0.6rem',
+            color: 'var(--text)', textDecoration: 'none', fontSize: '0.7rem',
           }}>
-            {isMobile ? '📝' : '📝 메모'}
+            '📝 메모'
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.6rem', color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
