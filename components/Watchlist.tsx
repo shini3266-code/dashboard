@@ -133,9 +133,19 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
 
   async function saveMemo() {
     setSaving(true)
+  
+    // watchlist_memos 저장
     await supabase
       .from('watchlist_memos')
       .upsert({ symbol, memo, updated_at: new Date().toISOString() }, { onConflict: 'symbol' })
+  
+    // memos 연동 API 호출
+    await fetch('/api/watchlist-memo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol, memo }),
+    })
+  
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)

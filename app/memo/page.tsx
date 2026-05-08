@@ -48,6 +48,29 @@ function CategoryModal({ categories, onClose, onSave, onDelete }: {
     setEditId(null)
   }
 
+  function WatchlistMemoBox({ content }: { content: string }) {
+    const match = content.match(/\[WATCHLIST_MEMO\]([\s\S]*?)\[\/WATCHLIST_MEMO\]/)
+    if (!match) return null
+  
+    return (
+      <div style={{
+        background: 'var(--surface2)',
+        border: '1px solid var(--accent)',
+        borderLeft: '3px solid var(--accent)',
+        borderRadius: 8,
+        padding: '10px 14px',
+        marginBottom: 12,
+      }}>
+        <div style={{ fontSize: '0.7rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 700 }}>
+          📌 관심종목 메모
+        </div>
+        <div style={{ fontSize: '0.8rem', color: 'var(--text)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+          {match[1]}
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <div onClick={handleBackdrop} style={{
       position: 'fixed', inset: 0, zIndex: 2000,
@@ -413,7 +436,7 @@ export default function MemoPage() {
   
       {/* 메인 영역 */}
       {(!isMobile || isEditing) && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
           {isEditing ? (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 24, gap: 12 }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -450,9 +473,19 @@ export default function MemoPage() {
                   저장
                 </button>
               </div>
+              {/* 관심종목 인라인 박스 (읽기 전용) */}
+              {selected?.linked_symbol && (
+                <WatchlistMemoBox content={selected.content} />
+              )}
+              {/* 추가 메모 편집 */}
               <RichEditor
-                content={form.content}
-                onChange={(html) => setForm({ ...form, content: html })}
+                content={form.content.replace(/\[WATCHLIST_MEMO\][\s\S]*?\[\/WATCHLIST_MEMO\]/, '')}
+                onChange={(html) => {
+                  // 저장 시 WATCHLIST_MEMO 태그 보존
+                  const match = selected?.content.match(/\[WATCHLIST_MEMO\][\s\S]*?\[\/WATCHLIST_MEMO\]/)
+                  const prefix = match ? match[0] : ''
+                  setForm({ ...form, content: prefix + html })
+                }}
                 editable={true}
               />
             </div>
@@ -490,8 +523,12 @@ export default function MemoPage() {
                   </button>
                 </div>
               </div>
+              {/* 관심종목 인라인 박스 */}
+              <WatchlistMemoBox content={selected.content} />
+
+              {/* 추가 메모 (WATCHLIST_MEMO 태그 제외한 나머지) */}
               <RichEditor
-                content={selected.content}
+                content={selected.content.replace(/\[WATCHLIST_MEMO\][\s\S]*?\[\/WATCHLIST_MEMO\]/, '')}
                 onChange={() => {}}
                 editable={false}
               />
