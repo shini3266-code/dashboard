@@ -239,8 +239,8 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
   }
 
   const upcomingEvents = events
-    .filter(e => e.date >= today)
-    .slice(0, 10)
+  .filter(e => e.date >= today)
+  .sort((a, b) => a.date.localeCompare(b.date))
 
   return (
     <div style={{

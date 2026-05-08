@@ -43,7 +43,7 @@ function CategoryModal({ categories, onClose, onSave, onDelete }: {
 
   function handleSave() {
     if (!form.name.trim()) return
-    onSave({ name: form.name, color: form.color })
+    onSave({ name: form.name, color: form.color }, editId ?? undefined)  // ← editId 넘기는지 확인
     setForm({ name: '', color: DEFAULT_COLORS[0] })
     setEditId(null)
   }
@@ -202,6 +202,7 @@ export default function MemoPage() {
   // 카테고리 추가/수정
   async function saveCategory(data: Omit<Category, 'id'>, editId?: string) {
     if (editId) {
+      // 수정
       const { data: updated } = await supabase
         .from('memo_categories')
         .update({ name: data.name, color: data.color })
@@ -210,6 +211,7 @@ export default function MemoPage() {
         .single()
       if (updated) setCategories(prev => prev.map(c => c.id === editId ? (updated as Category) : c))
     } else {
+      // 추가
       const { data: inserted } = await supabase
         .from('memo_categories')
         .insert({ name: data.name, color: data.color })
