@@ -360,6 +360,14 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
           <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10, letterSpacing: '0.08em' }}>
             임박한 이벤트
           </div>
+          <div style={{
+            overflowY: 'auto',        // ← 추가
+            maxHeight: 400,           // ← 최대 높이 설정
+            paddingRight: 4,          // ← 스크롤바 공간
+            scrollbarWidth: 'thin',   // ← 스크롤바 얇게 (Firefox)
+            scrollbarColor: 'var(--border) transparent',  // ← 스크롤바 색상
+          }}>
+          </div>
           {loadingDb ? (
             <div style={{ color: 'var(--muted)', fontSize: '0.6rem', textAlign: 'center', padding: 20 }}>로딩 중...</div>
           ) : upcomingEvents.length === 0 ? (

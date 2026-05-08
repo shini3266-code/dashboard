@@ -78,83 +78,81 @@ function getDrawdownComment(current: number | null, high: number | null) {
     : drawdown >= -20 ? '조정 구간이에요. 리스크 관리가 필요해요.'
     : drawdown >= -30 ? '약세장이에요. 방어적 접근이 필요해요.'
     : '급락 구간이에요. 현금 비중을 높이세요.'
-  const level = drawdown >= -2 ? 'good' as const
-    : drawdown >= -10 ? 'warn' as const
-    : 'bad' as const
+  const level = drawdown >= -2 ? 'good' as const : drawdown >= -10 ? 'warn' as const : 'bad' as const
   return { drawdown, status, comment, level }
 }
 
 function getYieldComment(val: number | null) {
   if (val === null) return null
-  if (val < 0) return { keyword: '역전', text: `경기침체 선행신호예요.` }
-  if (val < 0.5) return { keyword: '회복 초입', text: `실제 침체는 역전 해소 후 올 수 있어요.` }
-  return { keyword: '정상', text: `장기금리가 단기금리보다 높아요.` }
+  if (val < 0) return { keyword: '역전', text: `${val.toFixed(2)}%. 경기침체 선행신호예요.` }
+  if (val < 0.5) return { keyword: '회복 초입', text: `${val.toFixed(2)}%. 실제 침체는 역전 해소 후 올 수 있어요.` }
+  return { keyword: '정상', text: `${val.toFixed(2)}%. 장기금리가 단기금리보다 높아요.` }
 }
 
 function getBondComment(val: number | null) {
   if (val === null) return null
-  if (val >= 5) return { keyword: '고금리', text: `주식 밸류에이션 압박이 커요.` }
-  if (val >= 4) return { keyword: '제한적', text: `성장주에 부담이에요.` }
-  if (val >= 3) return { keyword: '중립', text: `시장 영향은 제한적이에요.` }
-  return { keyword: '저금리', text: `성장주에 유리해요.` }
+  if (val >= 5) return { keyword: '고금리', text: `${val.toFixed(2)}%. 주식 밸류에이션 압박이 커요.` }
+  if (val >= 4) return { keyword: '제한적', text: `${val.toFixed(2)}%. 성장주에 부담이에요.` }
+  if (val >= 3) return { keyword: '중립', text: `${val.toFixed(2)}%. 시장 영향은 제한적이에요.` }
+  return { keyword: '저금리', text: `${val.toFixed(2)}%. 성장주에 유리해요.` }
 }
 
 function getDxyComment(val: number | null) {
   if (val === null) return null
   const { keyword } = getDxyLevel(val)
-  if (val >= 105) return { keyword, text: `신흥국·원자재에 부담이에요.` }
-  if (val >= 100) return { keyword, text: `글로벌 유동성 위축 압력이 있어요.` }
-  if (val >= 95) return { keyword, text: `달러 방향성이 중립이에요.` }
-  return { keyword, text: `위험자산·신흥국에 우호적이에요.` }
+  if (val >= 105) return { keyword, text: `${val.toFixed(2)}. 신흥국·원자재에 부담이에요.` }
+  if (val >= 100) return { keyword, text: `${val.toFixed(2)}. 글로벌 유동성 위축 압력이 있어요.` }
+  if (val >= 95) return { keyword, text: `${val.toFixed(2)}. 달러 방향성이 중립이에요.` }
+  return { keyword, text: `${val.toFixed(2)}. 위험자산·신흥국에 우호적이에요.` }
 }
 
 function getOilComment(val: number | null) {
   if (val === null) return null
   const { keyword } = getOilLevel(val)
-  if (val >= 90) return { keyword, text: `인플레이션 압력이 커요.` }
-  if (val >= 70) return { keyword, text: `경기 회복 수요를 반영해요.` }
-  return { keyword, text: `경기 둔화 우려가 있어요.` }
+  if (val >= 90) return { keyword, text: `$${val.toFixed(1)}. 인플레이션 압력이 커요.` }
+  if (val >= 70) return { keyword, text: `$${val.toFixed(1)}. 경기 회복 수요를 반영해요.` }
+  return { keyword, text: `$${val.toFixed(1)}. 경기 둔화 우려가 있어요.` }
 }
 
 function getKrwComment(val: number | null) {
   if (val === null) return null
   const { keyword } = getKrwLevel(val)
-  if (val >= 1400) return { keyword, text: `외국인 자금유출 압력이 있어요.` }
-  if (val >= 1300) return { keyword, text: `환율 변동성에 주의하세요.` }
-  return { keyword, text: `외국인 자금유입에 우호적이에요.` }
+  if (val >= 1400) return { keyword, text: `${Math.round(val)}원. 외국인 자금유출 압력이 있어요.` }
+  if (val >= 1300) return { keyword, text: `${Math.round(val)}원. 환율 변동성에 주의하세요.` }
+  return { keyword, text: `${Math.round(val)}원. 외국인 자금유입에 우호적이에요.` }
 }
 
 function getFedAssetComment(val: number | null) {
   if (val === null) return null
   const t = val / 1000000
-  if (t >= 8) return { keyword: 'QT 진행 중', text: `대규모 자산 보유 중이에요.` }
-  if (t >= 7) return { keyword: 'QT 중반', text: `코로나 고점 대비 많이 줄었어요.` }
-  if (t >= 6) return { keyword: 'QT 후반', text: `코로나 이전 수준에 근접하고 있어요.` }
-  return { keyword: '정상화', text: `코로나 이전 수준으로 복귀했어요.` }
+  if (t >= 8) return { keyword: 'QT 진행 중', text: `$${t.toFixed(2)}T. 대규모 자산 보유 중이에요.` }
+  if (t >= 7) return { keyword: 'QT 중반', text: `$${t.toFixed(2)}T. 코로나 고점 대비 많이 줄었어요.` }
+  if (t >= 6) return { keyword: 'QT 후반', text: `$${t.toFixed(2)}T. 코로나 이전 수준에 근접하고 있어요.` }
+  return { keyword: '정상화', text: `$${t.toFixed(2)}T. 코로나 이전 수준으로 복귀했어요.` }
 }
 
 function getReservesComment(val: number | null) {
   if (val === null) return null
   const b = Math.round(val / 1000)
-  if (val > 3000000) return { keyword: '충분', text: `은행 시스템이 안정적이에요.` }
-  if (val > 2500000) return { keyword: '양호', text: `아직 안전 수준이에요.` }
-  if (val > 2000000) return { keyword: '주의', text: `감소 추세예요.` }
-  return { keyword: '위험', text: `QT 중단 가능성이 있어요.` }
+  if (val > 3000000) return { keyword: '충분', text: `$${b.toLocaleString()}B. 은행 시스템이 안정적이에요.` }
+  if (val > 2500000) return { keyword: '양호', text: `$${b.toLocaleString()}B. 아직 안전 수준이에요.` }
+  if (val > 2000000) return { keyword: '주의', text: `$${b.toLocaleString()}B. 감소 추세예요.` }
+  return { keyword: '위험', text: `$${b.toLocaleString()}B. QT 중단 가능성이 있어요.` }
 }
 
 function getRrpComment(val: number | null) {
   if (val === null) return null
-  if (val < 100) return { keyword: '거의 소진', text: `시장 초과유동성이 없어요.` }
-  if (val < 500) return { keyword: '대폭 감소', text: `시장으로 유동성이 유입됐어요.` }
-  return { keyword: '잔존', text: `아직 초과유동성이 남아있어요.` }
+  if (val < 100) return { keyword: '거의 소진', text: `$${Math.round(val)}B. 시장 초과유동성이 없어요.` }
+  if (val < 500) return { keyword: '대폭 감소', text: `$${Math.round(val)}B. 시장으로 유동성이 유입됐어요.` }
+  return { keyword: '잔존', text: `$${(val / 1000).toFixed(2)}T. 아직 초과유동성이 남아있어요.` }
 }
 
 function getTgaComment(val: number | null) {
   if (val === null) return null
-  if (val > 800) return { keyword: '잔고 풍부', text: `지출 시 유동성 공급 가능성이 있어요.` }
-  if (val > 500) return { keyword: '정상', text: `정상 수준이에요.` }
-  if (val > 200) return { keyword: '감소 중', text: `지출이 늘거나 세수가 줄고 있어요.` }
-  return { keyword: '부채한도 주의', text: `잔고가 매우 낮아요.` }
+  if (val > 800) return { keyword: '잔고 풍부', text: `$${Math.round(val)}B. 지출 시 유동성 공급 가능성이 있어요.` }
+  if (val > 500) return { keyword: '정상', text: `$${Math.round(val)}B. 정상 수준이에요.` }
+  if (val > 200) return { keyword: '감소 중', text: `$${Math.round(val)}B. 지출이 늘거나 세수가 줄고 있어요.` }
+  return { keyword: '부채한도 주의', text: `$${Math.round(val)}B. 잔고가 매우 낮아요.` }
 }
 
 function CommentBox({ keyword, text, level = 'neutral' }: {
@@ -163,23 +161,17 @@ function CommentBox({ keyword, text, level = 'neutral' }: {
   level?: 'good' | 'warn' | 'bad' | 'neutral'
 }) {
   if (!text) return null
-  const color = level === 'good' ? '#22c55e'
-    : level === 'warn' ? '#f59e0b'
-    : level === 'bad' ? '#ef4444'
-    : '#e2e8f0'
+  const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#64748b'
   return (
     <div style={{ marginTop: 8 }}>
       {keyword && (
         <div style={{ marginBottom: 4 }}>
-          <span style={{
-            fontSize: '0.6rem', fontWeight: 700, color,
-            border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px',
-          }}>
+          <span style={{ fontSize: '0.7rem', fontWeight: 700, color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px' }}>
             {keyword}
           </span>
         </div>
       )}
-      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>{text}</div>
+      <div style={{ fontSize: '0.7rem', color: 'var(--muted)', lineHeight: 1.6 }}>{text}</div>
     </div>
   )
 }
@@ -192,14 +184,14 @@ function DrawdownBadge({ dd }: {
   return (
     <div style={{ marginTop: 8 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-        <span style={{ fontSize: '0.6rem', fontWeight: 700, color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px' }}>
+        <span style={{ fontSize: '0.7rem', fontWeight: 700, color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px' }}>
           {dd.status}
         </span>
-        <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
+        <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
           ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
         </span>
       </div>
-      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>{dd.comment}</div>
+      <div style={{ fontSize: '0.7rem', color: 'var(--muted)', lineHeight: 1.6 }}>{dd.comment}</div>
     </div>
   )
 }
@@ -207,7 +199,7 @@ function DrawdownBadge({ dd }: {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
-        fontSize: '0.6rem', color: 'var(--text)',
+      fontSize: '0.8rem', color: 'var(--text)',
       letterSpacing: '0.12em', textTransform: 'uppercase',
       marginBottom: 10, marginTop: 28,
     }}>
@@ -216,6 +208,162 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   )
 }
 
+// ── 북마크 메뉴 ────────────────────────────────────
+function BookmarkMenu() {
+  const [open, setOpen] = useState(false)
+  const [bookmarks, setBookmarks] = useState<{ name: string; url: string }[]>([])
+  const [form, setForm] = useState({ name: '', url: '' })
+  const [showForm, setShowForm] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('bookmarks')
+    if (saved) setBookmarks(JSON.parse(saved))
+  }, [])
+
+  function save(updated: { name: string; url: string }[]) {
+    setBookmarks(updated)
+    localStorage.setItem('bookmarks', JSON.stringify(updated))
+  }
+
+  function addBookmark() {
+    if (!form.name.trim() || !form.url.trim()) return
+    const url = form.url.startsWith('http') ? form.url : `https://${form.url}`
+    save([...bookmarks, { name: form.name, url }])
+    setForm({ name: '', url: '' })
+    setShowForm(false)
+  }
+
+  function removeBookmark(i: number) {
+    save(bookmarks.filter((_, idx) => idx !== i))
+  }
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        onClick={() => setOpen(prev => !prev)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 5,
+          background: open ? 'var(--accent)' : 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 8, padding: '6px 12px',
+          color: open ? '#fff' : 'var(--text)',
+          cursor: 'pointer', fontSize: '0.75rem',
+        }}
+      >
+        🔖 북마크
+      </button>
+
+      {open && (
+        <>
+          <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 99 }} />
+          <div style={{
+            position: 'absolute', top: '100%', right: 0, marginTop: 6,
+            background: 'var(--surface)', border: '1px solid var(--border)',
+            borderRadius: 10, padding: 12, zIndex: 100,
+            minWidth: 240, maxWidth: 320,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+          }}>
+            <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 8, letterSpacing: '0.08em' }}>
+              북마크
+            </div>
+
+            {bookmarks.length === 0 ? (
+              <div style={{ fontSize: '0.75rem', color: 'var(--muted)', textAlign: 'center', padding: '8px 0' }}>
+                북마크가 없어요
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
+                {bookmarks.map((bm, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    gap: 8, padding: '6px 8px',
+                    background: 'var(--surface2)', borderRadius: 6,
+                  }}>
+                    <a href={bm.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        fontSize: '0.75rem', color: 'var(--text)', textDecoration: 'none',
+                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        flex: 1,
+                      }}
+                      onClick={() => setOpen(false)}
+                    >
+                      {bm.name}
+                    </a>
+                    <button
+                      onClick={() => removeBookmark(i)}
+                      style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.875rem', flexShrink: 0 }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {showForm ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+                <input
+                  value={form.name}
+                  onChange={e => setForm({ ...form, name: e.target.value })}
+                  placeholder="북마크 이름"
+                  autoFocus
+                  style={{
+                    background: 'var(--surface2)', border: '1px solid var(--border)',
+                    borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '0.75rem',
+                  }}
+                />
+                <input
+                  value={form.url}
+                  onChange={e => setForm({ ...form, url: e.target.value })}
+                  onKeyDown={e => e.key === 'Enter' && addBookmark()}
+                  placeholder="URL (예: https://...)"
+                  style={{
+                    background: 'var(--surface2)', border: '1px solid var(--border)',
+                    borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '0.75rem',
+                  }}
+                />
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button
+                    onClick={() => { setShowForm(false); setForm({ name: '', url: '' }) }}
+                    style={{
+                      flex: 1, background: 'none', border: '1px solid var(--border)',
+                      borderRadius: 6, padding: '5px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.7rem',
+                    }}
+                  >
+                    취소
+                  </button>
+                  <button
+                    onClick={addBookmark}
+                    style={{
+                      flex: 1, background: 'var(--accent)', color: '#fff', border: 'none',
+                      borderRadius: 6, padding: '5px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: 700,
+                    }}
+                  >
+                    추가
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowForm(true)}
+                style={{
+                  width: '100%', background: 'var(--surface2)', border: '1px solid var(--border)',
+                  borderRadius: 6, padding: '6px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.7rem',
+                }}
+              >
+                + 북마크 추가
+              </button>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+// ── 가격 + 차트 ────────────────────────────────────
 function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel, isMobile }: {
   ticker: string
   label: string
@@ -248,40 +396,32 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : '350px 1fr 2fr',
+      gridTemplateColumns: isMobile ? '1fr' : '280px 1fr 2fr',
       gap: 12,
-      background: 'var(--surface)',
-      border: '1px solid var(--border)',
-      borderRadius: 10,
-      padding: isMobile ? '14px' : '16px',
-      marginBottom: 4,
+      background: 'var(--surface)', border: '1px solid var(--border)',
+      borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
     }}>
-      {/* 가격 */}
       <div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
-        <div style={{ fontSize: isMobile ? '1rem' : '1rem', fontWeight: 700, lineHeight: 1 }}>
+        <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
+        <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
+        <div style={{ fontSize: '1.2rem', fontWeight: 700, lineHeight: 1 }}>
           {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
         </div>
-        <div style={{ fontSize: '0.6rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
+        <div style={{ fontSize: '0.75rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
           {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
         </div>
-        {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
+        {sub && <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
         {dd && <DrawdownBadge dd={dd} />}
         {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
-
-      {/* 1개월 차트 — 모바일 숨김 */}
       {!isMobile && (
         <div>
-          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
           <StockLineChart symbol={ticker} color={color} range="1mo" height={120} formatValue={fmt} />
         </div>
       )}
-
-      {/* 1년 차트 */}
       <div>
-        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>
+        <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 4 }}>
           {isMobile ? '1년 차트' : '1년'}
         </div>
         <StockLineChart symbol={ticker} color={color} range="1y" height={isMobile ? 200 : 120} formatValue={fmt} />
@@ -290,6 +430,7 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
   )
 }
 
+// ── FRED 차트 ──────────────────────────────────────
 function FredChartRow({ series, label, desc, color, unit = '%', getComment, isMobile }: {
   series: string
   label: string
@@ -339,44 +480,36 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment, isMo
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : '200px 1fr 2fr',
+      gridTemplateColumns: isMobile ? '1fr' : '280px 1fr 2fr',
       gap: 12,
-      background: 'var(--surface)',
-      border: '1px solid var(--border)',
-      borderRadius: 10,
-      padding: isMobile ? '14px' : '16px',
-      marginBottom: 4,
+      background: 'var(--surface)', border: '1px solid var(--border)',
+      borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
     }}>
-      {/* 가격 */}
       <div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
+        <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
+        <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
         <div style={{
-          fontSize: isMobile ? '1rem' : '1rem', fontWeight: 700, lineHeight: 1,
+          fontSize: '1.2rem', fontWeight: 700, lineHeight: 1,
           color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)',
         }}>
           {latest !== null ? fmt(latest) : '--'}
         </div>
         {change !== null && (
-          <div style={{ fontSize: '0.6rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
+          <div style={{ fontSize: '0.75rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
             {isUp ? '▲ +' : '▼ '}{fmt(Math.abs(change))}
           </div>
         )}
-        {desc && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
+        {desc && <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
         {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
       </div>
-
-      {/* 1개월 차트 — 모바일 숨김 */}
       {!isMobile && (
         <div>
-          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
           <StockLineChart symbol={series} color={color} range="1mo" height={120} formatValue={fmt} externalData={data1mo} />
         </div>
       )}
-
-      {/* 1년 차트 */}
       <div>
-        <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>
+        <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 4 }}>
           {isMobile ? '1년 차트' : '1년'}
         </div>
         <StockLineChart symbol={series} color={color} range="1y" height={isMobile ? 200 : 120} formatValue={fmt} externalData={data1y} />
@@ -385,6 +518,7 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment, isMo
   )
 }
 
+// ── Summary Bar ────────────────────────────────────
 function MarketSummaryBar({ quotes, freds }: {
   quotes: Record<string, QuoteData | null>
   freds: Record<string, FredData | null>
@@ -395,14 +529,14 @@ function MarketSummaryBar({ quotes, freds }: {
     .forEach(({ sym, label }) => {
       const change = quotes[sym]?.change ?? null
       if (change === null) return
-      const keyword = change >= 1.5 ? '강세장' : change >= 0 ? '보합' : change >= -1.5 ? '조정초입' : '조정장'
+      const keyword = change >= 1.5 ? '강세장' : change >= 0 ? '보합' : change >= -1.5 ? '조정 초입' : '조정장'
       const level: 'good' | 'warn' | 'bad' | 'neutral' = change >= 1.5 ? 'good' : change >= 0 ? 'neutral' : change >= -1.5 ? 'warn' : 'bad'
       items.push({ label, keyword, level })
     })
 
   const goldChange = quotes['GC=F']?.change ?? null
   if (goldChange !== null) {
-    const keyword = goldChange >= 1 ? '강세장' : goldChange >= 0 ? '보합' : goldChange >= -1 ? '조정초입' : '조정장'
+    const keyword = goldChange >= 1 ? '강세장' : goldChange >= 0 ? '보합' : goldChange >= -1 ? '조정 초입' : '조정장'
     const level: 'good' | 'warn' | 'bad' | 'neutral' = goldChange >= 0 ? 'good' : goldChange >= -1 ? 'neutral' : 'warn'
     items.push({ label: '금', keyword, level })
   }
@@ -422,7 +556,7 @@ function MarketSummaryBar({ quotes, freds }: {
 
   const t10y2y = freds['T10Y2Y']?.value ?? null
   if (t10y2y !== null) {
-    const keyword = t10y2y < 0 ? '역전' : t10y2y < 0.5 ? '회복초입' : '정상'
+    const keyword = t10y2y < 0 ? '역전' : t10y2y < 0.5 ? '회복 초입' : '정상'
     const level: 'good' | 'warn' | 'bad' | 'neutral' = t10y2y < 0 ? 'bad' : t10y2y < 0.5 ? 'warn' : 'good'
     items.push({ label: '금리차', keyword, level })
   }
@@ -447,7 +581,7 @@ function MarketSummaryBar({ quotes, freds }: {
   const walcl = freds['WALCL']?.value ?? null
   if (walcl !== null) {
     const t = walcl / 1000000
-    const keyword = t >= 8 ? 'QT진행중' : t >= 7 ? 'QT중반' : t >= 6 ? 'QT후반' : '정상화'
+    const keyword = t >= 8 ? 'QT 진행 중' : t >= 7 ? 'QT 중반' : t >= 6 ? 'QT 후반' : '정상화'
     items.push({ label: '연준자산', keyword, level: 'neutral' })
   }
 
@@ -460,13 +594,13 @@ function MarketSummaryBar({ quotes, freds }: {
 
   const rrp = freds['RRPONTSYD']?.value ?? null
   if (rrp !== null) {
-    const keyword = rrp < 100 ? '거의소진' : rrp < 500 ? '대폭감소' : '잔존'
+    const keyword = rrp < 100 ? '거의 소진' : rrp < 500 ? '대폭 감소' : '잔존'
     items.push({ label: '역레포', keyword, level: rrp < 100 ? 'warn' : 'neutral' })
   }
 
   const tga = freds['WTREGEN']?.value ?? null
   if (tga !== null) {
-    const keyword = tga > 800 ? '잔고풍부' : tga > 500 ? '정상' : tga > 200 ? '감소중' : '부채한도주의'
+    const keyword = tga > 800 ? '잔고 풍부' : tga > 500 ? '정상' : tga > 200 ? '감소 중' : '부채한도 주의'
     items.push({ label: 'TGA', keyword, level: tga > 500 ? 'neutral' : 'warn' })
   }
 
@@ -475,22 +609,22 @@ function MarketSummaryBar({ quotes, freds }: {
   return (
     <div style={{
       display: 'flex', flexWrap: 'nowrap', overflowX: 'auto',
-      gap: 8, padding: '10px 16px',
+      gap: 0, padding: '10px 16px',
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, marginBottom: 20,
       msOverflowStyle: 'none', scrollbarWidth: 'none',
     } as React.CSSProperties}>
       {items.map(({ label, keyword, level }, i) => {
-        const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#e2e8f0'
+        const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#64748b'
         return (
           <div key={i} style={{
-            display: 'flex', alignItems: 'center', gap: 7,
-            whiteSpace: 'nowrap', paddingRight: 5,
+            display: 'flex', alignItems: 'center', gap: 4,
+            whiteSpace: 'nowrap', paddingRight: 6,
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
             marginRight: 6,
           }}>
-            <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>{label}</span>
-            <span style={{ fontSize: '0.6rem', fontWeight: 700, color }}>{keyword}</span>
+            <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{label}</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 700, color }}>{keyword}</span>
           </div>
         )
       })}
@@ -498,6 +632,7 @@ function MarketSummaryBar({ quotes, freds }: {
   )
 }
 
+// ── 메인 페이지 ────────────────────────────────────
 export default function Page() {
   const isMobile = useIsMobile()
   const [quotes, setQuotes] = useState<Record<string, QuoteData | null>>({})
@@ -536,46 +671,33 @@ export default function Page() {
       {/* 헤더 */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)'
+        marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
             width: 36, height: 36, background: 'var(--accent)', borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 700, color: '#fff',
+            fontWeight: 700, color: '#fff', fontSize: '0.875rem',
           }}>M</div>
           {!isMobile && (
             <div>
-              <div style={{ fontSize: '0.7rem', fontWeight: 700 }}>Market Monitor</div>
-              <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>Market Monitor</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
             </div>
           )}
         </div>
 
-        {/* 우측 버튼들 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+          <BookmarkMenu />
           <a href="/memo" style={{
             display: 'flex', alignItems: 'center', gap: 5,
             background: 'var(--surface)', border: '1px solid var(--border)',
             borderRadius: 8, padding: '6px 12px',
-            color: 'var(--text)', textDecoration: 'none', fontSize: '0.6rem',
-          }}>{isMobile ? '📝' : '📝 메모'}</a>
-
-          <a href="https://usstocksigma.com/category/expected-move/" target="_blank" rel="noreferrer" style={{
-            display: 'flex', alignItems: 'center', gap: 5,
-            background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 8, padding: '6px 12px',
-            color: 'var(--text)', textDecoration: 'none', fontSize: '0.6rem',
-          }}>{isMobile ? 'Σ' : 'Σ 시그마 조회'}</a>
-
-          <a href="https://usstocksigma.com/2026/02/08/index-leveraged-etf-calculator/" target="_blank" rel="noreferrer" style={{
-            display: 'flex', alignItems: 'center', gap: 5,
-            background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 8, padding: '6px 12px',
-            color: 'var(--text)', textDecoration: 'none', fontSize: '0.6rem',
-          }}>{isMobile ? '📊' : '📊 레버리지 계산기'}</a>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.6rem', color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
+            color: 'var(--text)', textDecoration: 'none', fontSize: '0.75rem',
+          }}>
+            {isMobile ? '📝' : '📝 메모'}
+          </a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.7rem', color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
             {!isMobile && (loading ? 'LOADING...' : 'LIVE')}
           </div>
@@ -631,14 +753,14 @@ export default function Page() {
       <FearGreedGauge isMobile={isMobile} />
       <div style={{
         display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '200px 1fr 2fr',
+        gridTemplateColumns: isMobile ? '1fr' : '280px 1fr 2fr',
         gap: 12,
         background: 'var(--surface)', border: '1px solid var(--border)',
         borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
       }}>
         <div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
-          <div style={{ fontSize: isMobile ? '1rem' : '1rem', fontWeight: 700, lineHeight: 1, color: 'var(--text)' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
+          <div style={{ fontSize: '2rem', fontWeight: 700, lineHeight: 1, color: 'var(--text)' }}>
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox
@@ -651,12 +773,12 @@ export default function Page() {
         </div>
         {!isMobile && (
           <div>
-            <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
+            <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
             <StockLineChart symbol="^VIX" color={COLORS.fear} range="1mo" height={120} formatValue={(v) => v.toFixed(1)} />
           </div>
         )}
         <div>
-          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginBottom: 4 }}>{isMobile ? '1년 차트' : '1년'}</div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--muted)', marginBottom: 4 }}>{isMobile ? '1년 차트' : '1년'}</div>
           <StockLineChart symbol="^VIX" color={COLORS.fear} range="1y" height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} />
         </div>
       </div>
