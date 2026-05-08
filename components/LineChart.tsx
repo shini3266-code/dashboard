@@ -53,7 +53,7 @@ export default function StockLineChart({
       alignItems: 'center',
       justifyContent: 'center',
       color: 'var(--muted)',
-      fontSize: '0.6rem',
+      fontSize: '0.5rem',
     }}>
       로딩 중...
     </div>
@@ -86,11 +86,11 @@ export default function StockLineChart({
           border: '1px solid var(--border)',
           borderRadius: 8,
           padding: '10px 14px',
-          fontSize: '0.6rem',
+          fontSize: '0.5rem',
           boxShadow: '0 4px 12px rgba(0,0,0,0.4)',  // ← 그림자 추가
         }}>
-          <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: '0.6rem' }}>{label}</div>
-          <div style={{ color, fontWeight: 700, fontSize: '0.8rem' }}>{formatValue(payload[0].value)}</div>
+          <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: '0.5rem' }}>{label}</div>
+          <div style={{ color, fontWeight: 700, fontSize: '0.6rem' }}>{formatValue(payload[0].value)}</div>
         </div>
       )
     }
@@ -115,7 +115,7 @@ export default function StockLineChart({
           dataKey="date"
           tickFormatter={tickFormatter}
           tick={{ fill: '#64748b' }}
-          style={{ fontSize: '0.2rem' }}
+          style={{ fontSize: '0.1rem' }}
           axisLine={false}
           tickLine={false}
           interval="preserveStartEnd"
@@ -135,7 +135,7 @@ export default function StockLineChart({
         <YAxis
           domain={[min - padding, max + padding]}
           tick={{ fill: '#64748b' }}
-          style={{ fontSize: '0.2rem' }}
+          style={{ fontSize: '0.1rem' }}
           axisLine={false}
           tickLine={false}
           tickFormatter={formatValue}

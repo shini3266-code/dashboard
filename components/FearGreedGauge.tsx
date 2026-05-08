@@ -104,7 +104,7 @@ export default function FearGreedGauge() {
         {/* 게이지 */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {loading ? (
-            <div style={{ color: 'var(--muted)', fontSize: '0.6rem' }}>로딩 중...</div>
+            <div style={{ color: 'var(--muted)', fontSize: '0.5rem' }}>로딩 중...</div>
           ) : (
             <>
               <svg width="220" height="120" viewBox="0 0 220 120">

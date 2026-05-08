@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import RichEditor from '@/components/RichEditor'
 import { useIsMobile } from '@/hooks/useIsMobile'
