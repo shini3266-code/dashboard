@@ -20,6 +20,103 @@ interface WatchItem {
   added_at: string
 }
 
+function WatchCard({ item, onRemove, onMemo, memoPreview }: {
+  item: WatchItem
+  onRemove: (id: string, symbol: string) => void
+  onMemo: () => void
+  memoPreview?: string
+}) {
+  const [showChart, setShowChart] = useState(false)
+
+  return (
+    <div style={{
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
+      borderRadius: 12,
+      padding: 16,
+    }}>
+      {/* 헤더 */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+        <div>
+          <div style={{ fontSize: 16, fontWeight: 700 }}>{item.symbol}</div>
+          <div style={{ display: 'flex', gap: 10, marginTop: 4, alignItems: 'baseline' }}>
+            <span style={{ fontSize: 22, fontWeight: 700 }}>
+              ${item.price?.toFixed(2)}
+            </span>
+            <span style={{
+              fontSize: 13,
+              color: item.change_pct >= 0 ? 'var(--up)' : 'var(--down)',
+            }}>
+              {item.change_pct >= 0 ? '▲ +' : '▼ '}{item.change_pct?.toFixed(2)}%
+            </span>
+          </div>
+        </div>
+        <button
+          onClick={() => onRemove(item.id, item.symbol)}
+          style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 18 }}
+        >✕</button>
+      </div>
+
+      {/* 차트 토글 버튼 */}
+      <button
+        onClick={() => setShowChart(prev => !prev)}
+        style={{
+          width: '100%',
+          background: 'var(--surface2)',
+          border: '1px solid var(--border)',
+          borderRadius: 6,
+          padding: '5px 0',
+          color: 'var(--muted)',
+          cursor: 'pointer',
+          fontSize: 11,
+          marginBottom: showChart ? 8 : 0,
+        }}
+      >
+        {showChart ? '차트 닫기 ↑' : '차트 보기 ↓'}
+      </button>
+
+      {/* 차트 — 펼쳐질 때만 표시 */}
+      {showChart && (
+        <iframe
+          src={`https://s.tradingview.com/widgetembed/?symbol=${item.symbol}&interval=D&hidesidetoolbar=1&theme=dark&style=1&timezone=Asia%2FSeoul&withdateranges=1&locale=kr`}
+          style={{ width: '100%', height: 280, border: 'none', borderRadius: 8, marginBottom: 10 }}
+        />
+      )}
+
+      {/* 메모 미리보기 + 더보기 버튼 */}
+      <div
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: 'var(--surface2)', border: '1px solid var(--border)',
+          borderRadius: 8, padding: '8px 12px', cursor: 'pointer', marginTop: 8,
+        }}
+        onClick={onMemo}
+      >
+        <div style={{
+          fontSize: 12, color: 'var(--muted)',
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          flex: 1, marginRight: 8,
+        }}>
+          {memoPreview
+            ? memoPreview.replace(/<[^>]+>/g, '').split('\n')[0]  // HTML 태그 제거 후 첫줄
+            : '📌 메모 없음 — 클릭해서 추가하세요'}
+        </div>
+        <button
+          onClick={(e) => { e.stopPropagation(); onMemo() }}
+          style={{
+            background: 'var(--surface)', border: '1px solid var(--border)',
+            borderRadius: 6, padding: '4px 10px',
+            color: 'var(--text)', cursor: 'pointer', fontSize: 11, fontWeight: 700,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          📝 더보기
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // ── 메모 팝업 ──────────────────────────────────────
 function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void }) {
   const [memo, setMemo] = useState('')
@@ -51,103 +148,6 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
   // 바깥 클릭 시 닫기
   function handleBackdrop(e: React.MouseEvent) {
     if (e.target === e.currentTarget) onClose()
-  }
-
-  function WatchCard({ item, onRemove, onMemo, memoPreview }: {
-    item: WatchItem
-    onRemove: (id: string, symbol: string) => void
-    onMemo: () => void
-    memoPreview?: string
-  }) {
-    const [showChart, setShowChart] = useState(false)
-  
-    return (
-      <div style={{
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        borderRadius: 12,
-        padding: 16,
-      }}>
-        {/* 헤더 */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-          <div>
-            <div style={{ fontSize: 16, fontWeight: 700 }}>{item.symbol}</div>
-            <div style={{ display: 'flex', gap: 10, marginTop: 4, alignItems: 'baseline' }}>
-              <span style={{ fontSize: 22, fontWeight: 700 }}>
-                ${item.price?.toFixed(2)}
-              </span>
-              <span style={{
-                fontSize: 13,
-                color: item.change_pct >= 0 ? 'var(--up)' : 'var(--down)',
-              }}>
-                {item.change_pct >= 0 ? '▲ +' : '▼ '}{item.change_pct?.toFixed(2)}%
-              </span>
-            </div>
-          </div>
-          <button
-            onClick={() => onRemove(item.id, item.symbol)}
-            style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 18 }}
-          >✕</button>
-        </div>
-  
-        {/* 차트 토글 버튼 */}
-        <button
-          onClick={() => setShowChart(prev => !prev)}
-          style={{
-            width: '100%',
-            background: 'var(--surface2)',
-            border: '1px solid var(--border)',
-            borderRadius: 6,
-            padding: '5px 0',
-            color: 'var(--muted)',
-            cursor: 'pointer',
-            fontSize: 11,
-            marginBottom: showChart ? 8 : 0,
-          }}
-        >
-          {showChart ? '차트 닫기 ↑' : '차트 보기 ↓'}
-        </button>
-  
-        {/* 차트 — 펼쳐질 때만 표시 */}
-        {showChart && (
-          <iframe
-            src={`https://s.tradingview.com/widgetembed/?symbol=${item.symbol}&interval=D&hidesidetoolbar=1&theme=dark&style=1&timezone=Asia%2FSeoul&withdateranges=1&locale=kr`}
-            style={{ width: '100%', height: 280, border: 'none', borderRadius: 8, marginBottom: 10 }}
-          />
-        )}
-  
-        {/* 메모 미리보기 + 더보기 버튼 */}
-        <div
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            background: 'var(--surface2)', border: '1px solid var(--border)',
-            borderRadius: 8, padding: '8px 12px', cursor: 'pointer', marginTop: 8,
-          }}
-          onClick={onMemo}
-        >
-          <div style={{
-            fontSize: 12, color: 'var(--muted)',
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            flex: 1, marginRight: 8,
-          }}>
-            {memoPreview
-              ? memoPreview.replace(/<[^>]+>/g, '').split('\n')[0]  // HTML 태그 제거 후 첫줄
-              : '📌 메모 없음 — 클릭해서 추가하세요'}
-          </div>
-          <button
-            onClick={(e) => { e.stopPropagation(); onMemo() }}
-            style={{
-              background: 'var(--surface)', border: '1px solid var(--border)',
-              borderRadius: 6, padding: '4px 10px',
-              color: 'var(--text)', cursor: 'pointer', fontSize: 11, fontWeight: 700,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            📝 더보기
-          </button>
-        </div>
-      </div>
-    )
   }
 
   return (
