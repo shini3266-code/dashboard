@@ -36,10 +36,10 @@ function WatchlistMemoBox({ content }: { content: string }) {
       padding: '10px 14px',
       marginBottom: 12,
     }}>
-      <div style={{ fontSize: '0.7rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 700 }}>
+      <div style={{ fontSize: '0.6rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 700 }}>
         📌 관심종목 메모
       </div>
-      <div style={{ fontSize: '0.8rem', color: 'var(--text)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+      <div style={{ fontSize: '0.6rem', color: 'var(--text)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
         {match[1]}
       </div>
     </div>
