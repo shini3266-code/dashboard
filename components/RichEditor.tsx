@@ -43,25 +43,24 @@ function ToolbarBtn({ onClick, active, title, children }: {
 }
 
 export default function RichEditor({ content, onChange, editable = true }: Props) {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Underline,
-      TextStyle,
-      Color,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      //Table.configure({ resizable: true }),
-      Table,
-      TableRow,
-      TableHeader,
-      TableCell,
-    ],
-    content,
-    editable,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
-    },
-  })
+    const editor = useEditor({
+        extensions: [
+          StarterKit,
+          Underline,
+          TextStyle,
+          Color,
+          TextAlign.configure({ types: ['heading', 'paragraph'] }),
+          Table,
+          TableRow,
+          TableHeader,
+          TableCell,
+        ],
+        content: content,
+        editable: editable,
+        onUpdate({ editor }) {
+          onChange(editor.getHTML())
+        },
+      })
 
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
