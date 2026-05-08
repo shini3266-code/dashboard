@@ -704,7 +704,7 @@ export default function Page() {
             borderRadius: 8, padding: '6px 12px',
             color: 'var(--text)', textDecoration: 'none', fontSize: '0.7rem',
           }}>
-            '📝 메모'
+            📝 메모
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.6rem', color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
