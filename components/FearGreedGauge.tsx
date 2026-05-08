@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine } from 'recharts'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 interface FGData {
   score: number
@@ -11,6 +12,7 @@ interface FGData {
 export default function FearGreedGauge() {
   const [data, setData] = useState<FGData | null>(null)
   const [loading, setLoading] = useState(true)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     fetch('/api/feargreed')
