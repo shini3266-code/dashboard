@@ -168,6 +168,7 @@ function EventModal({
 
 // ── 메인 캘린더 ────────────────────────────────────
 export default function EventCalendar({ isMobile = false }: { isMobile?: boolean }) {
+  const isMobile = useIsMobile()
   const [events, setEvents] = useState<CalEvent[]>([])
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [loadingDb, setLoadingDb] = useState(true)

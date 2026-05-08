@@ -254,6 +254,7 @@ export default function Watchlist() {
   const [error, setError] = useState('')
   const [memoSymbol, setMemoSymbol] = useState<string | null>(null)
   const [memoPreview, setMemoPreview] = useState<Record<string, string>>({})
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     async function load() {
