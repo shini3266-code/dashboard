@@ -106,31 +106,21 @@ export default function StockLineChart({
       <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id={`grad-${symbol}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={color} stopOpacity={0.2} />
-            <stop offset="95%" stopColor={color} stopOpacity={0} />
+            <stop offset="5%" stopColor={color} stopOpacity={0.5} />
+            <stop offset="95%" stopColor={color} stopOpacity={0.05} />
           </linearGradient>
         </defs>
         <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
         <XAxis
           dataKey="date"
-          tickFormatter={tickFormatter}
-          tick={{ fill: '#64748b' }}
-          style={{ fontSize: '0.1rem' }}
+          tickFormatter={(date) => {
+            const d = new Date(date)
+            return `${d.getFullYear().toString().slice(2)}.${String(d.getMonth() + 1).padStart(2, '0')}`
+          }}
+          tick={{ fill: '#64748b', fontSize: 8 }}
           axisLine={false}
           tickLine={false}
-          interval="preserveStartEnd"
-          ticks={(() => {
-            // 월별로 첫번째 날짜만 추출
-            const seen = new Set<string>()
-            return data
-              .filter(d => {
-                const month = d.date.slice(0, 7) // "2024-01"
-                if (seen.has(month)) return false
-                seen.add(month)
-                return true
-              })
-              .map(d => d.date)
-          })()}
+          ticks={data.length > 0 ? [data[0].date, data[data.length - 1].date] : []}
         />
         <YAxis
           domain={[min - padding, max + padding]}

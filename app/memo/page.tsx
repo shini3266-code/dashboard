@@ -72,38 +72,55 @@ function CategoryModal({ categories, onClose, onSave, onDelete }: {
               background: 'var(--surface2)', borderRadius: 8, padding: '8px 12px',
             }}>
               {editId === cat.id ? (
-                // 수정 모드
-                <div style={{ display: 'flex', gap: 6, flex: 1, alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
                   <input
                     value={form.name}
                     onChange={e => setForm({ ...form, name: e.target.value })}
                     autoFocus
                     style={{
-                      flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
-                      borderRadius: 6, padding: '4px 8px', color: 'var(--text)', fontSize: '0.6rem',
+                      background: 'var(--surface)', border: '1px solid var(--border)',
+                      borderRadius: 6, padding: '4px 8px', color: 'var(--text)', fontSize: '0.75rem',
+                      width: '100%',
                     }}
                   />
-                  <div style={{ display: 'flex', gap: 3 }}>
+                  {/* 색상 선택 */}
+                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                     {DEFAULT_COLORS.map(c => (
                       <div
                         key={c}
                         onClick={() => setForm({ ...form, color: c })}
                         style={{
-                          width: 14, height: 14, borderRadius: '50%', background: c,
-                          cursor: 'pointer', outline: form.color === c ? '2px solid white' : 'none',
+                          width: 16, height: 16, borderRadius: '50%', background: c,
+                          cursor: 'pointer',
+                          outline: form.color === c ? '2px solid white' : 'none',
                           outlineOffset: 1,
                         }}
                       />
                     ))}
                   </div>
-                  <button
-                    onClick={() => { onSave({ name: form.name, color: form.color }); setEditId(null) }}
-                    style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 8px', cursor: 'pointer', fontSize: '0.6rem' }}
-                  >저장</button>
-                  <button
-                    onClick={() => setEditId(null)}
-                    style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '4px 8px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem' }}
-                  >취소</button>
+                  {/* 저장/취소 버튼 */}
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button
+                      onClick={() => { setEditId(null); setForm({ name: '', color: DEFAULT_COLORS[0] }) }}
+                      style={{
+                        background: 'none', border: '1px solid var(--border)',
+                        borderRadius: 6, padding: '3px 10px',
+                        color: 'var(--muted)', cursor: 'pointer', fontSize: '0.7rem',
+                      }}
+                    >취소</button>
+                    <button
+                      onClick={() => {
+                        onSave({ name: form.name, color: form.color }, cat.id)  // ← cat.id 넘기기
+                        setEditId(null)
+                        setForm({ name: '', color: DEFAULT_COLORS[0] })
+                      }}
+                      style={{
+                        background: 'var(--accent)', color: '#fff', border: 'none',
+                        borderRadius: 6, padding: '3px 10px',
+                        cursor: 'pointer', fontSize: '0.7rem',
+                      }}
+                    >저장</button>
+                  </div>
                 </div>
               ) : (
                 // 보기 모드

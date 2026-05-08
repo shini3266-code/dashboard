@@ -64,7 +64,7 @@ function WatchCard({ item, onRemove, onMemo, memoPreview }: {
           padding: '5px 0',
           color: 'var(--muted)',
           cursor: 'pointer',
-          fontSize: 11,
+          fontSize: '0.4rem',
           marginBottom: showChart ? 8 : 0,
         }}
       >
@@ -89,7 +89,7 @@ function WatchCard({ item, onRemove, onMemo, memoPreview }: {
         onClick={onMemo}
       >
         <div style={{
-          fontSize: 12, color: 'var(--text)',
+          fontSize: '0.6rem', color: 'var(--text)',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           flex: 1, marginRight: 8,
         }}>

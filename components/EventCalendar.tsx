@@ -271,7 +271,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
         📅 이벤트 캘린더
       </div> */}
 
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 400px', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 400px', gap: 16, alignItems: 'start', }}>
         {/* 달력 */}
         <div>
           {/* 월 네비게이션 */}
@@ -360,6 +360,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
             임박한 이벤트
           </div>
           <div style={{
+            maxHeight: 500,
             overflowY: 'auto',        // ← 추가
             maxHeight: 400,           // ← 최대 높이 설정
             paddingRight: 4,          // ← 스크롤바 공간
