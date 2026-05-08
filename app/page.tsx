@@ -260,7 +260,7 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
       <div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
-        <div style={{ fontSize: isMobile ? '1.2rem' : '1rem', fontWeight: 700, lineHeight: 1 }}>
+        <div style={{ fontSize: isMobile ? '1rem' : '1rem', fontWeight: 700, lineHeight: 1 }}>
           {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
         </div>
         <div style={{ fontSize: '0.6rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
@@ -352,7 +352,7 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment, isMo
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
         <div style={{
-          fontSize: isMobile ? '1.2rem' : '1rem', fontWeight: 700, lineHeight: 1,
+          fontSize: isMobile ? '1rem' : '1rem', fontWeight: 700, lineHeight: 1,
           color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)',
         }}>
           {latest !== null ? fmt(latest) : '--'}
