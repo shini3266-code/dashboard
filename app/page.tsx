@@ -8,6 +8,7 @@ import SectorFlow from '@/components/SectorFlow'
 import MarketHeatmap from '@/components/MarketHeatmap'
 import EventCalendar from '@/components/EventCalendar'
 import { useIsMobile } from '@/hooks/useIsMobile'
+import { supabase } from '@/lib/supabase'
 
 interface QuoteData {
   symbol: string
@@ -211,30 +212,38 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 // ── 북마크 메뉴 ────────────────────────────────────
 function BookmarkMenu() {
   const [open, setOpen] = useState(false)
-  const [bookmarks, setBookmarks] = useState<{ name: string; url: string }[]>([])
+  const [bookmarks, setBookmarks] = useState<{ id: string; name: string; url: string }[]>([])
   const [form, setForm] = useState({ name: '', url: '' })
   const [showForm, setShowForm] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem('bookmarks')
-    if (saved) setBookmarks(JSON.parse(saved))
+    load()
   }, [])
 
-  function save(updated: { name: string; url: string }[]) {
-    setBookmarks(updated)
-    localStorage.setItem('bookmarks', JSON.stringify(updated))
+  async function load() {
+    const { data } = await supabase
+      .from('bookmarks')
+      .select('*')
+      .order('created_at', { ascending: true })
+    if (data) setBookmarks(data)
   }
 
-  function addBookmark() {
+  async function addBookmark() {
     if (!form.name.trim() || !form.url.trim()) return
     const url = form.url.startsWith('http') ? form.url : `https://${form.url}`
-    save([...bookmarks, { name: form.name, url }])
+    const { data } = await supabase
+      .from('bookmarks')
+      .insert({ name: form.name, url })
+      .select()
+      .single()
+    if (data) setBookmarks(prev => [...prev, data])
     setForm({ name: '', url: '' })
     setShowForm(false)
   }
 
-  function removeBookmark(i: number) {
-    save(bookmarks.filter((_, idx) => idx !== i))
+  async function removeBookmark(id: string) {
+    await supabase.from('bookmarks').delete().eq('id', id)
+    setBookmarks(prev => prev.filter(b => b.id !== id))
   }
 
   return (
@@ -247,7 +256,7 @@ function BookmarkMenu() {
           border: '1px solid var(--border)',
           borderRadius: 8, padding: '6px 12px',
           color: open ? '#fff' : 'var(--text)',
-          cursor: 'pointer', fontSize: '0.6rem',
+          cursor: 'pointer', fontSize: '0.75rem',
         }}
       >
         🔖 북마크
@@ -263,27 +272,27 @@ function BookmarkMenu() {
             minWidth: 240, maxWidth: 320,
             boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
           }}>
-            <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 8, letterSpacing: '0.08em' }}>
+            <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 8, letterSpacing: '0.08em' }}>
               북마크
             </div>
 
             {bookmarks.length === 0 ? (
-              <div style={{ fontSize: '0.6rem', color: 'var(--muted)', textAlign: 'center', padding: '8px 0' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--muted)', textAlign: 'center', padding: '8px 0' }}>
                 북마크가 없어요
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
-                {bookmarks.map((bm, i) => (
-                  <div key={i} style={{
+                {bookmarks.map((bm) => (
+                  <div key={bm.id} style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     gap: 8, padding: '6px 8px',
                     background: 'var(--surface2)', borderRadius: 6,
-                  }}>
+                  }}>                    
                     <a href={bm.url}
                       target="_blank"
                       rel="noreferrer"
                       style={{
-                        fontSize: '0.6rem', color: 'var(--text)', textDecoration: 'none',
+                        fontSize: '0.75rem', color: 'var(--text)', textDecoration: 'none',
                         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                         flex: 1,
                       }}
@@ -292,7 +301,7 @@ function BookmarkMenu() {
                       {bm.name}
                     </a>
                     <button
-                      onClick={() => removeBookmark(i)}
+                      onClick={() => removeBookmark(bm.id)}
                       style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.875rem', flexShrink: 0 }}
                     >
                       ✕
@@ -311,7 +320,7 @@ function BookmarkMenu() {
                   autoFocus
                   style={{
                     background: 'var(--surface2)', border: '1px solid var(--border)',
-                    borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '0.6rem',
+                    borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '0.75rem',
                   }}
                 />
                 <input
@@ -321,7 +330,7 @@ function BookmarkMenu() {
                   placeholder="URL (예: https://...)"
                   style={{
                     background: 'var(--surface2)', border: '1px solid var(--border)',
-                    borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '0.6rem',
+                    borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '0.75rem',
                   }}
                 />
                 <div style={{ display: 'flex', gap: 6 }}>
@@ -329,7 +338,7 @@ function BookmarkMenu() {
                     onClick={() => { setShowForm(false); setForm({ name: '', url: '' }) }}
                     style={{
                       flex: 1, background: 'none', border: '1px solid var(--border)',
-                      borderRadius: 6, padding: '5px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem',
+                      borderRadius: 6, padding: '5px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.7rem',
                     }}
                   >
                     취소
@@ -338,7 +347,7 @@ function BookmarkMenu() {
                     onClick={addBookmark}
                     style={{
                       flex: 1, background: 'var(--accent)', color: '#fff', border: 'none',
-                      borderRadius: 6, padding: '5px', cursor: 'pointer', fontSize: '0.6rem', fontWeight: 700,
+                      borderRadius: 6, padding: '5px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: 700,
                     }}
                   >
                     추가
@@ -350,7 +359,7 @@ function BookmarkMenu() {
                 onClick={() => setShowForm(true)}
                 style={{
                   width: '100%', background: 'var(--surface2)', border: '1px solid var(--border)',
-                  borderRadius: 6, padding: '6px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem',
+                  borderRadius: 6, padding: '6px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.7rem',
                 }}
               >
                 + 북마크 추가
@@ -609,7 +618,7 @@ function MarketSummaryBar({ quotes, freds }: {
   return (
     <div style={{
       display: 'flex', flexWrap: 'nowrap', overflowX: 'auto',
-      gap: 0, padding: '10px 16px',
+      gap: 6, padding: '10px 16px',
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, marginBottom: 20,
       msOverflowStyle: 'none', scrollbarWidth: 'none',
@@ -618,7 +627,7 @@ function MarketSummaryBar({ quotes, freds }: {
         const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#e2e8f0'
         return (
           <div key={i} style={{
-            display: 'flex', alignItems: 'center', gap: 4,
+            display: 'flex', alignItems: 'center', gap: 6,
             whiteSpace: 'nowrap', paddingRight: 6,
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
             marginRight: 6,
