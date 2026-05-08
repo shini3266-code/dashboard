@@ -259,10 +259,12 @@ function JoblessChart() {
 }
 
 export default function UnemploymentCharts() {
+  const isMobile = useIsMobile()
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginBottom: 8 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 8, marginBottom: 8 }}>
       <UnempChart />
       <JoblessChart />
     </div>
   )
 }
+

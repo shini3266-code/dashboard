@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import RichEditor from '@/components/RichEditor'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -64,7 +65,7 @@ function CategoryModal({ categories, onClose, onSave, onDelete }: {
         display: 'flex', flexDirection: 'column', gap: 16,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: 15, fontWeight: 700 }}>카테고리 관리</div>
+          <div style={{ fontSize: '0.7rem', fontWeight: 700 }}>카테고리 관리</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
         </div>
 
@@ -272,7 +273,7 @@ export default function MemoPage() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
-
+  
       {/* 카테고리 모달 */}
       {showCatModal && (
         <CategoryModal
@@ -282,206 +283,213 @@ export default function MemoPage() {
           onDelete={deleteCategory}
         />
       )}
-
+  
       {/* 사이드바 */}
-      <div style={{ width: 260, borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-
-        {/* 상단 */}
-        <div style={{ padding: '16px', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <Link href="/" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '0.6rem' }}>
-              ← 대시보드
-            </Link>
+      {(!isMobile || !isEditing) && (
+        <div style={{
+          width: isMobile ? '100%' : 260,
+          borderRight: '1px solid var(--border)',
+          display: 'flex', flexDirection: 'column', flexShrink: 0,
+        }}>
+          {/* 상단 */}
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <Link href="/" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '0.6rem' }}>
+                ← 대시보드
+              </Link>
+              <button
+                onClick={() => {
+                  setSelected(null)
+                  setIsEditing(true)
+                  setForm({ title: '', content: '', category: categories[0]?.name ?? '기타' })
+                }}
+                style={{
+                  background: 'var(--accent)', color: '#fff', border: 'none',
+                  borderRadius: 6, padding: '5px 10px', cursor: 'pointer', fontSize: '0.6rem', fontWeight: 700,
+                }}
+              >
+                + 새 메모
+              </button>
+            </div>
+  
+            {/* 카테고리 목록 */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {allCategories.map(cat => {
+                const catObj = categories.find(c => c.name === cat)
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 8,
+                      background: selectedCategory === cat ? 'rgba(59,130,246,0.15)' : 'none',
+                      color: selectedCategory === cat ? 'var(--text)' : 'var(--muted)',
+                      border: 'none', borderRadius: 6, padding: '7px 10px',
+                      cursor: 'pointer', fontSize: '0.6rem', textAlign: 'left',
+                      borderLeft: selectedCategory === cat ? `3px solid ${catObj?.color ?? 'var(--accent)'}` : '3px solid transparent',
+                    }}
+                  >
+                    {catObj && <div style={{ width: 8, height: 8, borderRadius: '50%', background: catObj.color }} />}
+                    {cat}
+                    <span style={{ marginLeft: 'auto', fontSize: '0.6rem', color: 'var(--muted)' }}>
+                      {cat === '전체' ? memos.length : memos.filter(m => m.category === cat).length}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+  
+            {/* 카테고리 관리 버튼 */}
             <button
-              onClick={() => {
-                setSelected(null)
-                setIsEditing(true)
-                setForm({ title: '', content: '', category: categories[0]?.name ?? '기타' })
-              }}
+              onClick={() => setShowCatModal(true)}
               style={{
-                background: 'var(--accent)', color: '#fff', border: 'none',
-                borderRadius: 6, padding: '5px 10px', cursor: 'pointer', fontSize: '0.6rem', fontWeight: 700,
+                width: '100%', marginTop: 8,
+                background: 'none', border: '1px solid var(--border)',
+                borderRadius: 6, padding: '6px', cursor: 'pointer',
+                color: 'var(--muted)', fontSize: '0.6rem',
               }}
             >
-              + 새 메모
+              ⚙️ 카테고리 관리
             </button>
           </div>
-
-          {/* 카테고리 목록 */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {allCategories.map(cat => {
-              const catObj = categories.find(c => c.name === cat)
+  
+          {/* 메모 목록 */}
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            {loading ? (
+              <div style={{ padding: 20, color: 'var(--muted)', fontSize: '0.6rem', textAlign: 'center' }}>로딩 중...</div>
+            ) : filtered.length === 0 ? (
+              <div style={{ padding: 20, color: 'var(--muted)', fontSize: '0.6rem', textAlign: 'center' }}>메모 없음</div>
+            ) : filtered.map(memo => {
+              const catObj = categories.find(c => c.name === memo.category)
               return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
+                <div
+                  key={memo.id}
+                  onClick={() => { setSelected(memo); setIsEditing(false) }}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    background: selectedCategory === cat ? 'rgba(59,130,246,0.15)' : 'none',
-                    color: selectedCategory === cat ? 'var(--text)' : 'var(--muted)',
-                    border: 'none', borderRadius: 6, padding: '7px 10px',
-                    cursor: 'pointer', fontSize: '0.6rem', textAlign: 'left',
-                    borderLeft: selectedCategory === cat ? `3px solid ${catObj?.color ?? 'var(--accent)'}` : '3px solid transparent',
+                    padding: '12px 16px', borderBottom: '1px solid var(--border)',
+                    cursor: 'pointer',
+                    background: selected?.id === memo.id ? 'var(--surface)' : 'transparent',
+                    borderLeft: selected?.id === memo.id ? `3px solid ${catObj?.color ?? 'var(--accent)'}` : '3px solid transparent',
                   }}
                 >
-                  {catObj && <div style={{ width: 8, height: 8, borderRadius: '50%', background: catObj.color }} />}
-                  {cat}
-                  <span style={{ marginLeft: 'auto', fontSize: '0.6rem', color: 'var(--muted)' }}>
-                    {cat === '전체' ? memos.length : memos.filter(m => m.category === cat).length}
-                  </span>
-                </button>
+                  <div style={{ fontSize: '0.6rem', fontWeight: 700, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {memo.title}
+                  </div>
+                  <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {memo.content.replace(/<[^>]+>/g, '').split('\n')[0] || '내용 없음'}
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{
+                      fontSize: '0.6rem', color: catObj?.color ?? 'var(--accent)',
+                      background: `${catObj?.color ?? '#3b82f6'}20`, borderRadius: 3, padding: '1px 6px',
+                    }}>
+                      {memo.category}
+                    </span>
+                    <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
+                      {new Date(memo.updated_at).toLocaleDateString('ko-KR')}
+                    </span>
+                  </div>
+                </div>
               )
             })}
-          </div>
-
-          {/* 카테고리 관리 버튼 */}
-          <button
-            onClick={() => setShowCatModal(true)}
-            style={{
-              width: '100%', marginTop: 8,
-              background: 'none', border: '1px solid var(--border)',
-              borderRadius: 6, padding: '6px', cursor: 'pointer',
-              color: 'var(--muted)', fontSize: '0.6rem',
-            }}
-          >
-            ⚙️ 카테고리 관리
-          </button>
-        </div>
-
-        {/* 메모 목록 */}
-        <div style={{ flex: 1, overflowY: 'auto' }}>
-          {loading ? (
-            <div style={{ padding: 20, color: 'var(--muted)', fontSize: '0.6rem', textAlign: 'center' }}>로딩 중...</div>
-          ) : filtered.length === 0 ? (
-            <div style={{ padding: 20, color: 'var(--muted)', fontSize: '0.6rem', textAlign: 'center' }}>메모 없음</div>
-          ) : filtered.map(memo => {
-            const catObj = categories.find(c => c.name === memo.category)
-            return (
-              <div
-                key={memo.id}
-                onClick={() => { setSelected(memo); setIsEditing(false) }}
-                style={{
-                  padding: '12px 16px', borderBottom: '1px solid var(--border)',
-                  cursor: 'pointer',
-                  background: selected?.id === memo.id ? 'var(--surface)' : 'transparent',
-                  borderLeft: selected?.id === memo.id ? `3px solid ${catObj?.color ?? 'var(--accent)'}` : '3px solid transparent',
-                }}
-              >
-                <div style={{ fontSize: '0.6rem', fontWeight: 700, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {memo.title}
-                </div>
-                <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {memo.content.split('\n')[0] || '내용 없음'}
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{
-                    fontSize: '0.6rem', color: catObj?.color ?? 'var(--accent)',
-                    background: `${catObj?.color ?? '#3b82f6'}20`, borderRadius: 3, padding: '1px 6px',
-                  }}>
-                    {memo.category}
-                  </span>
-                  <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
-                    {new Date(memo.updated_at).toLocaleDateString('ko-KR')}
-                  </span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
+          </div> 
+        </div>    
+      )}         
+  
       {/* 메인 영역 */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {isEditing ? (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 24, gap: 12 }}>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <input
-                value={form.title}
-                onChange={e => setForm({ ...form, title: e.target.value })}
-                placeholder="제목"
-                autoFocus
-                style={{
-                  flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
-                  borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: '0.8rem', fontWeight: 700,
-                }}
+      {(!isMobile || isEditing) && (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {isEditing ? (
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 24, gap: 12 }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <input
+                  value={form.title}
+                  onChange={e => setForm({ ...form, title: e.target.value })}
+                  placeholder="제목"
+                  autoFocus
+                  style={{
+                    flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
+                    borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: '0.8rem', fontWeight: 700,
+                  }}
+                />
+                <select
+                  value={form.category}
+                  onChange={e => setForm({ ...form, category: e.target.value })}
+                  style={{
+                    background: 'var(--surface)', border: '1px solid var(--border)',
+                    borderRadius: 8, padding: '10px 12px', color: 'var(--text)', fontSize: '0.6rem',
+                  }}
+                >
+                  {categories.map(c => <option key={c.id}>{c.name}</option>)}
+                </select>
+                <button
+                  onClick={() => { setIsEditing(false); setSelected(null) }}
+                  style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem' }}
+                >
+                  취소
+                </button>
+                <button
+                  onClick={saveMemo}
+                  style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 18px', cursor: 'pointer', fontSize: '0.6rem', fontWeight: 700 }}
+                >
+                  저장
+                </button>
+              </div>
+              <RichEditor
+                content={form.content}
+                onChange={(html) => setForm({ ...form, content: html })}
+                editable={true}
               />
-              <select
-                value={form.category}
-                onChange={e => setForm({ ...form, category: e.target.value })}
-                style={{
-                  background: 'var(--surface)', border: '1px solid var(--border)',
-                  borderRadius: 8, padding: '10px 12px', color: 'var(--text)', fontSize: '0.6rem',
-                }}
-              >
-                {categories.map(c => <option key={c.id}>{c.name}</option>)}
-              </select>
-              <button
-                onClick={() => { setIsEditing(false); setSelected(null) }}
-                style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem' }}
-              >
-                취소
-              </button>
-              <button
-                onClick={saveMemo}
-                style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 18px', cursor: 'pointer', fontSize: '0.6rem', fontWeight: 700 }}
-              >
-                저장
-              </button>
             </div>
-            {/* 기존 textarea 제거하고 RichEditor로 교체 */}
-            <RichEditor
-              content={form.content}
-              onChange={(html) => setForm({ ...form, content: html })}
-              editable={true}
-            />
-          </div>
-        ) : selected ? (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 24, overflow: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-              <div>
-                <div style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 6 }}>{selected.title}</div>
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  {(() => {
-                    const catObj = categories.find(c => c.name === selected.category)
-                    return (
-                      <span style={{ fontSize: '0.6rem', color: catObj?.color ?? 'var(--accent)', background: `${catObj?.color ?? '#3b82f6'}20`, borderRadius: 3, padding: '2px 8px' }}>
-                        {selected.category}
-                      </span>
-                    )
-                  })()}
-                  <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
-                    {new Date(selected.updated_at).toLocaleString('ko-KR')}
-                  </span>
+          ) : selected ? (
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 24, overflow: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                <div>
+                  <div style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 6 }}>{selected.title}</div>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    {(() => {
+                      const catObj = categories.find(c => c.name === selected.category)
+                      return (
+                        <span style={{ fontSize: '0.6rem', color: catObj?.color ?? 'var(--accent)', background: `${catObj?.color ?? '#3b82f6'}20`, borderRadius: 3, padding: '2px 8px' }}>
+                          {selected.category}
+                        </span>
+                      )
+                    })()}
+                    <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
+                      {new Date(selected.updated_at).toLocaleString('ko-KR')}
+                    </span>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    onClick={() => { setIsEditing(true); setForm({ title: selected.title, content: selected.content, category: selected.category }) }}
+                    style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.6rem' }}
+                  >
+                    ✏️ 수정
+                  </button>
+                  <button
+                    onClick={() => deleteMemo(selected.id)}
+                    style={{ background: 'none', border: '1px solid var(--down)', borderRadius: 8, padding: '7px 14px', color: 'var(--down)', cursor: 'pointer', fontSize: '0.6rem' }}
+                  >
+                    삭제
+                  </button>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button
-                  onClick={() => { setIsEditing(true); setForm({ title: selected.title, content: selected.content, category: selected.category }) }}
-                  style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.6rem' }}
-                >
-                  ✏️ 수정
-                </button>
-                <button
-                  onClick={() => deleteMemo(selected.id)}
-                  style={{ background: 'none', border: '1px solid var(--down)', borderRadius: 8, padding: '7px 14px', color: 'var(--down)', cursor: 'pointer', fontSize: '0.6rem' }}
-                >
-                  삭제
-                </button>
-              </div>
+              <RichEditor
+                content={selected.content}
+                onChange={() => {}}
+                editable={false}
+              />
             </div>
-            <RichEditor
-              content={selected.content}
-              onChange={() => {}}
-              editable={false}
-            />
-          </div>
-        ) : (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', flexDirection: 'column', gap: 12 }}>
-            <div style={{ fontSize: '2rem' }}>📝</div>
-            <div style={{ fontSize: '0.6rem' }}>메모를 선택하거나 새 메모를 작성하세요</div>
-          </div>
-        )}
-      </div>
-    </div>
+          ) : (
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', flexDirection: 'column', gap: 12 }}>
+              <div style={{ fontSize: '2rem' }}>📝</div>
+              <div style={{ fontSize: '0.6rem' }}>메모를 선택하거나 새 메모를 작성하세요</div>
+            </div>
+          )}
+        </div> 
+      )}       
+
+    </div>  
   )
 }
