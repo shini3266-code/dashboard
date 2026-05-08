@@ -4,6 +4,7 @@ import Link from 'next/link'
 import RichEditor from '@/components/RichEditor'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { supabase } from '@/lib/supabase'
+import Watchlist from '@/components/Watchlist'
 
 interface Memo {
   id: string
@@ -21,6 +22,29 @@ interface Category {
 }
 
 const DEFAULT_COLORS = ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#f97316', /*'#06b6d4',*/ '#64748b']
+
+function WatchlistMemoBox({ content }: { content: string }) {
+  const match = content.match(/\[WATCHLIST_MEMO\]([\s\S]*?)\[\/WATCHLIST_MEMO\]/)
+  if (!match) return null
+
+  return (
+    <div style={{
+      background: 'var(--surface2)',
+      border: '1px solid var(--accent)',
+      borderLeft: '3px solid var(--accent)',
+      borderRadius: 8,
+      padding: '10px 14px',
+      marginBottom: 12,
+    }}>
+      <div style={{ fontSize: '0.7rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 700 }}>
+        📌 관심종목 메모
+      </div>
+      <div style={{ fontSize: '0.8rem', color: 'var(--text)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+        {match[1]}
+      </div>
+    </div>
+  )
+}
 
 // ── 카테고리 관리 모달 ─────────────────────────────
 function CategoryModal({ categories, onClose, onSave, onDelete }: {
@@ -48,29 +72,6 @@ function CategoryModal({ categories, onClose, onSave, onDelete }: {
     setEditId(null)
   }
 
-  function WatchlistMemoBox({ content }: { content: string }) {
-    const match = content.match(/\[WATCHLIST_MEMO\]([\s\S]*?)\[\/WATCHLIST_MEMO\]/)
-    if (!match) return null
-  
-    return (
-      <div style={{
-        background: 'var(--surface2)',
-        border: '1px solid var(--accent)',
-        borderLeft: '3px solid var(--accent)',
-        borderRadius: 8,
-        padding: '10px 14px',
-        marginBottom: 12,
-      }}>
-        <div style={{ fontSize: '0.7rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 700 }}>
-          📌 관심종목 메모
-        </div>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
-          {match[1]}
-        </div>
-      </div>
-    )
-  }
-  
   return (
     <div onClick={handleBackdrop} style={{
       position: 'fixed', inset: 0, zIndex: 2000,
