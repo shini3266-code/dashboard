@@ -248,7 +248,7 @@ function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValu
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : '200px 1fr 2fr',
+      gridTemplateColumns: isMobile ? '1fr' : '260px 1fr 2fr',
       gap: 12,
       background: 'var(--surface)',
       border: '1px solid var(--border)',
@@ -628,7 +628,7 @@ export default function Page() {
 
       {/* 시장 심리 */}
       <SectionLabel>😱 시장 심리</SectionLabel>
-      <FearGreedGauge />
+      <FearGreedGauge isMobile={isMobile} />
       <div style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : '200px 1fr 2fr',

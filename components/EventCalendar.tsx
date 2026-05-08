@@ -2,11 +2,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { useIsMobile } from '@/hooks/useIsMobile'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { supabase } from '@/lib/supabase'
 
 function getDeviceId() {
   return 'my-dashboard-user'
@@ -276,7 +272,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
         📅 이벤트 캘린더
       </div> */}
 
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 280px', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 400px', gap: 16 }}>
         {/* 달력 */}
         <div>
           {/* 월 네비게이션 */}

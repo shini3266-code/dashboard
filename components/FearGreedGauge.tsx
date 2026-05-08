@@ -98,7 +98,7 @@ export default function FearGreedGauge() {
         CNN 공포·탐욕 지수
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 24, alignItems: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '220px 1fr', gap: 24, alignItems: 'center' }}>
         {/* 게이지 */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {loading ? (
@@ -129,8 +129,8 @@ export default function FearGreedGauge() {
                 )}
 
                 {/* 레이블 */}
-                <text x="18" y="112" fill="#ef4444" fontSize='0.3rem' fontFamily="monospace">극단공포</text>
-                <text x="180" y="112" fill="#22c55e" fontSize='0.3rem' fontFamily="monospace">극단탐욕</text>
+                <text x="18" y="112" fill="#ef4444" fontSize='0.1rem' fontFamily="monospace">극단공포</text>
+                <text x="180" y="112" fill="#22c55e" fontSize='0.1rem' fontFamily="monospace">극단탐욕</text>
               </svg>
 
               {/* 숫자 */}
