@@ -74,11 +74,11 @@ function getDrawdownComment(current: number | null, high: number | null) {
     : drawdown >= -20 ? '조정장'
     : drawdown >= -30 ? '약세장'
     : '급락장'
-  const comment = drawdown >= -2 ? '고점 근처예요. 강세장이에요.'
-    : drawdown >= -10 ? '소폭 조정 중이에요. 매수 기회를 탐색할 구간이에요.'
-    : drawdown >= -20 ? '조정 구간이에요. 리스크 관리가 필요해요.'
-    : drawdown >= -30 ? '약세장이에요. 방어적 접근이 필요해요.'
-    : '급락 구간이에요. 현금 비중을 높이세요.'
+  // const comment = drawdown >= -2 ? '고점 근처예요. 강세장이에요.'
+  //   : drawdown >= -10 ? '소폭 조정 중이에요. 매수 기회를 탐색할 구간이에요.'
+  //   : drawdown >= -20 ? '조정 구간이에요. 리스크 관리가 필요해요.'
+  //   : drawdown >= -30 ? '약세장이에요. 방어적 접근이 필요해요.'
+  //   : '급락 구간이에요. 현금 비중을 높이세요.'
   const level = drawdown >= -2 ? 'good' as const : drawdown >= -10 ? 'warn' as const : 'bad' as const
   return { drawdown, status, comment, level }
 }
