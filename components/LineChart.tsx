@@ -113,6 +113,7 @@ export default function StockLineChart({
         <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
         <XAxis
           dataKey="date"
+          type="category"
           tickFormatter={(date) => {
             const d = new Date(date)
             return `${d.getFullYear().toString().slice(2)}.${String(d.getMonth() + 1).padStart(2, '0')}`
@@ -120,7 +121,9 @@ export default function StockLineChart({
           tick={{ fill: '#64748b', fontSize: 8 }}
           axisLine={false}
           tickLine={false}
+          interval={0}
           ticks={data.length > 0 ? [data[0].date, data[data.length - 1].date] : []}
+          allowDataOverflow={false}
         />
         <YAxis
           domain={[min - padding, max + padding]}

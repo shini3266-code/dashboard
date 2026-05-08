@@ -60,7 +60,7 @@ function CategoryModal({ categories, onClose, onSave, onDelete }: {
         display: 'flex', flexDirection: 'column', gap: 16,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: '0.7rem', fontWeight: 700 }}>카테고리 관리</div>
+          <div style={{ fontSize: '0.6rem', fontWeight: 700 }}>카테고리 관리</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
         </div>
 
@@ -79,7 +79,7 @@ function CategoryModal({ categories, onClose, onSave, onDelete }: {
                     autoFocus
                     style={{
                       background: 'var(--surface)', border: '1px solid var(--border)',
-                      borderRadius: 6, padding: '4px 8px', color: 'var(--text)', fontSize: '0.75rem',
+                      borderRadius: 6, padding: '4px 8px', color: 'var(--text)', fontSize: '0.6rem',
                       width: '100%',
                     }}
                   />
@@ -105,7 +105,7 @@ function CategoryModal({ categories, onClose, onSave, onDelete }: {
                       style={{
                         background: 'none', border: '1px solid var(--border)',
                         borderRadius: 6, padding: '3px 10px',
-                        color: 'var(--muted)', cursor: 'pointer', fontSize: '0.7rem',
+                        color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem',
                       }}
                     >취소</button>
                     <button
@@ -117,7 +117,7 @@ function CategoryModal({ categories, onClose, onSave, onDelete }: {
                       style={{
                         background: 'var(--accent)', color: '#fff', border: 'none',
                         borderRadius: 6, padding: '3px 10px',
-                        cursor: 'pointer', fontSize: '0.7rem',
+                        cursor: 'pointer', fontSize: '0.6rem',
                       }}
                     >저장</button>
                   </div>

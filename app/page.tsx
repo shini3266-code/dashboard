@@ -171,7 +171,7 @@ function CommentBox({ keyword, text, level = 'neutral' }: {
           </span>
         </div>
       )}
-      <div style={{ fontSize: '0.6rem', color: 'var(--text)', lineHeight: 1.6 }}>{text}</div>
+      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>{text}</div>
     </div>
   )
 }
@@ -490,7 +490,7 @@ function FredChartRow({ series, label, desc, color, unit = '%', getComment, isMo
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
         <div style={{
           fontSize: '1rem', fontWeight: 700, lineHeight: 1,
-          color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--muted)',
+          color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)',
         }}>
           {latest !== null ? fmt(latest) : '--'}
         </div>
