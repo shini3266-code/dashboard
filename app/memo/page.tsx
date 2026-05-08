@@ -213,7 +213,6 @@ export default function MemoPage() {
         .select()
         .single()
       if (updated) setCategories(prev => prev.map(c => c.id === editId ? updated : c))
-      setEditId(null)
     } else {
       // 추가
       const { data: inserted } = await supabase
