@@ -20,7 +20,7 @@ interface Category {
   color: string
 }
 
-const DEFAULT_COLORS = ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#f97316', '#06b6d4', '#64748b']
+const DEFAULT_COLORS = ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#f97316', /*'#06b6d4',*/ '#64748b']
 
 // ── 카테고리 관리 모달 ─────────────────────────────
 function CategoryModal({ categories, onClose, onSave, onDelete }: {
