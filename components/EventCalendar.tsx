@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { supabase } from '@/lib/supabase'
 
