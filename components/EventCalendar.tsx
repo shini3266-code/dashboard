@@ -271,11 +271,11 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
         />
       )}
 
-      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 16 }}>
+      {/* <div style={{ fontSize: '0.6rem', color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 16 }}>
         📅 이벤트 캘린더
-      </div>
+      </div> */}
 
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 260px', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 300px', gap: 16 }}>
         {/* 달력 */}
         <div>
           {/* 월 네비게이션 */}

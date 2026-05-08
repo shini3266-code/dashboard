@@ -638,7 +638,7 @@ export default function Page() {
       }}>
         <div>
           <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
-          <div style={{ fontSize: isMobile ? '2rem' : '1rem', fontWeight: 700, lineHeight: 1, color: 'var(--text)' }}>
+          <div style={{ fontSize: isMobile ? '1rem' : '1rem', fontWeight: 700, lineHeight: 1, color: 'var(--text)' }}>
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox
