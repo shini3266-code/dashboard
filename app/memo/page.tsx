@@ -205,24 +205,21 @@ export default function MemoPage() {
   // 카테고리 추가/수정
   async function saveCategory(data: Omit<Category, 'id'>, editId?: string) {
     if (editId) {
-      // 수정
       const { data: updated } = await supabase
         .from('memo_categories')
         .update({ name: data.name, color: data.color })
         .eq('id', editId)
         .select()
         .single()
-      if (updated) setCategories(prev => prev.map(c => c.id === editId ? updated : c))
+      if (updated) setCategories(prev => prev.map(c => c.id === editId ? (updated as Category) : c))
     } else {
-      // 추가
       const { data: inserted } = await supabase
         .from('memo_categories')
         .insert({ name: data.name, color: data.color })
         .select()
         .single()
-      if (inserted) setCategories(prev => [...prev, inserted])
+      if (inserted) setCategories(prev => [...prev, inserted as Category])
     }
-    setForm({ name: '', color: DEFAULT_COLORS[0] })
   }
 
   // 카테고리 삭제
