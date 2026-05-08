@@ -188,6 +188,7 @@ export default function MemoPage() {
   const [form, setForm] = useState({ title: '', content: '', category: '' })
   const [loading, setLoading] = useState(true)
   const [showCatModal, setShowCatModal] = useState(false)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     loadAll()
