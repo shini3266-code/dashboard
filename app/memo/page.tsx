@@ -606,13 +606,13 @@ export default function MemoPage() {
                         color: selected.pinned ? '#fff' : 'var(--muted)', cursor: 'pointer', fontSize: '0.75rem',
                       }}
                     >
-                      {selected.pinned ? '📌 고정됨' : '📌 고정'}
+                      {selected.pinned ? '📌' : '📌'}
                     </button>
                     <button
                       onClick={() => { setIsEditing(true); setForm({ title: selected.title, content: selected.content, category: selected.category }) }}
                       style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.75rem' }}
                     >
-                      ✏️ 수정
+                      수정
                     </button>
                     <button
                       onClick={() => deleteMemo(selected.id)}
