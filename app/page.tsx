@@ -110,19 +110,19 @@ export default function Page() {
       <EventCalendar isMobile={isMobile} />
 
       <SectionLabel>📊 글로벌 ETF</SectionLabel>
-      <PriceChartRow ticker="" label="SPY · S&P 500 ETF" color={COLORS.etf} data={quotes['SPY']} showDrawdown isMobile={isMobile} />
-      <PriceChartRow ticker="" label="QQQ · 나스닥 100 ETF" color={COLORS.etf} data={quotes['QQQ']} showDrawdown isMobile={isMobile} />
-      <PriceChartRow ticker="" label="SOXX · 반도체 ETF" color={COLORS.etf} data={quotes['SOXX']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="SPY" label="SPY · S&P 500 ETF" color={COLORS.etf} data={quotes['SPY']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="QQQ" label="QQQ · 나스닥 100 ETF" color={COLORS.etf} data={quotes['QQQ']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="SOXX" label="SOXX · 반도체 ETF" color={COLORS.etf} data={quotes['SOXX']} showDrawdown isMobile={isMobile} />
 
       <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
-      <PriceChartRow ticker="" label="GC=F · 금 Gold" color={COLORS.asset} unit="$" sub="USD / 온스" data={quotes['GC=F']} showDrawdown isMobile={isMobile} />
-      <PriceChartRow ticker="" label="BTC-USD · 비트코인" color={COLORS.asset} unit="$" sub="BTC / USD" data={quotes['BTC-USD']} showDrawdown isMobile={isMobile} />
-      <PriceChartRow ticker="" label="CL=F · WTI 원유" color={COLORS.asset} unit="$" sub="USD / 배럴" data={quotes['CL=F']}
+      <PriceChartRow ticker="GC=F" label="GC=F · 금 Gold" color={COLORS.asset} unit="$" sub="USD / 온스" data={quotes['GC=F']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="BTC-USD" label="BTC-USD · 비트코인" color={COLORS.asset} unit="$" sub="BTC / USD" data={quotes['BTC-USD']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="CL=F" label="CL=F · WTI 원유" color={COLORS.asset} unit="$" sub="USD / 배럴" data={quotes['CL=F']}
         comment={getOilComment(quotes['CL=F']?.price ?? null)}
         commentLevel={getOilLevel(quotes['CL=F']?.price ?? 0).level}
         isMobile={isMobile}
       />
-      <PriceChartRow ticker="" label="KRW=X · 원달러 환율" color={COLORS.asset} unit="" sub="KRW / USD" data={quotes['KRW=X']}
+      <PriceChartRow ticker="KRW=X" label="KRW=X · 원달러 환율" color={COLORS.asset} unit="" sub="KRW / USD" data={quotes['KRW=X']}
         formatValue={(v) => v.toLocaleString()}
         comment={getKrwComment(krw)}
         commentLevel={krw ? getKrwLevel(krw).level : 'neutral'}
@@ -130,9 +130,9 @@ export default function Page() {
       />
 
       <SectionLabel>🌐 매크로 지표</SectionLabel>
-      <FredChartRow series="" label="T10Y2Y · 장단기 금리차 (10Y-2Y)" desc="음수 = 역전 = 경기침체 선행신호" color={COLORS.macro} getComment={getYieldComment} isMobile={isMobile} />
-      <FredChartRow series="" label="DGS10 · 10년물 미국채 금리" desc="미국 장기금리 기준" color={COLORS.macro} getComment={getBondComment} isMobile={isMobile} />
-      <PriceChartRow ticker="" label="DX-Y.NYB · 달러 인덱스 (DXY)" color={COLORS.macro} unit="" data={quotes['DX-Y.NYB']}
+      <FredChartRow series="T10Y2Y" label="T10Y2Y · 장단기 금리차 (10Y-2Y)" desc="음수 = 역전 = 경기침체 선행신호" color={COLORS.macro} getComment={getYieldComment} isMobile={isMobile} />
+      <FredChartRow series="DGS10" label="DGS10 · 10년물 미국채 금리" desc="미국 장기금리 기준" color={COLORS.macro} getComment={getBondComment} isMobile={isMobile} />
+      <PriceChartRow ticker="DX-Y.NYB" label="DX-Y.NYB · 달러 인덱스 (DXY)" color={COLORS.macro} unit="" data={quotes['DX-Y.NYB']}
         formatValue={(v) => v.toFixed(2)}
         comment={getDxyComment(dxy)}
         commentLevel={dxy ? getDxyLevel(dxy).level : 'neutral'}
@@ -170,13 +170,13 @@ export default function Page() {
       </div>
 
       <SectionLabel>💧 연준 유동성</SectionLabel>
-      <FredChartRow series="" label="WALCL · 연준 총자산" desc="QE = 자산 증가 · QT = 자산 감소" color={COLORS.liquidity} unit="B" getComment={getFedAssetComment} isMobile={isMobile} />
-      <FredChartRow series="" label="WRESBAL · 연준 지급준비금" desc="은행 시스템 총 준비금" color={COLORS.liquidity} unit="B" getComment={getReservesComment} isMobile={isMobile} />
-      <FredChartRow series="" label="RRPONTSYD · 역레포 잔액 (RRP)" desc="초과유동성 흡수액" color={COLORS.liquidity} unit="B" getComment={getRrpComment} isMobile={isMobile} />
-      <FredChartRow series="" label="WTREGEN · TGA 잔고" desc="재무부 일반계정" color={COLORS.liquidity} unit="B" getComment={getTgaComment} isMobile={isMobile} />
+      <FredChartRow series="WALCL" label="WALCL · 연준 총자산" desc="QE = 자산 증가 · QT = 자산 감소" color={COLORS.liquidity} unit="B" getComment={getFedAssetComment} isMobile={isMobile} />
+      <FredChartRow series="WRESBAL" label="WRESBAL · 연준 지급준비금" desc="은행 시스템 총 준비금" color={COLORS.liquidity} unit="B" getComment={getReservesComment} isMobile={isMobile} />
+      <FredChartRow series="RRPONTSYD" label="RRPONTSYD · 역레포 잔액 (RRP)" desc="초과유동성 흡수액" color={COLORS.liquidity} unit="B" getComment={getRrpComment} isMobile={isMobile} />
+      <FredChartRow series="WTREGEN" label="WTREGEN · TGA 잔고" desc="재무부 일반계정" color={COLORS.liquidity} unit="B" getComment={getTgaComment} isMobile={isMobile} />
 
       <SectionLabel>💰 유동성 지표</SectionLabel>
-      <FredChartRow series="" label="M2SL · 미국 M2 통화량" desc="광의 통화량 · 증가 = 유동성 확대" color={COLORS.liquidity} unit="B"
+      <FredChartRow series="M2SL" label="M2SL · 미국 M2 통화량" desc="광의 통화량 · 증가 = 유동성 확대" color={COLORS.liquidity} unit="B"
         getComment={(val) => {
           if (!val) return null
           const t = val / 1000
@@ -186,7 +186,7 @@ export default function Page() {
         }}
         isMobile={isMobile}
       />
-      <FredChartRow series="" label="WRMFNS · MMF 총잔액" desc="머니마켓펀드 · 증가 = 안전자산 선호" color={COLORS.liquidity} unit="B"
+      <FredChartRow series="WRMFNS" label="WRMFNS · MMF 총잔액" desc="머니마켓펀드 · 증가 = 안전자산 선호" color={COLORS.liquidity} unit="B"
         getComment={(val) => {
           if (!val) return null
           const t = val / 1000
