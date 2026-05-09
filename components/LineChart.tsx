@@ -17,18 +17,20 @@ interface Props {
   height?: number
   formatValue?: (v: number) => string
   externalData?: { date: string; value: number }[]
+  ranges?: string[]
 }
 
 export default function StockLineChart({
   symbol,
   color = '#3b82f6',
-  range = '1y',
+  ranges = ['1y', '2y', '3y'],
   height = 200,
   formatValue = (v) => v.toLocaleString(),
   externalData,
 }: Props) {
   const [data, setData] = useState<ChartData[]>([])
   const [loading, setLoading] = useState(true)
+  const [activeRange, setActiveRange] = useState(ranges[0])
 
   useEffect(() => {
     if (externalData) {
@@ -37,14 +39,14 @@ export default function StockLineChart({
       return
     }
     setLoading(true)
-    fetch(`/api/history?symbol=${symbol}&range=${range}`)
+    fetch(`/api/history?symbol=${symbol}&range=${activeRange}`) 
       .then(r => r.json())
       .then(d => {
         setData(d)
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [symbol, range, externalData])
+  }, [symbol, activeRange, externalData])
 
   if (loading) return (
     <div style={{
@@ -102,6 +104,30 @@ export default function StockLineChart({
   const padding = (max - min) * 0.1
 
   return (
+    <div>
+    {/* 기간 선택 버튼 */}
+    {!externalData && (
+      <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+        {ranges.map(r => (
+          <button
+            key={r}
+            onClick={() => setActiveRange(r)}
+            style={{
+              background: activeRange === r ? color : 'var(--surface2)',
+              border: `1px solid ${activeRange === r ? color : 'var(--border)'}`,
+              borderRadius: 6,
+              padding: '3px 10px',
+              color: activeRange === r ? '#fff' : 'var(--muted)',
+              cursor: 'pointer',
+              fontSize: '0.7rem',
+              fontWeight: activeRange === r ? 700 : 400,
+            }}
+          >
+            {r.toUpperCase()}
+          </button>
+        ))}
+      </div>
+    )}
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
         <defs>
@@ -110,15 +136,15 @@ export default function StockLineChart({
             <stop offset="95%" stopColor={color} stopOpacity={0.05} />
           </linearGradient>
         </defs>
-        <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
+        <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
         <XAxis
           dataKey="date"
           type="category"
           tickFormatter={(date) => {
             const d = new Date(date)
-            return `${d.getFullYear().toString().slice(2)}.${String(d.getMonth() + 1).padStart(2, '0')}`
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
           }}
-          tick={{ fill: '#64748b', fontSize: 8 }}
+          tick={{ fill: '#64748b', fontSize: '0.3rem' }}
           axisLine={false}
           tickLine={false}
           interval={0}
@@ -127,13 +153,18 @@ export default function StockLineChart({
         />
         <YAxis
           domain={[min - padding, max + padding]}
-          tick={{ fill: '#64748b' }}
-          style={{ fontSize: '0.1rem' }}
+          tick={{ fill: '#64748b', fontSize: '0.3rem' }}
           axisLine={false}
           tickLine={false}
           tickFormatter={formatValue}
-          width={0}
-          ticks={[min, max]}  // ← 최하단, 최상단만
+          width={70}
+          ticks={data.length > 0 ? [
+            min,
+            min + (max - min) * 0.25,
+            min + (max - min) * 0.5,
+            min + (max - min) * 0.75,
+            max,
+          ].map(v => parseFloat(v.toFixed(2))) : []}
         />
         <Tooltip content={<CustomTooltip />} />
         <Area
@@ -147,5 +178,6 @@ export default function StockLineChart({
         />
       </AreaChart>
     </ResponsiveContainer>
+    </div>
   )
 }
