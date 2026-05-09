@@ -11,6 +11,8 @@ interface Memo {
   title: string
   content: string
   category: string
+  linked_symbol?: string
+  pinned: boolean
   created_at: string
   updated_at: string
 }
@@ -268,6 +270,13 @@ export default function MemoPage() {
     setCategories(prev => prev.filter(c => c.id !== id))
   }
 
+  // 고정 토글
+  async function togglePin(id: string, pinned: boolean) {
+    await supabase.from('memos').update({ pinned: !pinned }).eq('id', id)
+    setMemos(prev => prev.map(m => m.id === id ? { ...m, pinned: !pinned } : m))
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, pinned: !pinned } : null)
+  }
+
   // 메모 저장
   async function saveMemo() {
     if (!form.title.trim()) return
@@ -307,7 +316,12 @@ export default function MemoPage() {
   }
 
   const allCategories = ['전체', ...categories.map(c => c.name)]
-  const filtered = selectedCategory === '전체' ? memos : memos.filter(m => m.category === selectedCategory)
+  const filtered = (selectedCategory === '전체' ? memos : memos.filter(m => m.category === selectedCategory))
+  .sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1
+    if (!a.pinned && b.pinned) return 1
+    return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  })
   const currentCat = categories.find(c => c.name === selectedCategory)
 
   return (
@@ -408,9 +422,16 @@ export default function MemoPage() {
                     padding: '12px 16px', borderBottom: '1px solid var(--border)',
                     cursor: 'pointer',
                     background: selected?.id === memo.id ? 'var(--surface)' : 'transparent',
-                    borderLeft: selected?.id === memo.id ? `3px solid ${catObj?.color ?? 'var(--accent)'}` : '3px solid transparent',
-                  }}
-                >
+                    borderLeft: selected?.id === memo.id
+                      ? `3px solid ${catObj?.color ?? 'var(--accent)'}`
+                      : memo.pinned ? '3px solid var(--accent)' : '3px solid transparent',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+                      {memo.pinned && <span style={{ fontSize: '0.65rem' }}>📌</span>}  {/* ← 고정 아이콘 */}
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {memo.title}
+                      </div>
+                    </div>
                   <div style={{ fontSize: '0.6rem', fontWeight: 700, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {memo.title}
                   </div>
@@ -439,8 +460,8 @@ export default function MemoPage() {
       {(!isMobile || isEditing) && (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
           {isEditing ? (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 24, gap: 12 }}>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ display: 'flex', gap: 8 }}>
                 <input
                   value={form.title}
                   onChange={e => setForm({ ...form, title: e.target.value })}
@@ -461,11 +482,17 @@ export default function MemoPage() {
                 >
                   {categories.map(c => <option key={c.id}>{c.name}</option>)}
                 </select>
-                <button
-                  onClick={() => { setIsEditing(false); setSelected(null) }}
-                  style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem' }}
-                >
-                  취소
+              </div>
+                {/* 버튼 별도 줄 */}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    onClick={() => { setIsEditing(false); setSelected(null) }}
+                    style={{
+                      flex: 1, background: 'none', border: '1px solid var(--border)',
+                      borderRadius: 8, padding: '10px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.75rem',
+                    }}
+                  >
+                    취소
                 </button>
                 <button
                   onClick={saveMemo}
@@ -505,16 +532,28 @@ export default function MemoPage() {
                       )
                     })()}
                     <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
-                      {new Date(selected.updated_at).toLocaleString('ko-KR')}
+                      {new Date(selected.updated_at).toLocaleString('ko-KR', { timezone: 'Asia/Seoul'})}
                     </span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                    onClick={() => togglePin(selected.id, selected.pinned)}
+                    style={{
+                      background: selected.pinned ? 'var(--accent)' : 'var(--surface)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 8, padding: '7px 14px',
+                      color: selected.pinned ? '#fff' : 'var(--muted)',
+                      cursor: 'pointer', fontSize: '0.75rem',
+                    }}
+                  >
+                    {selected.pinned ? '📌' : '📌'}
+                  </button>
                   <button
                     onClick={() => { setIsEditing(true); setForm({ title: selected.title, content: selected.content, category: selected.category }) }}
                     style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.6rem' }}
                   >
-                    ✏️ 수정
+                    수정
                   </button>
                   <button
                     onClick={() => deleteMemo(selected.id)}

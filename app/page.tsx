@@ -799,6 +799,39 @@ export default function Page() {
       <FredChartRow series="RRPONTSYD" label="역레포 잔액 (RRP)" desc="초과유동성 흡수액" color={COLORS.liquidity} unit="B" getComment={getRrpComment} isMobile={isMobile} />
       <FredChartRow series="WTREGEN" label="TGA 잔고" desc="재무부 일반계정" color={COLORS.liquidity} unit="B" getComment={getTgaComment} isMobile={isMobile} />
 
+      {/* M2 & MMF */}
+      <SectionLabel>💰 유동성 지표</SectionLabel>
+      <FredChartRow
+        series="M2SL"
+        label="미국 M2 통화량"
+        desc="광의 통화량 · 증가 = 유동성 확대"
+        color={COLORS.liquidity}
+        unit="B"
+        getComment={(val) => {
+          if (!val) return null
+          const t = val / 1000
+          if (t > 21000) return { keyword: '역대최고', text: `풍부한 유동성이에요.` }
+          if (t > 20000) return { keyword: '높은수준', text: `유동성이 충분해요.` }
+          return { keyword: '정상', text: `정상 수준이에요.` }
+        }}
+        isMobile={isMobile}
+      />
+      <FredChartRow
+        series="WRMFNS"
+        label="MMF 총잔액"
+        desc="머니마켓펀드 · 증가 = 안전자산 선호"
+        color={COLORS.liquidity}
+        unit="B"
+        getComment={(val) => {
+          if (!val) return null
+          const t = val / 1000
+          if (t > 6000) return { keyword: '역대최고', text: `투자자들이 관망 중이에요.` }
+          if (t > 5000) return { keyword: '높은수준', text: `안전자산 선호가 강해요.` }
+          return { keyword: '정상', text: `정상 수준이에요.` }
+        }}
+        isMobile={isMobile}
+      />
+
       {/* 고용 */}
       <SectionLabel>👷 고용 지표</SectionLabel>
       <UnemploymentCharts />
