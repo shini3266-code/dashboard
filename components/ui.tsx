@@ -1,0 +1,54 @@
+'use client'
+import React from 'react'
+
+export function CommentBox({ keyword, text, level = 'neutral' }: {
+  keyword?: string
+  text: string | null
+  level?: 'good' | 'warn' | 'bad' | 'neutral'
+}) {
+  if (!text) return null
+  const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#64748b'
+  return (
+    <div style={{ marginTop: 8 }}>
+      {keyword && (
+        <div style={{ marginBottom: 4 }}>
+          <span style={{ fontSize: '0.6rem', fontWeight: 700, color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px' }}>
+            {keyword}
+          </span>
+        </div>
+      )}
+      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>{text}</div>
+    </div>
+  )
+}
+
+export function DrawdownBadge({ dd }: {
+  dd: { drawdown: number; status: string; level: 'good' | 'warn' | 'bad' } | null
+}) {
+  if (!dd) return null
+  const color = dd.level === 'good' ? '#22c55e' : dd.level === 'warn' ? '#f59e0b' : '#ef4444'
+  return (
+    <div style={{ marginTop: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+        <span style={{ fontSize: '0.6rem', fontWeight: 700, color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px' }}>
+          {dd.status}
+        </span>
+        <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
+          ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
+        </span>
+      </div>
+    </div>
+  )
+}
+
+export function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      fontSize: '0.6rem', color: 'var(--text)',
+      letterSpacing: '0.12em', textTransform: 'uppercase',
+      marginBottom: 10, marginTop: 28,
+    }}>
+      {children}
+    </div>
+  )
+}
