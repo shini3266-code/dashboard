@@ -110,9 +110,9 @@ export default function Page() {
       <EventCalendar isMobile={isMobile} />
 
       <SectionLabel>📊 글로벌 ETF</SectionLabel>
-      <PriceChartRow ticker="SPY" label="S&P 500 ETF" color={COLORS.etf} data={quotes['SPY']} showDrawdown isMobile={isMobile} />
-      <PriceChartRow ticker="QQQ" label="나스닥 100 ETF" color={COLORS.etf} data={quotes['QQQ']} showDrawdown isMobile={isMobile} />
-      <PriceChartRow ticker="SOXX" label="반도체 ETF" color={COLORS.etf} data={quotes['SOXX']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="" label="SPY · S&P 500 ETF" color={COLORS.etf} data={quotes['SPY']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="" label="QQQ · 나스닥 100 ETF" color={COLORS.etf} data={quotes['QQQ']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="" label="SOXX · 반도체 ETF" color={COLORS.etf} data={quotes['SOXX']} showDrawdown isMobile={isMobile} />
 
       <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
       <PriceChartRow ticker="GC=F" label="금 Gold" color={COLORS.asset} unit="$" sub="USD / 온스" data={quotes['GC=F']} showDrawdown isMobile={isMobile} />
