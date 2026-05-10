@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     if (!meta) return Response.json(null)
     const prev = meta.chartPreviousClose ?? meta.previousClose
     const curr = meta.regularMarketPrice
-    const change = ((curr - prev) / prev) * 100
+    const change = meta.regularMarketChangePercent
     return Response.json({ symbol, price: curr, change, prev })
   } catch {
     return Response.json(null)
