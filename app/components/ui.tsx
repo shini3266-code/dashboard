@@ -1,6 +1,29 @@
 'use client'
 import React from 'react'
 
+export function RangeTabs<T extends string>({ ranges, selected, onChange, color = 'var(--accent)' }: {
+  ranges: readonly T[]
+  selected: T
+  onChange: (r: T) => void
+  color?: string
+}) {
+  return (
+    <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
+      {ranges.map(r => (
+        <button key={r} onClick={() => onChange(r)} style={{
+          fontSize: '0.55rem', padding: '2px 7px', borderRadius: 4,
+          border: `1px solid ${selected === r ? color : 'var(--border)'}`,
+          background: selected === r ? color : 'transparent',
+          color: selected === r ? '#fff' : 'var(--muted)',
+          cursor: 'pointer', fontWeight: selected === r ? 700 : 400,
+        }}>
+          {r.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export function CommentBox({ keyword, text, level = 'neutral' }: {
   keyword?: string
   text: string | null

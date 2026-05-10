@@ -21,6 +21,14 @@ import {
   getFedAssetComment, getReservesComment, getRrpComment, getTgaComment,
 } from './components/commentFunctions'
 
+const SHORT_RANGES = ['1mo', '3mo', '6mo'] as const
+const LONG_RANGES  = ['1y',  '3y',  '5y' ] as const
+type ShortRange = typeof SHORT_RANGES[number]
+type LongRange  = typeof LONG_RANGES[number]
+
+const [vixShort, setVixShort] = useState<ShortRange>('1mo')
+const [vixLong,  setVixLong ] = useState<LongRange>('1y')
+
 async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   try {
     const res = await fetch(`/api/quote?symbol=${symbol}`)
@@ -226,15 +234,17 @@ export default function Page() {
             level={vixSummary.level}
           />
         </div>
+        {/* VIX 단기 */}
         {!isMobile && (
           <div>
-            <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-            <StockLineChart symbol="^VIX" color={COLORS.fear} range="1mo" height={120} formatValue={(v) => v.toFixed(1)} />
+            <RangeTabs ranges={SHORT_RANGES} selected={vixShort} onChange={setVixShort} color={COLORS.fear} />
+            <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixShort} height={120} formatValue={(v) => v.toFixed(1)} />
           </div>
         )}
+        {/* VIX 장기 */}
         <div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4 }}>{isMobile ? '1년 차트' : '1년'}</div>
-          <StockLineChart symbol="^VIX" color={COLORS.fear} range="1y" height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} />
+          <RangeTabs ranges={LONG_RANGES} selected={vixLong} onChange={setVixLong} color={COLORS.fear} />
+          <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixLong} height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} />
         </div>
       </div>
 

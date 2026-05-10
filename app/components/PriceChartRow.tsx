@@ -67,14 +67,22 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
       {!isMobile && (
         <div>
           <RangeTabs ranges={SHORT_RANGES} selected={shortRange} onChange={setShortRange} />
-          <StockLineChart symbol={ticker} color={color} range={shortRange} height={120} formatValue={fmt} />
+          <StockLineChart
+            symbol={ticker} color={color}
+            range={shortRange}          // ← range로 제어, 내부 버튼 안 뜸
+            height={120} formatValue={fmt}
+          />
         </div>
       )}
       {/* 장기 차트 - 1y/3y/5y */}
       <div>
-        <RangeTabs ranges={LONG_RANGES} selected={longRange} onChange={setLongRange} />
-        <StockLineChart symbol={ticker} color={color} range={longRange} height={isMobile ? 200 : 120} formatValue={fmt} />
-      </div>
+      <RangeTabs ranges={LONG_RANGES} selected={longRange} onChange={setLongRange} />
+      <StockLineChart
+        symbol={ticker} color={color}
+        range={longRange}             // ← range로 제어, 내부 버튼 안 뜸
+        height={isMobile ? 200 : 120} formatValue={fmt}
+      />
+    </div>
     </div>
   )
 }
