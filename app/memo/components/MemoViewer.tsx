@@ -39,7 +39,7 @@ export default function MemoViewer({ selected, categories, isMobile, onBack, onE
                 {selected.category}
               </span>
               <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
-                {toKST(selected.updated_at)}
+                {selected.updated_at}
               </span>
             </div>
           </div>
