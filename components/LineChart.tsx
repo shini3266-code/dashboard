@@ -17,25 +17,23 @@ interface Props {
   height?: number
   formatValue?: (v: number) => string
   externalData?: { date: string; value: number }[]
-  ranges?: string[]
 }
 
 export default function StockLineChart({
   symbol,
   color = '#3b82f6',
   range,              // ← 외부에서 제어할 때
-  ranges = ['1y', '2y', '3y'],
+  ranges = '1y',
   height = 200,
   formatValue = (v) => v.toLocaleString(),
   externalData,
 }: Props) {
   const [data, setData] = useState<ChartData[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeRange, setActiveRange] = useState(range ?? ranges[0])
 
-  useEffect(() => {
-    if (range) setActiveRange(range)
-  }, [range])
+  // useEffect(() => {
+  //   if (range) setActiveRange(range)
+  // }, [range])
 
   useEffect(() => {
     if (externalData) {
@@ -51,7 +49,7 @@ export default function StockLineChart({
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [symbol, activeRange, externalData])
+  }, [symbol, range, externalData])
 
   if (loading) return (
     <div style={{
@@ -110,23 +108,6 @@ export default function StockLineChart({
 
   return (
     <div>
-    {/* 기간 선택 버튼 */}
-    {!externalData && (
-      <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
-        {ranges.map(r => (
-          <button key={r} onClick={() => setActiveRange(r)} style={{
-            background: activeRange === r ? color : 'var(--surface2)',
-            border: `1px solid ${activeRange === r ? color : 'var(--border)'}`,
-            borderRadius: 6, padding: '3px 10px',
-            color: activeRange === r ? '#fff' : 'var(--muted)',
-            cursor: 'pointer', fontSize: '0.7rem',
-            fontWeight: activeRange === r ? 700 : 400,
-          }}>
-            {r.toUpperCase()}
-          </button>
-        ))}
-      </div>
-    )}
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
         <defs>
