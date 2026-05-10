@@ -22,6 +22,30 @@ export function CommentBox({ keyword, text, level = 'neutral' }: {
   )
 }
 
+export function RangeTabs<T extends string>({ ranges, selected, onChange }: {
+  ranges: readonly T[]
+  selected: T
+  onChange: (r: T) => void
+}) {
+  return (
+    <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
+      {ranges.map(r => (
+        <button key={r} onClick={() => onChange(r)} style={{
+          fontSize: '0.55rem',
+          padding: '2px 6px',
+          borderRadius: 4,
+          border: '1px solid var(--border)',
+          background: selected === r ? 'var(--accent)' : 'transparent',
+          color:      selected === r ? '#fff'          : 'var(--muted)',
+          cursor: 'pointer',
+        }}>
+          {r}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export function DrawdownBadge({ dd }: {
   dd: { drawdown: number; status: string; level: 'good' | 'warn' | 'bad' } | null
 }) {

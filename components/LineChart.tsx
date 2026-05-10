@@ -136,35 +136,35 @@ export default function StockLineChart({
             <stop offset="95%" stopColor={color} stopOpacity={0.05} />
           </linearGradient>
         </defs>
-        <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
+        <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={true} />
         <XAxis
           dataKey="date"
           type="category"
           tickFormatter={(date) => {
             const d = new Date(date)
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
           }}
           tick={{ fill: '#64748b', fontSize: '0.3rem' }}
-          axisLine={false}
+          axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
           tickLine={false}
           interval={0}
-          ticks={data.length > 0 ? [data[0].date, data[data.length - 1].date] : []}
-          allowDataOverflow={false}
+          ticks={(() => {
+            if (!data.length) return []
+            const count = 5
+            const step = Math.floor((data.length - 1) / (count - 1))
+            return Array.from({ length: count }, (_, i) =>
+              data[Math.min(i * step, data.length - 1)].date
+            )
+          })()}
         />
         <YAxis
           domain={[min - padding, max + padding]}
-          tick={{ fill: '#64748b', fontSize: '0.3rem' }}
-          axisLine={false}
+          tick={{ fill: '#64748b', fontSize: '0.55rem' }}
+          axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
           tickLine={false}
           tickFormatter={formatValue}
           width={70}
-          ticks={data.length > 0 ? [
-            min,
-            min + (max - min) * 0.25,
-            min + (max - min) * 0.5,
-            min + (max - min) * 0.75,
-            max,
-          ].map(v => parseFloat(v.toFixed(2))) : []}
+          tickCount={5}
         />
         <Tooltip content={<CustomTooltip />} />
         <Area

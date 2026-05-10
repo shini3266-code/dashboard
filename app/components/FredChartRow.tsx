@@ -3,6 +3,16 @@ import { useState, useEffect } from 'react'
 import StockLineChart from '@/components/LineChart'
 import { CommentBox } from './ui'
 
+const SHORT_RANGES = ['1mo', '3mo', '6mo'] as const
+const LONG_RANGES  = ['1y',  '3y',  '5y' ] as const
+type ShortRange = typeof SHORT_RANGES[number]
+type LongRange  = typeof LONG_RANGES[number]
+
+const RANGE_POINTS: Record<string, number> = {
+  '1mo': 22, '3mo': 66, '6mo': 132,
+  '1y': 252, '3y': 756, '5y': 1300,
+}
+
 export default function FredChartRow({ series, label, desc, color, unit = '%', getComment, isMobile }: {
   series: string
   label: string
@@ -15,9 +25,11 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
   const [data, setData] = useState<{ date: string; value: number }[]>([])
   const [latest, setLatest] = useState<number | null>(null)
   const [change, setChange] = useState<number | null>(null)
+  const [shortRange, setShortRange] = useState<ShortRange>('1mo')
+  const [longRange,  setLongRange ] = useState<LongRange>('1y')
 
   useEffect(() => {
-    fetch(`/api/fredhistory?series=${series}&limit=260`)
+    fetch(`/api/fredhistory?series=${series}&limit=1300`)  // 5y치 확보
       .then(r => r.json())
       .then((d: { date: string; value: number }[]) => {
         setData(d)
@@ -45,8 +57,8 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
     return 'neutral'
   }
 
-  const data1mo = data.slice(-22)
-  const data1y = data.slice(-252)
+  const shortData = data.slice(-RANGE_POINTS[shortRange])
+  const longData  = data.slice(-RANGE_POINTS[longRange])
   const c = getComment?.(latest) ?? null
 
   return (
@@ -71,18 +83,49 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
         {desc && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
         {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
       </div>
+
+      {/* 왼쪽: 단기 1mo/3mo/6mo */}
       {!isMobile && (
         <div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-          <StockLineChart symbol={series} color={color} range="1mo" height={120} formatValue={fmt} externalData={data1mo} />
+          <RangeTabs ranges={SHORT_RANGES} selected={shortRange} onChange={setShortRange} color={color} />
+          <StockLineChart
+            symbol={series} color={color} height={120}
+            formatValue={fmt} externalData={shortData}
+          />
         </div>
       )}
+
+      {/* 오른쪽: 장기 1y/3y/5y */}
       <div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4 }}>
-          {isMobile ? '1년 차트' : '1년'}
-        </div>
-        <StockLineChart symbol={series} color={color} range="1y" height={isMobile ? 200 : 120} formatValue={fmt} externalData={data1y} />
+        <RangeTabs ranges={LONG_RANGES} selected={longRange} onChange={setLongRange} color={color} />
+        <StockLineChart
+          symbol={series} color={color} height={isMobile ? 200 : 120}
+          formatValue={fmt} externalData={longData}
+        />
       </div>
+    </div>
+  )
+}
+
+function RangeTabs<T extends string>({ ranges, selected, onChange, color }: {
+  ranges: readonly T[]
+  selected: T
+  onChange: (r: T) => void
+  color: string
+}) {
+  return (
+    <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
+      {ranges.map(r => (
+        <button key={r} onClick={() => onChange(r)} style={{
+          fontSize: '0.55rem', padding: '2px 7px', borderRadius: 4,
+          border: `1px solid ${selected === r ? color : 'var(--border)'}`,
+          background: selected === r ? color : 'transparent',
+          color: selected === r ? '#fff' : 'var(--muted)',
+          cursor: 'pointer', fontWeight: selected === r ? 700 : 400,
+        }}>
+          {r.toUpperCase()}
+        </button>
+      ))}
     </div>
   )
 }

@@ -40,6 +40,14 @@ async function fetchFred(series: string): Promise<FredData | null> {
   } catch { return null }
 }
 
+function etfSummary(change: number | null | undefined) {
+  if (change == null) return { keyword: '--', level: 'neutral' as const }
+  return {
+    keyword: change >= 1.5 ? '강세장' : change >= 0 ? '보합' : change >= -1.5 ? '조정초입' : '조정장',
+    level: (change >= 1.5 ? 'good' : change >= 0 ? 'neutral' : change >= -1.5 ? 'warn' : 'bad') as const,
+  }
+}
+
 export default function Page() {
   const isMobile = useIsMobile()
   const [quotes, setQuotes] = useState<Record<string, QuoteData | null>>({})
@@ -68,9 +76,70 @@ export default function Page() {
     return () => clearInterval(interval)
   }, [])
 
+  // 기본 변수
   const dxy = quotes['DX-Y.NYB']?.price ?? null
   const krw = quotes['KRW=X']?.price ?? null
   const vix = quotes['^VIX']?.price ?? 0
+  const oilPrice = quotes['CL=F']?.price ?? null
+  const t10y2y = freds['T10Y2Y']?.value ?? null
+  const dgs10  = freds['DGS10']?.value  ?? null
+  const walcl   = freds['WALCL']?.value     ?? null
+  const wresbal = freds['WRESBAL']?.value   ?? null
+  const rrp     = freds['RRPONTSYD']?.value ?? null
+  const tga     = freds['WTREGEN']?.value   ?? null
+
+  // 카드 & summary 공용 comment/level
+  const oilComment  = getOilComment(oilPrice)
+  const oilLevel    = oilPrice ? getOilLevel(oilPrice).level : 'neutral' as const
+  const krwComment  = getKrwComment(krw)
+  const krwLevel    = krw ? getKrwLevel(krw).level : 'neutral' as const
+  const dxyComment  = getDxyComment(dxy)
+  const dxyLevel    = dxy ? getDxyLevel(dxy).level : 'neutral' as const
+  const yieldComment = getYieldComment(t10y2y)
+  const bondComment  = getBondComment(dgs10)
+
+  const t10y2yLevel = t10y2y != null ? (t10y2y < 0 ? 'bad' : t10y2y < 0.5 ? 'warn' : 'good') as const : 'neutral' as const
+  const dgs10Level  = dgs10  != null ? (dgs10  >= 5 ? 'bad' : dgs10  >= 4 ? 'warn' : 'good') as const : 'neutral' as const
+
+  // ETF / 자산 summary
+  const spySummary  = etfSummary(quotes['SPY']?.change)
+  const qqqSummary  = etfSummary(quotes['QQQ']?.change)
+  const soxxSummary = etfSummary(quotes['SOXX']?.change)
+
+  const goldChange = quotes['GC=F']?.change ?? null
+  const goldSummary = goldChange != null ? {
+    keyword: goldChange >= 1 ? '강세장' : goldChange >= 0 ? '보합' : goldChange >= -1 ? '조정초입' : '조정장',
+    level: (goldChange >= 0 ? 'good' : goldChange >= -1 ? 'neutral' : 'warn') as const,
+  } : { keyword: '--', level: 'neutral' as const }
+
+  const btcChange = quotes['BTC-USD']?.change ?? null
+  const btcSummary = btcChange != null ? {
+    keyword: btcChange >= 3 ? '강세장' : btcChange >= 0 ? '보합' : btcChange >= -3 ? '조정장' : '급락장',
+    level: (btcChange >= 0 ? 'good' : btcChange >= -3 ? 'warn' : 'bad') as const,
+  } : { keyword: '--', level: 'neutral' as const }
+
+  const vixSummary = {
+    keyword: vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정',
+    level: (vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good') as const,
+  }
+
+  const summaryItems = [
+    { label: 'SPY',  ...spySummary },
+    { label: 'QQQ',  ...qqqSummary },
+    { label: 'SOXX', ...soxxSummary },
+    { label: '금',   ...goldSummary },
+    { label: 'BTC',  ...btcSummary },
+    ...(oilComment  ? [{ label: 'WTI',  keyword: oilComment.keyword,  level: oilLevel  }] : []),
+    ...(krwComment  ? [{ label: '환율', keyword: krwComment.keyword,  level: krwLevel  }] : []),
+    ...(dxyComment  ? [{ label: 'DXY',  keyword: dxyComment.keyword,  level: dxyLevel  }] : []),
+    ...(t10y2y != null ? [{ label: '금리차', keyword: yieldComment?.keyword ?? '--', level: t10y2yLevel }] : []),
+    ...(dgs10  != null ? [{ label: '10Y',   keyword: bondComment?.keyword  ?? '--', level: dgs10Level  }] : []),
+    { label: 'VIX', ...vixSummary },
+    ...(walcl  != null ? [{ label: '연준자산', keyword: walcl/1e6 >= 8 ? 'QT진행중' : walcl/1e6 >= 7 ? 'QT중반' : walcl/1e6 >= 6 ? 'QT후반' : '정상화', level: 'neutral' as const }] : []),
+    ...(wresbal != null ? [{ label: '지준금', keyword: wresbal > 3e6 ? '충분' : wresbal > 2.5e6 ? '양호' : wresbal > 2e6 ? '주의' : '위험', level: (wresbal > 3e6 ? 'good' : wresbal > 2.5e6 ? 'neutral' : wresbal > 2e6 ? 'warn' : 'bad') as const }] : []),
+    ...(rrp    != null ? [{ label: '역레포', keyword: rrp < 100 ? '거의소진' : rrp < 500 ? '대폭감소' : '잔존', level: (rrp < 100 ? 'warn' : 'neutral') as const }] : []),
+    ...(tga    != null ? [{ label: 'TGA', keyword: tga > 800 ? '잔고풍부' : tga > 500 ? '정상' : tga > 200 ? '감소중' : '부채한도주의', level: (tga > 500 ? 'neutral' : 'warn') as const }] : []),
+  ]
 
   return (
     <main style={{ maxWidth: isMobile ? '100%' : 1440, margin: '0 auto', padding: isMobile ? 12 : 24 }}>
@@ -101,7 +170,7 @@ export default function Page() {
         </div>
       </div>
 
-      <MarketSummaryBar quotes={quotes} freds={freds} />
+      <MarketSummaryBar items={summaryItems} />
 
       <SectionLabel>⭐ 관심종목</SectionLabel>
       <Watchlist />
@@ -118,14 +187,14 @@ export default function Page() {
       <PriceChartRow ticker="GC=F" label="GC=F · 금 Gold" color={COLORS.asset} unit="$" sub="USD / 온스" data={quotes['GC=F']} showDrawdown isMobile={isMobile} />
       <PriceChartRow ticker="BTC-USD" label="BTC-USD · 비트코인" color={COLORS.asset} unit="$" sub="BTC / USD" data={quotes['BTC-USD']} showDrawdown isMobile={isMobile} />
       <PriceChartRow ticker="CL=F" label="CL=F · WTI 원유" color={COLORS.asset} unit="$" sub="USD / 배럴" data={quotes['CL=F']}
-        comment={getOilComment(quotes['CL=F']?.price ?? null)}
-        commentLevel={getOilLevel(quotes['CL=F']?.price ?? 0).level}
+        comment={oilComment}
+        commentLevel={oilLevel}
         isMobile={isMobile}
       />
       <PriceChartRow ticker="KRW=X" label="KRW=X · 원달러 환율" color={COLORS.asset} unit="" sub="KRW / USD" data={quotes['KRW=X']}
         formatValue={(v) => v.toLocaleString()}
-        comment={getKrwComment(krw)}
-        commentLevel={krw ? getKrwLevel(krw).level : 'neutral'}
+        comment={krwComment}
+        commentLevel={krwLevel}
         isMobile={isMobile}
       />
 
@@ -134,8 +203,8 @@ export default function Page() {
       <FredChartRow series="DGS10" label="DGS10 · 10년물 미국채 금리" desc="미국 장기금리 기준" color={COLORS.macro} getComment={getBondComment} isMobile={isMobile} />
       <PriceChartRow ticker="DX-Y.NYB" label="DX-Y.NYB · 달러 인덱스 (DXY)" color={COLORS.macro} unit="" data={quotes['DX-Y.NYB']}
         formatValue={(v) => v.toFixed(2)}
-        comment={getDxyComment(dxy)}
-        commentLevel={dxy ? getDxyLevel(dxy).level : 'neutral'}
+        comment={dxyComment}
+        commentLevel={dxyLevel}
         isMobile={isMobile}
       />
 
@@ -152,9 +221,9 @@ export default function Page() {
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox
-            keyword={vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정'}
+            keyword={vixSummary.keyword}
             text={vix >= 30 ? '시장 패닉 상태예요.' : vix >= 20 ? '변동성이 확대되고 있어요.' : '위험자산에 우호적이에요.'}
-            level={vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good'}
+            level={vixSummary.level}
           />
         </div>
         {!isMobile && (

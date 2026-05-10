@@ -5,6 +5,12 @@ import { QuoteData } from './types'
 import { CommentBox, DrawdownBadge } from './ui'
 import { getDrawdownComment } from './commentFunctions'
 
+const SHORT_RANGES = ['1mo', '3mo', '6mo'] as const
+const LONG_RANGES  = ['1y',  '3y',  '5y' ] as const
+
+type ShortRange = typeof SHORT_RANGES[number]
+type LongRange  = typeof LONG_RANGES[number]
+
 export default function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel, isMobile }: {
   ticker: string
   label: string
@@ -18,6 +24,8 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
   commentLevel?: 'good' | 'warn' | 'bad' | 'neutral'
   isMobile: boolean
 }) {
+  const [shortRange, setShortRange] = useState<ShortRange>('1mo')
+  const [longRange,  setLongRange ] = useState<LongRange>('1y')
   const [high, setHigh] = useState<number | null>(null)
 
   useEffect(() => {
@@ -55,18 +63,40 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
         {dd && <DrawdownBadge dd={dd} />}
         {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
+      {/* 단기 차트 - 1m/3m/6m */}
       {!isMobile && (
         <div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4 }}>1개월</div>
-          <StockLineChart symbol={ticker} color={color} range="1mo" height={120} formatValue={fmt} />
+          <RangeTabs ranges={SHORT_RANGES} selected={shortRange} onChange={setShortRange} />
+          <StockLineChart symbol={ticker} color={color} range={shortRange} height={120} formatValue={fmt} />
         </div>
       )}
+      {/* 장기 차트 - 1y/3y/5y */}
       <div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4 }}>
-          {isMobile ? '1년 차트' : '1년'}
-        </div>
-        <StockLineChart symbol={ticker} color={color} range="1y" height={isMobile ? 200 : 120} formatValue={fmt} />
+        <RangeTabs ranges={LONG_RANGES} selected={longRange} onChange={setLongRange} />
+        <StockLineChart symbol={ticker} color={color} range={longRange} height={isMobile ? 200 : 120} formatValue={fmt} />
       </div>
+    </div>
+  )
+}
+
+function RangeTabs<T extends string>({ ranges, selected, onChange }: {
+  ranges: readonly T[]
+  selected: T
+  onChange: (r: T) => void
+}) {
+  return (
+    <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
+      {ranges.map(r => (
+        <button key={r} onClick={() => onChange(r)} style={{
+          fontSize: '0.55rem', padding: '2px 7px', borderRadius: 4,
+          border: `1px solid ${selected === r ? 'var(--accent)' : 'var(--border)'}`,
+          background: selected === r ? 'var(--accent)' : 'transparent',
+          color: selected === r ? '#fff' : 'var(--muted)',
+          cursor: 'pointer', fontWeight: selected === r ? 700 : 400,
+        }}>
+          {r.toUpperCase()}
+        </button>
+      ))}
     </div>
   )
 }
