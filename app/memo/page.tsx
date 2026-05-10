@@ -56,10 +56,10 @@ export default function MemoPage() {
     if (!form.title.trim()) return
     const category = form.category || categories[0]?.name || '기타'
     if (selected && isEditing) {
-      const { data } = await supabase.from('memos').update({ ...form, category, updated_at: new Date().toISOString() }).eq('id', selected.id).select().single()
+      const { data } = await supabase.from('memos').update({ ...form, category, updated_at: new Date(data.updated_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) }).eq('id', selected.id).select().single()
       if (data) { setMemos(prev => prev.map(m => m.id === data.id ? data : m)); setSelected(data) }
     } else {
-      const { data } = await supabase.from('memos').insert({ ...form, category, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }).select().single()
+      const { data } = await supabase.from('memos').insert({ ...form, category, created_at: new Date(data.updated_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }), updated_at: new Date(data.updated_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) }).select().single()
       if (data) { setMemos(prev => [data, ...prev]); setSelected(data) }
     }
     setIsEditing(false)
