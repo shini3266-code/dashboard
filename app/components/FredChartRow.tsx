@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import StockLineChart from '@./LineChart'
+import StockLineChart from './LineChart'
 import { CommentBox } from './ui'
 
 const SHORT_RANGES = ['1mo', '3mo', '6mo'] as const

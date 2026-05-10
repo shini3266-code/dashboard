@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import StockLineChart from '@./LineChart'
+import StockLineChart from './LineChart'
 import { QuoteData } from './types'
 import { CommentBox, DrawdownBadge } from './ui'
 import { getDrawdownComment } from './commentFunctions'

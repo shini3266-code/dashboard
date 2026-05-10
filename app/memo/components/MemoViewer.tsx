@@ -1,5 +1,5 @@
 'use client'
-import RichEditor from '@../RichEditor'
+import RichEditor from '../RichEditor'
 import { Memo, Category } from '../types'
 
 export default function MemoViewer({ selected, categories, isMobile, onBack, onEdit, onDelete, onTogglePin }: {
