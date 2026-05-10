@@ -42,7 +42,7 @@ export default function StockLineChart({
       return
     }
     setLoading(true)
-    fetch(`/api/history?symbol=${symbol}&range=${activeRange}`) 
+    fetch(`/api/history?symbol=${symbol}&range=${range}`) 
       .then(r => r.json())
       .then(d => {
         setData(d)
