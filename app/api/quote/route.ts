@@ -4,7 +4,7 @@ export async function GET(request: Request) {
 
   try {
     const res = await fetch(
-      `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=5d`,
+      `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`,
       {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     if (!meta) return Response.json(null)
     const prev = meta.chartPreviousClose ?? meta.previousClose
     const curr = meta.regularMarketPrice
-    const change = meta.regularMarketChangePercent
+    const change = ((curr - prev) / prev) * 100
     return Response.json({ symbol, price: curr, change, prev })
   } catch {
     return Response.json(null)
