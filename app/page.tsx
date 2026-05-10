@@ -10,6 +10,7 @@ import EventCalendar from '@/components/EventCalendar'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { QuoteData, FredData, COLORS } from './components/types'
 import { SectionLabel, CommentBox } from './components/ui'
+import { SectionLabel, CommentBox, RangeTabs } from './components/ui'
 import BookmarkMenu from './components/BookmarkMenu'
 import MarketSummaryBar from './components/MarketSummaryBar'
 import PriceChartRow from './components/PriceChartRow'
@@ -25,9 +26,6 @@ const SHORT_RANGES = ['1mo', '3mo', '6mo'] as const
 const LONG_RANGES  = ['1y',  '3y',  '5y' ] as const
 type ShortRange = typeof SHORT_RANGES[number]
 type LongRange  = typeof LONG_RANGES[number]
-
-const [vixShort, setVixShort] = useState<ShortRange>('1mo')
-const [vixLong,  setVixLong ] = useState<LongRange>('1y')
 
 async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   try {
@@ -61,6 +59,9 @@ export default function Page() {
   const [quotes, setQuotes] = useState<Record<string, QuoteData | null>>({})
   const [freds, setFreds] = useState<Record<string, FredData | null>>({})
   const [loading, setLoading] = useState(true)
+  const [vixShort, setVixShort] = useState<ShortRange>('1mo')
+  const [vixLong,  setVixLong ] = useState<LongRange>('1y')
+
 
   useEffect(() => {
     async function loadAll() {
