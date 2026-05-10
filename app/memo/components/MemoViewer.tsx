@@ -15,6 +15,13 @@ export default function MemoViewer({ selected, categories, isMobile, onBack, onE
   const watchlistMatch = selected.content.match(/\[WATCHLIST_MEMO\]([\s\S]*?)\[\/WATCHLIST_MEMO\]/)
   const cleanContent = selected.content.replace(/\[WATCHLIST_MEMO\][\s\S]*?\[\/WATCHLIST_MEMO\]/, '')
 
+  function toKST(dateStr: string) {
+    const normalized = dateStr.replace(' ', 'T').replace('+00', 'Z')
+    return new Date(normalized).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+  }
+
+  <span>{toKST(selected.updated_at)}</span>
+  
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {isMobile && (
