@@ -20,8 +20,6 @@ export default function MemoViewer({ selected, categories, isMobile, onBack, onE
     return new Date(normalized).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
   }
 
-  <span>{toKST(selected.updated_at)}</span>
-  
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {isMobile && (
@@ -41,7 +39,7 @@ export default function MemoViewer({ selected, categories, isMobile, onBack, onE
                 {selected.category}
               </span>
               <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
-                {new Date(selected.updated_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}
+                {toKST(selected.updated_at)}
               </span>
             </div>
           </div>
