@@ -33,6 +33,9 @@ function WatchCard({ item, onRemove, onMemo, memoPreview }: {
     }}>
       {/* 헤더 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+        <div style={{ fontSize: '0.55rem', color: 'var(--muted)' }}>
+          {refreshing ? '⟳ 가격 갱신 중...' : '전일 종가 기준 · 60초마다 갱신'}
+        </div>
         <div>
           <div style={{ fontSize: 16, fontWeight: 700 }}>{item.symbol}</div>
           <div style={{ display: 'flex', gap: 10, marginTop: 4, alignItems: 'baseline' }}>
@@ -259,7 +262,25 @@ export default function Watchlist() {
   const [error, setError] = useState('')
   const [memoSymbol, setMemoSymbol] = useState<string | null>(null)
   const [memoPreview, setMemoPreview] = useState<Record<string, string>>({})
+  const [refreshing, setRefreshing] = useState(false)
   const isMobile = useIsMobile()
+
+  async function refreshPrices(items: WatchItem[]) {
+    if (!items.length) return
+    setRefreshing(true)
+    const updated = await Promise.all(
+      items.map(async item => {
+        try {
+          const res = await fetch(`/api/quote?symbol=${item.symbol}`)
+          if (!res.ok) return item
+          const q = await res.json()
+          return { ...item, price: q.price, change_pct: q.change }
+        } catch { return item }
+      })
+    )
+    setWatchlist(updated)
+    setRefreshing(false)
+  }
 
   useEffect(() => {
     async function load() {
@@ -273,9 +294,21 @@ export default function Watchlist() {
         setWatchlist(data)
         // 메모 미리보기 로드
         loadMemoPreviews(data.map(d => d.symbol))
+        await refreshPrices(data)
       }
     }
     load()
+
+    const interval = setInterval(async () => {
+      const deviceId = getDeviceId()
+      const { data } = await supabase
+        .from('watchlist')
+        .select('*')
+        .eq('device_id', deviceId)
+        .order('added_at', { ascending: true })
+      if (data) await refreshPrices(data)
+    }, 60000)
+    return () => clearInterval(interval)
   }, [])
 
   async function loadMemoPreviews(symbols: string[]) {
@@ -314,8 +347,8 @@ export default function Watchlist() {
         .insert({
           device_id: deviceId,
           symbol: sym,
-          price: data.price,
-          change_pct: data.change,
+          price: q.price,
+          change_pct: q.change,
           memo: '',
         })
         .select()
