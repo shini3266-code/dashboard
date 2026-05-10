@@ -136,7 +136,7 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
     setSaving(true)
     await supabase
       .from('watchlist_memos')
-      .upsert({ symbol, memo, updated_at: new Date().toISOString() }, { onConflict: 'symbol' })
+      .upsert({ symbol, memo, updated_at: new Date(data.updated_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }).toISOString() }, { onConflict: 'symbol' })
     await fetch('/api/watchlist-memo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
