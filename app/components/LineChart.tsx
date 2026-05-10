@@ -130,7 +130,7 @@ export default function StockLineChart({
           interval={0}
           ticks={(() => {
             if (!data.length) return []
-            const count = 5
+            const count = 10
             const step = Math.floor((data.length - 1) / (count - 1))
             return Array.from({ length: count }, (_, i) =>
               data[Math.min(i * step, data.length - 1)].date
