@@ -1,5 +1,5 @@
 'use client'
-import RichEditor from '@/components/RichEditor'
+import RichEditor from '@../RichEditor'
 import { Memo, Category } from '../types'
 
 export default function MemoEditor({ form, setForm, categories, selected, isMobile, onSave, onCancel }: {
