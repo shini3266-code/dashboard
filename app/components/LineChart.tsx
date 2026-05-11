@@ -129,6 +129,7 @@ export default function StockLineChart({
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
           }}
           tick={{ fill: '#64748b', fontSize: 5 }}
+          style={{ fontSize: 5 }}
           // tick={(props) => (
           //   <text x={props.x} y={props.y} dy={10} fill="#64748b" fontSize={5} textAnchor="middle">
           //     {tickFormatter(props.value)}
@@ -152,12 +153,12 @@ export default function StockLineChart({
         />
         <YAxis
           domain={[min - padding, max + padding]}
-          // tick={{ fill: '#64748b', fontSize: 10 }}
-          tick={(props) => (
-            <text x={props.x} y={props.y} dy={4} fill="#64748b" fontSize={10} textAnchor="end">
-              {formatValue(props.value)}
-            </text>
-          )}
+          tick={{ fill: '#64748b', fontSize: 5 }}
+          // tick={(props) => (
+          //   <text x={props.x} y={props.y} dy={4} fill="#64748b" fontSize={10} textAnchor="end">
+          //     {formatValue(props.value)}
+          //   </text>
+          // )}
           axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
           tickLine={false}
           tickFormatter={formatYAxis ?? formatValue}
