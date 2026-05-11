@@ -235,12 +235,20 @@ export default function Page() {
         {!isMobile && (
           <div>
             <RangeTabs ranges={SHORT_RANGES} selected={vixShort} onChange={setVixShort} color={COLORS.fear} />
-            <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixShort} height={120} formatValue={(v) => v.toFixed(1)} tickCount={10} range={rangeMap[shortRange]}/>
+            <StockLineChart
+              symbol="^VIX" color={COLORS.fear}
+              range={rangeMap[vixShort]}
+              height={120} formatValue={(v) => v.toFixed(1)} tickCount={10}
+            />
           </div>
         )}
         <div>
           <RangeTabs ranges={LONG_RANGES} selected={vixLong} onChange={setVixLong} color={COLORS.fear} />
-          <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixLong} height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} tickCount={20} range={rangeMap[shortRange]}/>
+          <StockLineChart
+            symbol="^VIX" color={COLORS.fear}
+            range={rangeMap[vixLong]}
+            height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} tickCount={20}
+          />
         </div>
       </div>
 
