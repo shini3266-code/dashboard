@@ -17,6 +17,7 @@ interface Props {
   height?: number
   formatValue?: (v: number) => string
   externalData?: { date: string; value: number }[]
+  tickCount?: number
 }
 
 export default function StockLineChart({
@@ -27,6 +28,7 @@ export default function StockLineChart({
   height = 200,
   formatValue = (v) => v.toLocaleString(),
   externalData,
+  tickCount = 6,
 }: Props) {
   const [data, setData] = useState<ChartData[]>([])
   const [loading, setLoading] = useState(true)
@@ -130,12 +132,16 @@ export default function StockLineChart({
           interval={0}
           ticks={(() => {
             if (!data.length) return []
-            const count = 10
+            const count = tickCount
             const step = Math.floor((data.length - 1) / (count - 1))
             return Array.from({ length: count }, (_, i) =>
               data[Math.min(i * step, data.length - 1)].date
             )
           })()}
+          tickFormatter={(date) => {
+            const d = new Date(date)
+            return `${d.getMonth() + 1}/${d.getDate()}`
+          }}
         />
         <YAxis
           domain={[min - padding, max + padding]}

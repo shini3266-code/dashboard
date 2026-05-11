@@ -21,8 +21,8 @@ import {
   getFedAssetComment, getReservesComment, getRrpComment, getTgaComment,
 } from './components/commentFunctions'
 
-const SHORT_RANGES = ['1mo', '3mo', '6mo'] as const
-const LONG_RANGES  = ['1y',  '3y',  '5y' ] as const
+const SHORT_RANGES = ['1m', '3m', '6m'] as const
+const LONG_RANGES  = ['1y', '3y', '5y' ] as const
 type ShortRange = typeof SHORT_RANGES[number]
 type LongRange  = typeof LONG_RANGES[number]
 

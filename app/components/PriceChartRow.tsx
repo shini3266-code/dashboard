@@ -51,17 +51,18 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
       borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
     }}>
       <div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2 }}>{ticker}</div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
+      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
         <div style={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1 }}>
           {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
         </div>
-        <div style={{ fontSize: '0.6rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
+        <div style={{ fontSize: '0.6rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
           {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
         </div>
-        {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
-        {dd && <DrawdownBadge dd={dd} />}
-        {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
+      </div>
+      {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
+      {dd && <DrawdownBadge dd={dd} />}
+      {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
       {/* 단기 차트 - 1m/3m/6m */}
       {!isMobile && (
@@ -71,6 +72,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
             symbol={ticker} color={color}
             range={shortRange}          // ← range로 제어, 내부 버튼 안 뜸
             height={120} formatValue={fmt}
+            tickCount={5}
           />
         </div>
       )}
@@ -81,6 +83,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
         symbol={ticker} color={color}
         range={longRange}             // ← range로 제어, 내부 버튼 안 뜸
         height={isMobile ? 200 : 120} formatValue={fmt}
+        tickCount={10}
       />
     </div>
     </div>

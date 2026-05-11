@@ -70,13 +70,13 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
       borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
     }}>
       <div>
-        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 2, letterSpacing: '0.08em' }}>{series}</div>
         <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
-        <div style={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1, color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}></div>
+          <div style={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1, color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)' }}>
           {latest !== null ? fmt(latest) : '--'}
         </div>
         {change !== null && (
-          <div style={{ fontSize: '0.6rem', marginTop: 6, color: isUp ? 'var(--up)' : 'var(--down)' }}>
+          <div style={{ fontSize: '0.6rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
             {isUp ? '▲ +' : '▼ '}{fmt(Math.abs(change))}
           </div>
         )}
@@ -91,6 +91,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
           <StockLineChart
             symbol={series} color={color} height={120}
             formatValue={fmt} externalData={shortData}
+            tickCount={5}
           />
         </div>
       )}
@@ -101,6 +102,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
         <StockLineChart
           symbol={series} color={color} height={isMobile ? 200 : 120}
           formatValue={fmt} externalData={longData}
+          tickCount={10}
         />
       </div>
     </div>

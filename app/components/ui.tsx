@@ -32,15 +32,13 @@ export function CommentBox({ keyword, text, level = 'neutral' }: {
   if (!text) return null
   const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#64748b'
   return (
-    <div style={{ marginTop: 8 }}>
+    <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
       {keyword && (
-        <div style={{ marginBottom: 4 }}>
-          <span style={{ fontSize: '0.6rem', fontWeight: 700, color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px' }}>
-            {keyword}
-          </span>
-        </div>
+        <span style={{ fontSize: '0.6rem', fontWeight: 700, color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px', whiteSpace: 'nowrap' }}>
+          {keyword}
+        </span>
       )}
-      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>{text}</div>
+      <span style={{ fontSize: '0.6rem', color: 'var(--muted)', lineHeight: 1.6 }}>{text}</span>
     </div>
   )
 }
