@@ -234,23 +234,59 @@ function FearGreedChart() {
       }
     })
 
-  return (
-    <ResponsiveContainer width="100%" height={160}>
-      <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
-        <defs>
-          <linearGradient id="fg-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
-        <XAxis dataKey="date" tick={{ fill: '#808c9e', fontSize: '1.3rem' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-        <YAxis domain={[0, 100]} tick={{ fill: '#808c9e', fontSize: '1.3rem' }} axisLine={false} tickLine={false} width={28} />
-        <Tooltip content={<CustomTooltip />} />
-        <ReferenceLine y={25} stroke="#ef4444" strokeDasharray="3 3" strokeOpacity={0.4} />
-        <ReferenceLine y={75} stroke="#22c55e" strokeDasharray="3 3" strokeOpacity={0.4} />
-        <Area type="monotone" dataKey="value" stroke="#f59e0b" strokeWidth={1.5} fill="url(#fg-grad)" dot={false} activeDot={{ r: 4, fill: '#f59e0b' }} />
-      </AreaChart>
-    </ResponsiveContainer>
-  )
-}
+    return (
+      <ResponsiveContainer width="100%" height={160}>
+        <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+          <defs>
+            {segments.map((seg, i) => (
+              <linearGradient key={i} id={`fg-grad-${i}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={seg.color} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={seg.color} stopOpacity={0} />
+              </linearGradient>
+            ))}
+          </defs>
+          <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
+          <XAxis
+            dataKey="date"
+            tick={<CustomXTick />}
+            axisLine={false} tickLine={false}
+            interval="preserveStartEnd"
+          />
+          <YAxis
+            domain={[0, 100]}
+            tick={{ fill: '#808c9e', fontSize: 9 }}
+            axisLine={false} tickLine={false}
+            width={28}
+          />
+          <Tooltip content={<CustomTooltip />} />
+          <ReferenceLine y={25} stroke="#ef4444" strokeDasharray="3 3" strokeOpacity={0.4} />
+          <ReferenceLine y={75} stroke="#22c55e" strokeDasharray="3 3" strokeOpacity={0.4} />
+          {/* 단일 Area에 linearGradient 대신 stroke를 동적으로 */}
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="url(#fg-stroke)"
+            strokeWidth={1.5}
+            fill="none"
+            dot={false}
+            activeDot={{ r: 4 }}
+          />
+          {/* 색상별 세그먼트 오버레이 */}
+          {segments.map((seg, i) => (
+            <Area
+              key={i}
+              data={seg.data}
+              type="monotone"
+              dataKey="value"
+              stroke={seg.color}
+              strokeWidth={1.5}
+              fill={`url(#fg-grad-${i})`}
+              dot={false}
+              activeDot={false}
+              legendType="none"
+            />
+          ))}
+        </AreaChart>
+      </ResponsiveContainer>
+    )
+  }
