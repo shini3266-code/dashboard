@@ -204,7 +204,7 @@ function JoblessChart() {
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)' }}>
+          <div style={{ fontSize: '2.0rem', fontWeight: 700, color: 'var(--text)' }}>
             {latest !== null ? `${Math.round(latest).toLocaleString()}건` : '--'}
           </div>
           {change !== null && (

@@ -27,14 +27,14 @@ main svg text {
   --mono: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
 }
 
-html {
+/* html {
   font-size: 10px;
-}
+} */
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-size: 1rem; /* html 기준으로 상대적으로 적용 */
+  /* font-size: 1rem; */
 }
 
 input, textarea {
@@ -46,7 +46,7 @@ input::placeholder, textarea::placeholder {
 }
 
 select option {
-  font-size: 12px;
+  /* font-size: 12px; */
   background: #0d1117;
   color: #e2e8f0;
 }

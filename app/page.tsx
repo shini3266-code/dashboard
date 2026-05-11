@@ -238,7 +238,7 @@ export default function Page() {
             <StockLineChart
               symbol="^VIX" color={COLORS.fear}
               range={rangeMap[vixShort]}
-              height={120} formatValue={(v) => v.toFixed(1)} tickCount={10}
+              height={120} formatValue={(v) => v.toFixed(1)} tickCount={5}
             />
           </div>
         )}
@@ -247,7 +247,7 @@ export default function Page() {
           <StockLineChart
             symbol="^VIX" color={COLORS.fear}
             range={rangeMap[vixLong]}
-            height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} tickCount={20}
+            height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} tickCount={10}
           />
         </div>
       </div>

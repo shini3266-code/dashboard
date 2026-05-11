@@ -27,7 +27,7 @@ const CustomXTick = ({ x, y, payload }: any) => {
   const label = `${d.getMonth() + 1}/${d.getDate()}`
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={10} textAnchor="middle" fill="#64748b" fontSize={7}>
+      <text x={0} y={0} dy={10} textAnchor="middle" fill="#64748b" fontSize={5}>
         {label}
       </text>
     </g>
@@ -38,7 +38,7 @@ const CustomYTick = ({ x, y, payload, formatter }: any) => {
   if (payload?.value == null) return null
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={4} textAnchor="end" fill="#64748b" fontSize={7}>
+      <text x={0} y={0} dy={4} textAnchor="end" fill="#64748b" fontSize={5}>
         {formatter ? formatter(payload.value) : payload.value}
       </text>
     </g>
@@ -72,13 +72,13 @@ export default function StockLineChart({
   }, [symbol, range, externalData])
 
   if (loading) return (
-    <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.6rem' }}>
+    <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '1.3rem' }}>
       로딩 중...
     </div>
   )
 
   if (!data.length) return (
-    <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.6rem' }}>
+    <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '1.3rem' }}>
       데이터 없음
     </div>
   )
