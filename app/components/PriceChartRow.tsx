@@ -99,7 +99,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
             symbol={ticker} color={color}
             range={rangeMap[shortRange]}
             height={120} formatValue={fmt}
-            tickCount={10}
+            tickCount={5}
           />
         </div>
       )}
@@ -111,7 +111,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
           symbol={ticker} color={color}
           range={rangeMap[longRange]}
           height={isMobile ? 200 : 120} formatValue={fmt}
-          tickCount={15}
+          tickCount={10}
         />
       </div>
     </div>
