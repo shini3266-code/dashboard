@@ -83,7 +83,11 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
         )}
 
         {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
-        {dd && <DrawdownBadge dd={dd} />}
+        {dd &&  (
+          <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
+            ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
+          </span>
+        )}
         {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
 

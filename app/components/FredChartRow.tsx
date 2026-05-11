@@ -91,9 +91,9 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
             {isUp ? '▲ +' : '▼ '}{fmt(Math.abs(change))}
           </div>
         )}
-        {desc && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
-        {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
       </div>
+      {desc && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
+      {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
 
       {/* 왼쪽: 단기 1mo/3mo/6mo */}
       {!isMobile && (
