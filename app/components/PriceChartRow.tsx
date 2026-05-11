@@ -6,14 +6,15 @@ import { CommentBox, DrawdownBadge } from './ui'
 import { getDrawdownComment } from './commentFunctions'
 
 const SHORT_RANGES = ['1m', '3m', '6m'] as const
-const LONG_RANGES  = ['1y',  '3y',  '5y' ] as const
-const rangeMap: Record<string, string> = {
-  '1m': '1mo', '3m': '3mo', '6m': '6mo',
-  '1y': '1y', '3y': '3y', '5y': '5y',
-}
+const LONG_RANGES  = ['1y', '3y', '5y'] as const
 
 type ShortRange = typeof SHORT_RANGES[number]
 type LongRange  = typeof LONG_RANGES[number]
+
+const rangeMap: Record<string, string> = {
+  '1m': '1mo', '3m': '3mo', '6m': '6mo',
+  '1y': '1y',  '3y': '3y',  '5y': '5y',
+}
 
 export default function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel, keyword, keywordLevel, isMobile }: {
   ticker: string
@@ -26,9 +27,9 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
   showDrawdown?: boolean
   comment?: { keyword: string; text: string } | null
   commentLevel?: 'good' | 'warn' | 'bad' | 'neutral'
-  isMobile: boolean
   keyword?: string
   keywordLevel?: 'good' | 'warn' | 'bad' | 'neutral'
+  isMobile: boolean
 }) {
   const [shortRange, setShortRange] = useState<ShortRange>('1m')
   const [longRange,  setLongRange ] = useState<LongRange>('1y')
@@ -57,58 +58,58 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
       borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
     }}>
       <div>
-      <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-        <div style={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1 }}>
-          {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
+        <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+          <div style={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1 }}>
+            {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
+          </div>
+          <div style={{ fontSize: '0.6rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
+            {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
+          </div>
         </div>
-        <div style={{ fontSize: '0.6rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
-          {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
-        </div>
+
+        {keyword && (
+          <div style={{ marginTop: 6 }}>
+            <span style={{
+              fontSize: '0.6rem', fontWeight: 700,
+              color: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
+              border: '1px solid',
+              borderColor: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
+              borderRadius: 6, padding: '2px 8px',
+            }}>
+              {keyword}
+            </span>
+          </div>
+        )}
+
+        {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
+        {dd && <DrawdownBadge dd={dd} />}
+        {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
 
-      {keyword && (
-      <div style={{ marginTop: 6 }}>
-        <span style={{
-          fontSize: '0.6rem', fontWeight: 700,
-          color: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
-          border: '1px solid',
-          borderColor: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
-          borderRadius: 6, padding: '2px 8px',
-        }}>
-          {keyword}
-        </span>
-      </div>
-    )}
-
-      {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
-      {dd && <DrawdownBadge dd={dd} />}
-      {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
-      </div>
       {/* 단기 차트 - 1m/3m/6m */}
       {!isMobile && (
         <div>
           <RangeTabs ranges={SHORT_RANGES} selected={shortRange} onChange={setShortRange} />
           <StockLineChart
             symbol={ticker} color={color}
-            range={shortRange}          // ← range로 제어, 내부 버튼 안 뜸
+            range={rangeMap[shortRange]}
             height={120} formatValue={fmt}
             tickCount={10}
-            range={rangeMap[shortRange]}
           />
         </div>
       )}
+
       {/* 장기 차트 - 1y/3y/5y */}
       <div>
-      <RangeTabs ranges={LONG_RANGES} selected={longRange} onChange={setLongRange} />
-      <StockLineChart
-        symbol={ticker} color={color}
-        range={longRange}             // ← range로 제어, 내부 버튼 안 뜸
-        height={isMobile ? 200 : 120} formatValue={fmt}
-        tickCount={20}
-        range={rangeMap[shortRange]}
-      />
-    </div>
+        <RangeTabs ranges={LONG_RANGES} selected={longRange} onChange={setLongRange} />
+        <StockLineChart
+          symbol={ticker} color={color}
+          range={rangeMap[longRange]}
+          height={isMobile ? 200 : 120} formatValue={fmt}
+          tickCount={15}
+        />
+      </div>
     </div>
   )
 }
