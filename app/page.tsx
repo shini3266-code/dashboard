@@ -165,7 +165,7 @@ export default function Page() {
           <div style={{ width: 36, height: 36, background: 'var(--accent)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff', fontSize: '1.3rem' }}>M</div>
           {!isMobile && (
             <div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>Market Monitor</div>
+              <div style={{ fontSize: '2.0rem', fontWeight: 700 }}>Market Monitor</div>
               <div style={{ fontSize: '1.0rem', color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
             </div>
           )}

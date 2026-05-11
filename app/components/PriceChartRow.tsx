@@ -58,12 +58,12 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
       borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
     }}>
       <div>
-        <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
+        <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
           <div style={{ fontSize: '2.0rem', fontWeight: 700, lineHeight: 1 }}>
             {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
           </div>
-          <div style={{ fontSize: '1.0rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
+          <div style={{ fontSize: '1.3rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
             {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
         {keyword && (
           <div style={{ marginTop: 6 }}>
             <span style={{
-              fontSize: '1.0rem', fontWeight: 700,
+              fontSize: '1.3rem', fontWeight: 700,
               color: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
               border: '1px solid',
               borderColor: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
@@ -82,9 +82,9 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
           </div>
         )}
 
-        {sub && <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
+        {sub && <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
         {dd &&  (
-          <span style={{ fontSize: '1.0rem', color: 'var(--muted)' }}>
+          <span style={{ fontSize: '1.3rem', color: 'var(--muted)' }}>
             ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
           </span>
         )}
@@ -127,7 +127,7 @@ function RangeTabs<T extends string>({ ranges, selected, onChange }: {
     <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
       {ranges.map(r => (
         <button key={r} onClick={() => onChange(r)} style={{
-          fontSize: '1.0rem', padding: '2px 7px', borderRadius: 4,
+          fontSize: '1.3rem', padding: '2px 7px', borderRadius: 4,
           border: `1px solid ${selected === r ? 'var(--accent)' : 'var(--border)'}`,
           background: selected === r ? 'var(--accent)' : 'transparent',
           color: selected === r ? '#fff' : 'var(--muted)',

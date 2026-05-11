@@ -38,28 +38,28 @@ function WatchCard({ item, onRemove, onMemo, memoPreview, refreshing }: {
           <a  href={`https://www.investing.com/search/?q=${item.symbol}&tab=news`}
               target="_blank"
               rel="noreferrer"
-              style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', textDecoration: 'none' }}
+              style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', textDecoration: 'none' }}
             >
               {item.symbol} ↗
             </a>
           <div style={{ display: 'flex', gap: 10, marginTop: 4, alignItems: 'baseline' }}>
-            <span style={{ fontSize: 22, fontWeight: 700 }}>
+            <span style={{ fontSize: '2.0rem', fontWeight: 700 }}>
               ${item.price?.toFixed(2)}
             </span>
             <span style={{
-              fontSize: 13,
+              fontSize: '1.3rem',
               color: item.change_pct >= 0 ? 'var(--up)' : 'var(--down)',
             }}>
               {item.change_pct >= 0 ? '▲ +' : '▼ '}{item.change_pct?.toFixed(2)}%
             </span>
           </div>
           <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginTop: 4 }}>
-            {refreshing ? '⟳ 갱신 중...' : '전일 대비'}
+            {refreshing ? '⟳ 갱신 중...' : ''}
           </div>
         </div>
         <button
           onClick={() => onRemove(item.id, item.symbol)}
-          style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 18 }}
+          style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.5rem' }}
         >✕</button>
       </div>
 
@@ -74,7 +74,7 @@ function WatchCard({ item, onRemove, onMemo, memoPreview, refreshing }: {
           padding: '5px 0',
           color: 'var(--muted)',
           cursor: 'pointer',
-          fontSize: '0.4rem',
+          fontSize: '1.0rem',
           marginBottom: showChart ? 8 : 0,
         }}
       >
@@ -98,7 +98,7 @@ function WatchCard({ item, onRemove, onMemo, memoPreview, refreshing }: {
         onClick={onMemo}
       >
         <div style={{
-          fontSize: '1.0rem', color: 'var(--text)',
+          fontSize: '1.2rem', color: 'var(--text)',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           flex: 1, marginRight: 8,
         }}>
@@ -111,7 +111,7 @@ function WatchCard({ item, onRemove, onMemo, memoPreview, refreshing }: {
           style={{
             background: 'var(--surface)', border: '1px solid var(--border)',
             borderRadius: 6, padding: '4px 10px',
-            color: 'var(--text)', cursor: 'pointer', fontSize: 11, fontWeight: 700,
+            color: 'var(--text)', cursor: 'pointer', fontSize: '1.0rem', fontWeight: 700,
             whiteSpace: 'nowrap',
           }}
         >

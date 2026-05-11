@@ -81,17 +81,17 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
       borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
     }}>
       <div>
-        <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
+        <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}></div>
           <div style={{ fontSize: '2.0rem', fontWeight: 700, lineHeight: 1, color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)' }}>
           {latest !== null ? fmt(latest) : '--'}
         </div>
         {change !== null && (
-          <div style={{ fontSize: '1.0rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
+          <div style={{ fontSize: '1.3rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
             {isUp ? '▲ +' : '▼ '}{fmt(Math.abs(change))}
           </div>
         )}
-        {desc && <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
+        {desc && <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
         {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
       </div>
       {/* 왼쪽: 단기 1mo/3mo/6mo */}
@@ -129,7 +129,7 @@ function RangeTabs<T extends string>({ ranges, selected, onChange, color }: {
     <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
       {ranges.map(r => (
         <button key={r} onClick={() => onChange(r)} style={{
-          fontSize: '1.0rem', padding: '2px 7px', borderRadius: 4,
+          fontSize: '1.3rem', padding: '2px 7px', borderRadius: 4,
           border: `1px solid ${selected === r ? color : 'var(--border)'}`,
           background: selected === r ? color : 'transparent',
           color: selected === r ? '#fff' : 'var(--muted)',

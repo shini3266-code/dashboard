@@ -23,8 +23,8 @@ export default function MarketSummaryBar({ items }: {
             borderRight: i < items.length - 1 ? '1px solid var(--border)' : 'none',
             marginRight: 6,
           }}>
-            <span style={{ fontSize: '1.0rem', color: 'var(--muted)' }}>{label}</span>
-            <span style={{ fontSize: '1.0rem', fontWeight: 700, color }}>{keyword}</span>
+            <span style={{ fontSize: '1.3rem', color: 'var(--muted)' }}>{label}</span>
+            <span style={{ fontSize: '1.3rem', fontWeight: 700, color }}>{keyword}</span>
           </div>
         )
       })}

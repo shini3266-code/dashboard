@@ -62,7 +62,7 @@ export default function StockLineChart({
       alignItems: 'center',
       justifyContent: 'center',
       color: 'var(--muted)',
-      fontSize: '1.0rem',
+      fontSize: '1.3rem',
     }}>
       로딩 중...
     </div>
@@ -75,7 +75,7 @@ export default function StockLineChart({
       alignItems: 'center',
       justifyContent: 'center',
       color: 'var(--muted)',
-      fontSize: '1.0rem',
+      fontSize: '1.3rem',
     }}>
       데이터 없음
     </div>
@@ -95,11 +95,11 @@ export default function StockLineChart({
           border: '1px solid var(--border)',
           borderRadius: 8,
           padding: '10px 14px',
-          fontSize: '1.0rem',
+          fontSize: '1.3rem',
           boxShadow: '0 4px 12px rgba(0,0,0,0.4)',  // ← 그림자 추가
         }}>
-          <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: '1.0rem' }}>{label}</div>
-          <div style={{ color, fontWeight: 700, fontSize: '1.0rem' }}>{formatValue(payload[0].value)}</div>
+          <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: '1.3rem' }}>{label}</div>
+          <div style={{ color, fontWeight: 700, fontSize: '1.3rem' }}>{formatValue(payload[0].value)}</div>
         </div>
       )
     }

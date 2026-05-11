@@ -69,7 +69,7 @@ function EventModal({
             </div>
             <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginTop: 2 }}>{date}</div>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 20 }}>✕</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '2.0rem' }}>✕</button>
         </div>
 
         {/* 카테고리 */}
@@ -78,7 +78,7 @@ function EventModal({
           onChange={e => setForm({ ...form, category: e.target.value as CalEvent['category'] })}
           style={{
             background: 'var(--surface2)', border: '1px solid var(--border)',
-            borderRadius: 8, padding: '8px 12px', color: 'var(--text)', fontSize: '1.0rem',
+            borderRadius: 8, padding: '8px 12px', color: 'var(--text)', fontSize: '1.3rem',
           }}
         >
           <option>FOMC</option>
@@ -95,7 +95,7 @@ function EventModal({
           autoFocus
           style={{
             background: 'var(--surface2)', border: '1px solid var(--border)',
-            borderRadius: 8, padding: '8px 12px', color: 'var(--text)', fontSize: '1.0rem',
+            borderRadius: 8, padding: '8px 12px', color: 'var(--text)', fontSize: '1.3rem',
           }}
         />
 
@@ -109,7 +109,7 @@ function EventModal({
           style={{
             background: 'var(--surface2)', border: '1px solid var(--border)',
             borderRadius: 8, padding: '8px 12px', color: 'var(--text)',
-            fontSize: '1.0rem', resize: 'none',
+            fontSize: '1.3rem', resize: 'none',
           }}
         />
 
@@ -123,7 +123,7 @@ function EventModal({
                 style={{
                   background: 'none', border: '1px solid var(--down)',
                   borderRadius: 8, padding: '7px 14px',
-                  color: 'var(--down)', cursor: 'pointer', fontSize: '1.0rem',
+                  color: 'var(--down)', cursor: 'pointer', fontSize: '1.3rem',
                 }}
               >
                 삭제
@@ -136,7 +136,7 @@ function EventModal({
               style={{
                 background: 'none', border: '1px solid var(--border)',
                 borderRadius: 8, padding: '7px 14px',
-                color: 'var(--muted)', cursor: 'pointer', fontSize: '1.0rem',
+                color: 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem',
               }}
             >
               취소
@@ -149,7 +149,7 @@ function EventModal({
               style={{
                 background: 'var(--accent)', color: '#fff', border: 'none',
                 borderRadius: 8, padding: '7px 18px',
-                cursor: 'pointer', fontSize: '1.0rem', fontWeight: 700,
+                cursor: 'pointer', fontSize: '1.3rem', fontWeight: 700,
               }}
             >
               저장
@@ -267,10 +267,6 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
         />
       )}
 
-      {/* <div style={{ fontSize: '1.0rem', color: 'var(--muted)', letterSpacing: '0.08em', marginBottom: 16 }}>
-        📅 이벤트 캘린더
-      </div> */}
-
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 400px', gap: 16, alignItems: 'start', }}>
         {/* 달력 */}
         <div>
@@ -280,7 +276,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
               onClick={() => setCurrentMonth(new Date(year, month - 1))}
               style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem' }}
             >‹</button>
-            <div style={{ fontSize: '1.0rem', fontWeight: 700 }}>
+            <div style={{ fontSize: '1.3rem', fontWeight: 700 }}>
               {year}년 {month + 1}월
             </div>
             <button
@@ -292,7 +288,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
           {/* 요일 헤더 */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
             {['일', '월', '화', '수', '목', '금', '토'].map(d => (
-              <div key={d} style={{ textAlign: 'center', fontSize: '1.0rem', color: 'var(--muted)', padding: '4px 0' }}>
+              <div key={d} style={{ textAlign: 'center', fontSize: '1.3rem', color: 'var(--muted)', padding: '4px 0' }}>
                 {d}
               </div>
             ))}
@@ -318,7 +314,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
                   }}
                 >
                   <div style={{
-                    fontSize: '1.0rem',
+                    fontSize: '1.3rem',
                     color: isToday ? 'var(--accent)' : 'var(--muted)',
                     fontWeight: isToday ? 700 : 400,
                     marginBottom: 2,
@@ -334,7 +330,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
                         setEditModal(ev)     // ← 일정 클릭 시 수정 팝업
                       }}
                       style={{
-                        fontSize: '1.0rem',
+                        fontSize: '1.3rem',
                         background: CATEGORY_COLORS[ev.category],
                         color: '#fff', borderRadius: 3,
                         padding: '1px 4px', marginBottom: 2,
@@ -386,7 +382,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ fontSize: '1.0rem', fontWeight: 700 }}>{ev.title}</div>
                     <div style={{
-                      fontSize: '1.0rem',
+                      fontSize: '1.3rem',
                       color: daysLeft === 0 ? 'var(--down)' : daysLeft <= 3 ? 'var(--down)' : daysLeft <= 7 ? 'var(--gold)' : 'var(--muted)',
                       fontWeight: daysLeft <= 7 ? 700 : 400,
                     }}>
