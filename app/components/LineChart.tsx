@@ -18,6 +18,7 @@ interface Props {
   formatValue?: (v: number) => string
   externalData?: { date: string; value: number }[]
   tickCount?: number
+  formatYAxis?: (v: number) => string
 }
 
 export default function StockLineChart({
@@ -29,6 +30,7 @@ export default function StockLineChart({
   formatValue = (v) => v.toLocaleString(),
   externalData,
   tickCount = 6,
+  formatYAxis,
 }: Props) {
   const [data, setData] = useState<ChartData[]>([])
   const [loading, setLoading] = useState(true)
@@ -148,8 +150,8 @@ export default function StockLineChart({
           tick={{ fill: '#64748b', fontSize: 3 }}
           axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
           tickLine={false}
-          tickFormatter={formatValue}
-          width={70}
+          tickFormatter={formatYAxis ?? formatValue}
+          width={60}
           tickCount={5}
         />
         <Tooltip content={<CustomTooltip />} />

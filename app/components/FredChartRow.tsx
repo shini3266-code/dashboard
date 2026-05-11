@@ -59,6 +59,15 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
     return 'neutral'
   }
 
+  function fmtYAxis(n: number) {
+    if (unit === 'B') {
+      if (Math.abs(n) >= 1000000) return `$${(n/1000000).toFixed(1)}T`
+      if (Math.abs(n) >= 1000) return `$${(n/1000).toFixed(1)}T`
+      return `$${Math.round(n)}B`
+    }
+    return `${n.toFixed(2)}${unit}`
+  }
+
   const shortData = data.slice(-RANGE_POINTS[shortRange])
   const longData  = data.slice(-RANGE_POINTS[longRange])
   const c = getComment?.(latest) ?? null
@@ -66,7 +75,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : '280px 1fr 2fr',
+      gridTemplateColumns: isMobile ? '1fr' : '320px 1fr 1.5fr',
       gap: 12,
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
@@ -93,7 +102,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
           <StockLineChart
             symbol={series} color={color} height={120}
             formatValue={fmt} externalData={shortData}
-            tickCount={10}
+            tickCount={10} formatYAxis={fmtYAxis}
           />
         </div>
       )}
@@ -104,7 +113,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
         <StockLineChart
           symbol={series} color={color} height={isMobile ? 200 : 120}
           formatValue={fmt} externalData={longData}
-          tickCount={15}
+          tickCount={20} formatYAxis={fmtYAxis}
         />
       </div>
     </div>

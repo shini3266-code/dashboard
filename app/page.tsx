@@ -23,6 +23,10 @@ import {
 
 const SHORT_RANGES = ['1m', '3m', '6m'] as const
 const LONG_RANGES  = ['1y', '3y', '5y' ] as const
+const rangeMap: Record<string, string> = {
+  '1m': '1mo', '3m': '3mo', '6m': '6mo',
+  '1y': '1y', '3y': '3y', '5y': '5y',
+}
 type ShortRange = typeof SHORT_RANGES[number]
 type LongRange  = typeof LONG_RANGES[number]
 
@@ -231,12 +235,12 @@ export default function Page() {
         {!isMobile && (
           <div>
             <RangeTabs ranges={SHORT_RANGES} selected={vixShort} onChange={setVixShort} color={COLORS.fear} />
-            <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixShort} height={120} formatValue={(v) => v.toFixed(1)} tickCount={10}/>
+            <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixShort} height={120} formatValue={(v) => v.toFixed(1)} tickCount={10} range={rangeMap[shortRange]}/>
           </div>
         )}
         <div>
           <RangeTabs ranges={LONG_RANGES} selected={vixLong} onChange={setVixLong} color={COLORS.fear} />
-          <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixLong} height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} tickCount={15}/>
+          <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixLong} height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} tickCount={20} range={rangeMap[shortRange]}/>
         </div>
       </div>
 

@@ -7,6 +7,10 @@ import { getDrawdownComment } from './commentFunctions'
 
 const SHORT_RANGES = ['1m', '3m', '6m'] as const
 const LONG_RANGES  = ['1y',  '3y',  '5y' ] as const
+const rangeMap: Record<string, string> = {
+  '1m': '1mo', '3m': '3mo', '6m': '6mo',
+  '1y': '1y', '3y': '3y', '5y': '5y',
+}
 
 type ShortRange = typeof SHORT_RANGES[number]
 type LongRange  = typeof LONG_RANGES[number]
@@ -47,7 +51,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : '280px 1fr 2fr',
+      gridTemplateColumns: isMobile ? '1fr' : '320px 1fr 1.5fr',
       gap: 12,
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
@@ -90,6 +94,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
             range={shortRange}          // ← range로 제어, 내부 버튼 안 뜸
             height={120} formatValue={fmt}
             tickCount={10}
+            range={rangeMap[shortRange]}
           />
         </div>
       )}
@@ -100,7 +105,8 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
         symbol={ticker} color={color}
         range={longRange}             // ← range로 제어, 내부 버튼 안 뜸
         height={isMobile ? 200 : 120} formatValue={fmt}
-        tickCount={15}
+        tickCount={20}
+        range={rangeMap[shortRange]}
       />
     </div>
     </div>
