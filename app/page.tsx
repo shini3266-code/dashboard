@@ -58,7 +58,7 @@ export default function Page() {
   const [quotes, setQuotes] = useState<Record<string, QuoteData | null>>({})
   const [freds, setFreds] = useState<Record<string, FredData | null>>({})
   const [loading, setLoading] = useState(true)
-  const [vixShort, setVixShort] = useState<ShortRange>('1mo')
+  const [vixShort, setVixShort] = useState<ShortRange>('1m')
   const [vixLong,  setVixLong]  = useState<LongRange>('1y')
   const [t10y2yVal, setT10y2yVal] = useState<number | null>(null)
   const [dgs10Val,  setDgs10Val ] = useState<number | null>(null)

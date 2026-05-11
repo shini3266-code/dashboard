@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import StockLineChart from './LineChart'
 import { CommentBox } from './ui'
 
-const SHORT_RANGES = ['1mo', '3mo', '6mo'] as const
+const SHORT_RANGES = ['1m', '3m', '6m'] as const
 const LONG_RANGES  = ['1y',  '3y',  '5y' ] as const
 type ShortRange = typeof SHORT_RANGES[number]
 type LongRange  = typeof LONG_RANGES[number]
@@ -26,7 +26,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
   const [data, setData] = useState<{ date: string; value: number }[]>([])
   const [latest, setLatest] = useState<number | null>(null)
   const [change, setChange] = useState<number | null>(null)
-  const [shortRange, setShortRange] = useState<ShortRange>('1mo')
+  const [shortRange, setShortRange] = useState<ShortRange>('1m')
   const [longRange,  setLongRange ] = useState<LongRange>('1y')
 
   useEffect(() => {
