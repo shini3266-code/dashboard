@@ -27,7 +27,7 @@ const CustomXTick = ({ x, y, payload }: any) => {
   const label = `${d.getMonth() + 1}/${d.getDate()}`
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={10} textAnchor="middle" fill="#64748b" fontSize={5}>
+      <text x={0} y={0} dy={10} textAnchor="middle" fill="#808c9e" fontSize={5}>
         {label}
       </text>
     </g>
@@ -38,7 +38,7 @@ const CustomYTick = ({ x, y, payload, formatter }: any) => {
   if (payload?.value == null) return null
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={4} textAnchor="end" fill="#64748b" fontSize={5}>
+      <text x={0} y={0} dy={4} textAnchor="end" fill="#808c9e" fontSize={5}>
         {formatter ? formatter(payload.value) : payload.value}
       </text>
     </g>

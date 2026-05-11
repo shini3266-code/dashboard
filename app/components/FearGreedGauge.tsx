@@ -26,7 +26,7 @@ export default function FearGreedGauge() {
 
   const score = data?.score ?? null
 
-  const color = score === null ? '#64748b'
+  const color = score === null ? '#808c9e'
     : score < 25 ? '#ef4444'
     : score < 45 ? '#f97316'
     : score < 55 ? '#f59e0b'
@@ -204,8 +204,8 @@ function FearGreedChart() {
           </linearGradient>
         </defs>
         <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
-        <XAxis dataKey="date" tick={{ fill: '#64748b', fontSize: '1.3rem' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-        <YAxis domain={[0, 100]} tick={{ fill: '#64748b', fontSize: '1.3rem' }} axisLine={false} tickLine={false} width={28} />
+        <XAxis dataKey="date" tick={{ fill: '#808c9e', fontSize: '1.3rem' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+        <YAxis domain={[0, 100]} tick={{ fill: '#808c9e', fontSize: '1.3rem' }} axisLine={false} tickLine={false} width={28} />
         <Tooltip content={<CustomTooltip />} />
         <ReferenceLine y={25} stroke="#ef4444" strokeDasharray="3 3" strokeOpacity={0.4} />
         <ReferenceLine y={75} stroke="#22c55e" strokeDasharray="3 3" strokeOpacity={0.4} />

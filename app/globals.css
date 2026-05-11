@@ -19,12 +19,12 @@ main svg text {
   --surface2: #131922;
   --border: rgba(255,255,255,0.07);
   --text: #e2e8f0;
-  --muted: #64748b;
+  --muted: #808c9e;
   --up: #00d084;
   --down: #ff4d6a;
   --accent: #3b82f6;
   --gold: #f59e0b;
-  --mono: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  /* --mono: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif; */
 }
 
 html {

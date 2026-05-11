@@ -97,7 +97,7 @@ function UnempChart() {
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)' }}>
+          <div style={{ fontSize: '2.0rem', fontWeight: 700, color: 'var(--text)' }}>
             {latest !== null ? `${latest.toFixed(1)}%` : '--'}
           </div>
           {change !== null && (
@@ -118,7 +118,7 @@ function UnempChart() {
           borderLeft: `2px solid ${latest <= 4 ? 'var(--up)' : latest <= 5 ? 'var(--gold)' : 'var(--down)'}`,
         }}>
           <div style={{
-            fontSize: '1.3rem', lineHeight: 1.6,
+            fontSize: '1.3rem', lineHeight: 1.0,
             color: latest <= 4 ? 'var(--up)' : latest <= 5 ? 'var(--gold)' : 'var(--down)',
           }}>
             {latest <= 4
@@ -225,7 +225,7 @@ function JoblessChart() {
           borderLeft: `2px solid ${latest > 300000 ? 'var(--down)' : latest > 250000 ? 'var(--gold)' : 'var(--up)'}`,
         }}>
           <div style={{
-            fontSize: '1.3rem', lineHeight: 1.6,
+            fontSize: '1.3rem', lineHeight: 1.0,
             color: latest > 300000 ? 'var(--down)' : latest > 250000 ? 'var(--gold)' : 'var(--up)',
           }}>
             {latest > 300000

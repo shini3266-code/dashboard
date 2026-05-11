@@ -46,7 +46,10 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
   }, [ticker, showDrawdown])
 
   const isUp = (data?.change ?? 0) >= 0
-  const fmt = formatValue ?? ((v: number) => `${unit}${v.toLocaleString()}`)
+  const fmt = (v: number) => {
+    if (unit === '') return v.toFixed(2)  // DXY 같은 경우
+    return `${unit}${Math.round(v).toLocaleString()}`  // 소수점 제거
+  }
   const dd = showDrawdown ? getDrawdownComment(data?.price ?? null, high) : null
 
   return (
@@ -101,6 +104,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
             range={rangeMap[shortRange]}
             height={120} formatValue={fmt}
             tickCount={5}
+            formatYAxis={fmtYAxis}
           />
         </div>
       )}
@@ -113,6 +117,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
           range={rangeMap[longRange]}
           height={isMobile ? 200 : 120} formatValue={fmt}
           tickCount={10}
+          formatYAxis={fmtYAxis}
         />
       </div>
     </div>

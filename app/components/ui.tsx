@@ -30,7 +30,7 @@ export function CommentBox({ keyword, text, level = 'neutral' }: {
   level?: 'good' | 'warn' | 'bad' | 'neutral'
 }) {
   if (!text) return null
-  const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#64748b'
+  const color = level === 'good' ? '#22c55e' : level === 'warn' ? '#f59e0b' : level === 'bad' ? '#ef4444' : '#808c9e'
   return (
     <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
       {keyword && (

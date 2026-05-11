@@ -34,8 +34,8 @@ function CustomTooltip({ active, payload, label, color, suffix = '' }: any) {
         fontSize: '1.3rem',
         boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
       }}>
-        <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: '1.3rem' }}>{label}</div>
-        <div style={{ color, fontWeight: 700, fontSize: '0.8rem' }}>{payload[0].value?.toLocaleString()}{suffix}</div>
+        <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: '1.0rem' }}>{label}</div>
+        <div style={{ color, fontWeight: 700, fontSize: '1.0rem' }}>{payload[0].value?.toLocaleString()}{suffix}</div>
       </div>
     )
   }
@@ -121,11 +121,11 @@ export default function SectorFlow() {
               <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
               <XAxis
                 dataKey="name"
-                tick={{ fill: '#64748b', fontSize: '1.3rem' }}
+                tick={{ fill: '#808c9e', fontSize: '1.3rem' }}
                 axisLine={false} tickLine={false}
               />
               <YAxis
-                tick={{ fill: '#64748b', fontSize: '1.3rem' }}
+                tick={{ fill: '#808c9e', fontSize: '1.3rem' }}
                 axisLine={false} tickLine={false}
                 tickFormatter={(v) => `${v > 0 ? '+' : ''}${v.toFixed(1)}%`}
                 width={48}
