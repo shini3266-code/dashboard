@@ -35,7 +35,13 @@ function WatchCard({ item, onRemove, onMemo, memoPreview, refreshing }: {
       {/* 헤더 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: 16, fontWeight: 700 }}>{item.symbol}</div>
+          <a  href={`https://www.investing.com/search/?q=${item.symbol}&tab=news`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', textDecoration: 'none' }}
+            >
+              {item.symbol} ↗
+            </a>
           <div style={{ display: 'flex', gap: 10, marginTop: 4, alignItems: 'baseline' }}>
             <span style={{ fontSize: 22, fontWeight: 700 }}>
               ${item.price?.toFixed(2)}
