@@ -82,15 +82,16 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
     }}>
       <div>
         <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}></div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
           <div style={{ fontSize: '2.0rem', fontWeight: 700, lineHeight: 1, color: latest !== null && latest < 0 ? 'var(--down)' : 'var(--text)' }}>
           {latest !== null ? fmt(latest) : '--'}
-        </div>
+          </div>
         {change !== null && (
           <div style={{ fontSize: '1.3rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
             {isUp ? '▲ +' : '▼ '}{fmt(Math.abs(change))}
           </div>
         )}
+        </div>
         {desc && <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>{desc}</div>}
         {c && <CommentBox keyword={c.keyword} text={c.text} level={getLevel()} />}
       </div>

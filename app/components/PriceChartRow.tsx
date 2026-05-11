@@ -60,18 +60,20 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
       <div>
         <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginBottom: 10 }}>{label}</div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          <div style={{ fontSize: '2.0rem', fontWeight: 700, lineHeight: 1 }}>
+          <div style={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1 }}>
             {data ? `${unit}${data.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : '--'}
           </div>
-          <div style={{ fontSize: '1.3rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
+          <div style={{ fontSize: '0.6rem', color: isUp ? 'var(--up)' : 'var(--down)' }}>
             {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
           </div>
         </div>
 
-        {keyword && (
-          <div style={{ marginTop: 6 }}>
+        {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
+          {keyword && (
             <span style={{
-              fontSize: '1.3rem', fontWeight: 700,
+              fontSize: '0.6rem', fontWeight: 700,
               color: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
               border: '1px solid',
               borderColor: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
@@ -79,15 +81,14 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
             }}>
               {keyword}
             </span>
-          </div>
-        )}
+          )}
+          {dd && (
+            <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
+              ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
+            </span>
+          )}
+        </div>
 
-        {sub && <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
-        {dd &&  (
-          <span style={{ fontSize: '1.3rem', color: 'var(--muted)' }}>
-            ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
-          </span>
-        )}
         {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
       </div>
 

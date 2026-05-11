@@ -67,7 +67,7 @@ function EventModal({
             <div style={{ fontSize: '1.3rem', fontWeight: 700 }}>
               {event ? '일정 수정' : '일정 추가'}
             </div>
-            <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginTop: 2 }}>{date}</div>
+            <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginTop: 2 }}>{date}</div>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '2.0rem' }}>✕</button>
         </div>
@@ -345,7 +345,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
               )
             })}
           </div>
-          <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginTop: 6 }}>
+          <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginTop: 6 }}>
             * 날짜 클릭 = 일정 추가 · 일정 클릭 = 수정/삭제
           </div>
         </div>
@@ -361,9 +361,9 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
             임박한 이벤트
           </div>
           {loadingDb ? (
-            <div style={{ color: 'var(--muted)', fontSize: '1.0rem', textAlign: 'center', padding: 20 }}>로딩 중...</div>
+            <div style={{ color: 'var(--muted)', fontSize: '1.3rem', textAlign: 'center', padding: 20 }}>로딩 중...</div>
           ) : upcomingEvents.length === 0 ? (
-            <div style={{ color: 'var(--muted)', fontSize: '1.0rem', textAlign: 'center', padding: 20 }}>예정된 이벤트 없음</div>
+            <div style={{ color: 'var(--muted)', fontSize: '1.3rem', textAlign: 'center', padding: 20 }}>예정된 이벤트 없음</div>
           ) : (
             upcomingEvents.map(ev => {
               const daysLeft = Math.ceil((new Date(ev.date).getTime() - new Date(today).getTime()) / 86400000)
@@ -380,9 +380,9 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontSize: '1.0rem', fontWeight: 700 }}>{ev.title}</div>
+                    <div style={{ fontSize: '1.3rem', fontWeight: 700 }}>{ev.title}</div>
                     <div style={{
-                      fontSize: '1.3rem',
+                      fontSize: '1.0rem',
                       color: daysLeft === 0 ? 'var(--down)' : daysLeft <= 3 ? 'var(--down)' : daysLeft <= 7 ? 'var(--gold)' : 'var(--muted)',
                       fontWeight: daysLeft <= 7 ? 700 : 400,
                     }}>
@@ -395,7 +395,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
                   {/* 메모 있을 때만 미리보기 */}
                   {ev.memo && (
                     <div style={{
-                      fontSize: '1.0rem', color: 'var(--muted)', marginTop: 4,
+                      fontSize: '1.3rem', color: 'var(--muted)', marginTop: 4,
                       lineHeight: 1.5, borderTop: '1px solid var(--border)', paddingTop: 4,
                     }}>
                       {ev.memo.split('\n')[0]}
