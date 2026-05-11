@@ -9,7 +9,7 @@ type ShortRange = typeof SHORT_RANGES[number]
 type LongRange  = typeof LONG_RANGES[number]
 
 const RANGE_POINTS: Record<string, number> = {
-  '1mo': 22, '3mo': 66, '6mo': 132,
+  '1m': 22, '3m': 66, '6m': 132,
   '1y': 252, '3y': 756, '5y': 1300,
 }
 
@@ -21,6 +21,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
   unit?: string
   getComment?: (val: number | null) => { keyword: string; text: string } | null
   isMobile: boolean
+  onDataLoad?: (val: number | null) => void
 }) {
   const [data, setData] = useState<{ date: string; value: number }[]>([])
   const [latest, setLatest] = useState<number | null>(null)
@@ -36,6 +37,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
         if (d.length >= 2) {
           setLatest(d[d.length - 1].value)
           setChange(d[d.length - 1].value - d[d.length - 2].value)
+          onDataLoad?.(d[d.length - 1].value)
         }
       })
       .catch(() => {})

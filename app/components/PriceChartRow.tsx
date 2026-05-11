@@ -5,13 +5,13 @@ import { QuoteData } from './types'
 import { CommentBox, DrawdownBadge } from './ui'
 import { getDrawdownComment } from './commentFunctions'
 
-const SHORT_RANGES = ['1mo', '3mo', '6mo'] as const
+const SHORT_RANGES = ['1m', '3m', '6m'] as const
 const LONG_RANGES  = ['1y',  '3y',  '5y' ] as const
 
 type ShortRange = typeof SHORT_RANGES[number]
 type LongRange  = typeof LONG_RANGES[number]
 
-export default function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel, isMobile }: {
+export default function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel, keyword, keywordLevel, isMobile }: {
   ticker: string
   label: string
   color: string

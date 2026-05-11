@@ -60,6 +60,8 @@ export default function Page() {
   const [loading, setLoading] = useState(true)
   const [vixShort, setVixShort] = useState<ShortRange>('1mo')
   const [vixLong,  setVixLong]  = useState<LongRange>('1y')
+  const [t10y2yVal, setT10y2yVal] = useState<number | null>(null)
+  const [dgs10Val,  setDgs10Val ] = useState<number | null>(null)
 
   useEffect(() => {
     async function loadAll() {
@@ -201,8 +203,8 @@ export default function Page() {
       />
 
       <SectionLabel>🌐 매크로 지표</SectionLabel>
-      <FredChartRow series="T10Y2Y"   label="T10Y2Y · 장단기 금리차 (10Y-2Y)" desc="음수 = 역전 = 경기침체 선행신호" color={COLORS.macro} getComment={getYieldComment} isMobile={isMobile} />
-      <FredChartRow series="DGS10"    label="DGS10 · 10년물 미국채 금리"       desc="미국 장기금리 기준"              color={COLORS.macro} getComment={getBondComment}  isMobile={isMobile} />
+      <FredChartRow series="T10Y2Y"   label="T10Y2Y · 장단기 금리차 (10Y-2Y)" desc="음수 = 역전 = 경기침체 선행신호" color={COLORS.macro} getComment={getYieldComment} isMobile={isMobile} onDataLoad={setT10y2yVal}/>
+      <FredChartRow series="DGS10"    label="DGS10 · 10년물 미국채 금리"       desc="미국 장기금리 기준"              color={COLORS.macro} getComment={getBondComment}  isMobile={isMobile} onDataLoad={setDgs10Val}/>
       <PriceChartRow ticker="DX-Y.NYB" label="DX-Y.NYB · 달러 인덱스 (DXY)"  color={COLORS.macro} unit="" data={quotes['DX-Y.NYB']}
         formatValue={(v) => v.toFixed(2)}
         comment={dxyComment} commentLevel={dxyLevel} isMobile={isMobile}
