@@ -91,7 +91,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
           <StockLineChart
             symbol={series} color={color} height={120}
             formatValue={fmt} externalData={shortData}
-            tickCount={5}
+            tickCount={10}
           />
         </div>
       )}
@@ -102,7 +102,7 @@ export default function FredChartRow({ series, label, desc, color, unit = '%', g
         <StockLineChart
           symbol={series} color={color} height={isMobile ? 200 : 120}
           formatValue={fmt} externalData={longData}
-          tickCount={10}
+          tickCount={15}
         />
       </div>
     </div>

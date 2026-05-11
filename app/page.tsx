@@ -185,13 +185,13 @@ export default function Page() {
       <EventCalendar isMobile={isMobile} />
 
       <SectionLabel>📊 글로벌 ETF</SectionLabel>
-      <PriceChartRow ticker="SPY"  label="SPY · S&P 500 ETF"     color={COLORS.etf} data={quotes['SPY']}  showDrawdown isMobile={isMobile} />
-      <PriceChartRow ticker="QQQ"  label="QQQ · 나스닥 100 ETF"  color={COLORS.etf} data={quotes['QQQ']}  showDrawdown isMobile={isMobile} />
-      <PriceChartRow ticker="SOXX" label="SOXX · 반도체 ETF"     color={COLORS.etf} data={quotes['SOXX']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="SPY"  label="SPY · S&P 500 ETF"     color={COLORS.etf} data={quotes['SPY']}  showDrawdown isMobile={isMobile} keyword={spySummary.keyword} keywordLevel={spySummary.level}/>
+      <PriceChartRow ticker="QQQ"  label="QQQ · 나스닥 100 ETF"  color={COLORS.etf} data={quotes['QQQ']}  showDrawdown isMobile={isMobile} keyword={qqqSummary.keyword} keywordLevel={qqqSummary.level}/>
+      <PriceChartRow ticker="SOXX" label="SOXX · 반도체 ETF"     color={COLORS.etf} data={quotes['SOXX']} showDrawdown isMobile={isMobile} keyword={soxxSummary.keyword} keywordLevel={soxxSummary.level}/>
 
       <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
-      <PriceChartRow ticker="GC=F"    label="GC=F · 금 Gold"       color={COLORS.asset} unit="$" sub="USD / 온스"  data={quotes['GC=F']}    showDrawdown isMobile={isMobile} />
-      <PriceChartRow ticker="BTC-USD" label="BTC-USD · 비트코인"   color={COLORS.asset} unit="$" sub="BTC / USD"   data={quotes['BTC-USD']} showDrawdown isMobile={isMobile} />
+      <PriceChartRow ticker="GC=F"    label="GC=F · 금 Gold"       color={COLORS.asset} unit="$" sub="USD / 온스"  data={quotes['GC=F']}    showDrawdown isMobile={isMobile} keyword={goldSummary.keyword} keywordLevel={goldSummary.level}/>
+      <PriceChartRow ticker="BTC-USD" label="BTC-USD · 비트코인"   color={COLORS.asset} unit="$" sub="BTC / USD"   data={quotes['BTC-USD']} showDrawdown isMobile={isMobile} keyword={btcSummary.keyword} keywordLevel={btcSummary.level}/>
       <PriceChartRow ticker="CL=F"    label="CL=F · WTI 원유"      color={COLORS.asset} unit="$" sub="USD / 배럴"  data={quotes['CL=F']}
         comment={oilComment} commentLevel={oilLevel} isMobile={isMobile}
       />
@@ -229,12 +229,12 @@ export default function Page() {
         {!isMobile && (
           <div>
             <RangeTabs ranges={SHORT_RANGES} selected={vixShort} onChange={setVixShort} color={COLORS.fear} />
-            <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixShort} height={120} formatValue={(v) => v.toFixed(1)} />
+            <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixShort} height={120} formatValue={(v) => v.toFixed(1)} tickCount={10}/>
           </div>
         )}
         <div>
           <RangeTabs ranges={LONG_RANGES} selected={vixLong} onChange={setVixLong} color={COLORS.fear} />
-          <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixLong} height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} />
+          <StockLineChart symbol="^VIX" color={COLORS.fear} range={vixLong} height={isMobile ? 200 : 120} formatValue={(v) => v.toFixed(1)} tickCount={15}/>
         </div>
       </div>
 

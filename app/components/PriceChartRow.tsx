@@ -23,6 +23,8 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
   comment?: { keyword: string; text: string } | null
   commentLevel?: 'good' | 'warn' | 'bad' | 'neutral'
   isMobile: boolean
+  keyword?: string
+  keywordLevel?: 'good' | 'warn' | 'bad' | 'neutral'
 }) {
   const [shortRange, setShortRange] = useState<ShortRange>('1mo')
   const [longRange,  setLongRange ] = useState<LongRange>('1y')
@@ -60,6 +62,21 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
           {data ? `${isUp ? '▲ +' : '▼ '}${data.change.toFixed(2)}%` : '--'}
         </div>
       </div>
+
+      {keyword && (
+      <div style={{ marginTop: 6 }}>
+        <span style={{
+          fontSize: '0.6rem', fontWeight: 700,
+          color: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
+          border: '1px solid',
+          borderColor: keywordLevel === 'good' ? '#22c55e' : keywordLevel === 'warn' ? '#f59e0b' : keywordLevel === 'bad' ? '#ef4444' : '#e2e8f0',
+          borderRadius: 6, padding: '2px 8px',
+        }}>
+          {keyword}
+        </span>
+      </div>
+    )}
+
       {sub && <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>}
       {dd && <DrawdownBadge dd={dd} />}
       {comment && <CommentBox keyword={comment.keyword} text={comment.text} level={commentLevel} />}
@@ -72,7 +89,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
             symbol={ticker} color={color}
             range={shortRange}          // ← range로 제어, 내부 버튼 안 뜸
             height={120} formatValue={fmt}
-            tickCount={5}
+            tickCount={10}
           />
         </div>
       )}
@@ -83,7 +100,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
         symbol={ticker} color={color}
         range={longRange}             // ← range로 제어, 내부 버튼 안 뜸
         height={isMobile ? 200 : 120} formatValue={fmt}
-        tickCount={10}
+        tickCount={15}
       />
     </div>
     </div>
