@@ -9,6 +9,10 @@ main * {
   font-size: 14px;
 }
 
+main svg text {
+  font-size: unset;  /* ← 강제 해제 */
+}
+
 :root {
   --bg: #060810;
   --surface: #0d1117;
@@ -20,7 +24,7 @@ main * {
   --down: #ff4d6a;
   --accent: #3b82f6;
   --gold: #f59e0b;
-  --mono: 'JetBrains Mono', 'Pretendard', monospace;
+  --mono: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
 }
 
 html {
