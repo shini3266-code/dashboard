@@ -22,20 +22,20 @@ export default function MemoEditor({ form, setForm, categories, selected, isMobi
             autoFocus
             style={{
               width: '100%', background: 'var(--surface)', border: '1px solid var(--border)',
-              borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: '0.85rem', fontWeight: 700,
+              borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: '1.3rem', fontWeight: 700,
             }}
           />
           <div style={{ display: 'flex', gap: 8 }}>
             <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} style={{
               flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
-              borderRadius: 8, padding: '10px 12px', color: 'var(--text)', fontSize: '0.75rem',
+              borderRadius: 8, padding: '10px 12px', color: 'var(--text)', fontSize: '1.3rem',
             }}>
               {categories.map(c => <option key={c.id}>{c.name}</option>)}
             </select>
-            <button onClick={onCancel} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 16px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.75rem' }}>
+            <button onClick={onCancel} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 16px', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem' }}>
               취소
             </button>
-            <button onClick={onSave} style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 16px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
+            <button onClick={onSave} style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 16px', cursor: 'pointer', fontSize: '1.3rem', fontWeight: 700 }}>
               저장
             </button>
           </div>
@@ -49,19 +49,19 @@ export default function MemoEditor({ form, setForm, categories, selected, isMobi
             autoFocus
             style={{
               flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
-              borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: '0.85rem', fontWeight: 700,
+              borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: '1.3rem', fontWeight: 700,
             }}
           />
           <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} style={{
             background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 8, padding: '10px 12px', color: 'var(--text)', fontSize: '0.75rem',
+            borderRadius: 8, padding: '10px 12px', color: 'var(--text)', fontSize: '1.3rem',
           }}>
             {categories.map(c => <option key={c.id}>{c.name}</option>)}
           </select>
-          <button onClick={onCancel} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.75rem' }}>
+          <button onClick={onCancel} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem' }}>
             취소
           </button>
-          <button onClick={onSave} style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 18px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}>
+          <button onClick={onSave} style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 18px', cursor: 'pointer', fontSize: '1.3rem', fontWeight: 700 }}>
             저장
           </button>
         </div>

@@ -40,7 +40,7 @@ export default function CategoryModal({ categories, onClose, onSave, onDelete }:
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>카테고리 관리</div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '2.0rem' }}>✕</button>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 240, overflowY: 'auto' }}>
@@ -57,7 +57,7 @@ export default function CategoryModal({ categories, onClose, onSave, onDelete }:
                     autoFocus
                     style={{
                       background: 'var(--surface)', border: '1px solid var(--border)',
-                      borderRadius: 6, padding: '4px 8px', color: 'var(--text)', fontSize: '0.75rem', width: '100%',
+                      borderRadius: 6, padding: '4px 8px', color: 'var(--text)', fontSize: '1.3rem', width: '100%',
                     }}
                   />
                   <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
@@ -70,11 +70,11 @@ export default function CategoryModal({ categories, onClose, onSave, onDelete }:
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button onClick={() => { setEditId(null); setForm({ name: '', color: DEFAULT_COLORS[0] }) }}
-                      style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '3px 10px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.7rem' }}>
+                      style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '3px 10px', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem' }}>
                       취소
                     </button>
                     <button onClick={() => { onSave({ name: form.name, color: form.color }, cat.id); setEditId(null); setForm({ name: '', color: DEFAULT_COLORS[0] }) }}
-                      style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '3px 10px', cursor: 'pointer', fontSize: '0.7rem' }}>
+                      style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, padding: '3px 10px', cursor: 'pointer', fontSize: '1.3rem' }}>
                       저장
                     </button>
                   </div>
@@ -83,12 +83,12 @@ export default function CategoryModal({ categories, onClose, onSave, onDelete }:
                 <>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 10, height: 10, borderRadius: '50%', background: cat.color }} />
-                    <span style={{ fontSize: '0.75rem' }}>{cat.name}</span>
+                    <span style={{ fontSize: '1.3rem' }}>{cat.name}</span>
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    <button onClick={() => startEdit(cat)} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.75rem' }}>✏️</button>
+                    <button onClick={() => startEdit(cat)} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem' }}>✏️</button>
                     <button onClick={() => { if (confirm(`"${cat.name}" 삭제할까요?`)) onDelete(cat.id) }}
-                      style={{ background: 'none', border: 'none', color: 'var(--down)', cursor: 'pointer', fontSize: '0.75rem' }}>🗑️</button>
+                      style={{ background: 'none', border: 'none', color: 'var(--down)', cursor: 'pointer', fontSize: '1.3rem' }}>🗑️</button>
                   </div>
                 </>
               )}
@@ -97,7 +97,7 @@ export default function CategoryModal({ categories, onClose, onSave, onDelete }:
         </div>
 
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12 }}>
-          <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 8 }}>새 카테고리 추가</div>
+          <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginBottom: 8 }}>새 카테고리 추가</div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <input
               value={form.name}
@@ -106,12 +106,12 @@ export default function CategoryModal({ categories, onClose, onSave, onDelete }:
               placeholder="카테고리 이름"
               style={{
                 flex: 1, background: 'var(--surface2)', border: '1px solid var(--border)',
-                borderRadius: 8, padding: '8px 12px', color: 'var(--text)', fontSize: '0.75rem',
+                borderRadius: 8, padding: '8px 12px', color: 'var(--text)', fontSize: '1.3rem',
               }}
             />
             <button onClick={handleSave} style={{
               background: 'var(--accent)', color: '#fff', border: 'none',
-              borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700,
+              borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontSize: '1.3rem', fontWeight: 700,
             }}>추가</button>
           </div>
           <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>

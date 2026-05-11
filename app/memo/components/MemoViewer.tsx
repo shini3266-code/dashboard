@@ -25,7 +25,7 @@ export default function MemoViewer({ selected, categories, isMobile, onBack, onE
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {isMobile && (
         <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center' }}>
-          <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '0.85rem' }}>
+          <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '1.3rem' }}>
             ← 목록
           </button>
         </div>
@@ -36,10 +36,10 @@ export default function MemoViewer({ selected, categories, isMobile, onBack, onE
           <div>
             <div style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 6 }}>{selected.title}</div>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-              <span style={{ fontSize: '0.7rem', color: catObj?.color ?? 'var(--accent)', background: `${catObj?.color ?? '#3b82f6'}20`, borderRadius: 3, padding: '2px 8px' }}>
+              <span style={{ fontSize: '1.3rem', color: catObj?.color ?? 'var(--accent)', background: `${catObj?.color ?? '#3b82f6'}20`, borderRadius: 3, padding: '2px 8px' }}>
                 {selected.category}
               </span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
+              <span style={{ fontSize: '1.3rem', color: 'var(--muted)' }}>
                 {toKST(selected.updated_at)}
               </span>
             </div>
@@ -48,14 +48,14 @@ export default function MemoViewer({ selected, categories, isMobile, onBack, onE
             <button onClick={onTogglePin} style={{
               background: selected.pinned ? 'var(--accent)' : 'var(--surface)',
               border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px',
-              color: selected.pinned ? '#fff' : 'var(--muted)', cursor: 'pointer', fontSize: '0.75rem',
+              color: selected.pinned ? '#fff' : 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem',
             }}>
               {selected.pinned ? '📌 고정됨' : '📌 고정'}
             </button>
-            <button onClick={onEdit} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px', color: 'var(--text)', cursor: 'pointer', fontSize: '0.75rem' }}>
+            <button onClick={onEdit} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 14px', color: 'var(--text)', cursor: 'pointer', fontSize: '1.3rem' }}>
               수정
             </button>
-            <button onClick={onDelete} style={{ background: 'none', border: '1px solid var(--down)', borderRadius: 8, padding: '7px 14px', color: 'var(--down)', cursor: 'pointer', fontSize: '0.75rem' }}>
+            <button onClick={onDelete} style={{ background: 'none', border: '1px solid var(--down)', borderRadius: 8, padding: '7px 14px', color: 'var(--down)', cursor: 'pointer', fontSize: '1.3rem' }}>
               삭제
             </button>
           </div>
@@ -66,7 +66,7 @@ export default function MemoViewer({ selected, categories, isMobile, onBack, onE
             background: 'var(--surface2)', border: '1px solid var(--accent)',
             borderLeft: '3px solid var(--accent)', borderRadius: 8, padding: '10px 14px', marginBottom: 12,
           }}>
-            <div style={{ fontSize: '0.7rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 700 }}>📌 관심종목 메모</div>
+            <div style={{ fontSize: '1.3rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 700 }}>📌 관심종목 메모</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{watchlistMatch[1]}</div>
           </div>
         )}

@@ -53,7 +53,7 @@ function WatchCard({ item, onRemove, onMemo, memoPreview, refreshing }: {
               {item.change_pct >= 0 ? '▲ +' : '▼ '}{item.change_pct?.toFixed(2)}%
             </span>
           </div>
-          <div style={{ fontSize: '0.5rem', color: 'var(--muted)', marginTop: 4 }}>
+          <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginTop: 4 }}>
             {refreshing ? '⟳ 갱신 중...' : '전일 대비'}
           </div>
         </div>
@@ -98,7 +98,7 @@ function WatchCard({ item, onRemove, onMemo, memoPreview, refreshing }: {
         onClick={onMemo}
       >
         <div style={{
-          fontSize: '0.6rem', color: 'var(--text)',
+          fontSize: '1.0rem', color: 'var(--text)',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           flex: 1, marginRight: 8,
         }}>
@@ -171,8 +171,8 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontSize: '0.7rem', fontWeight: 700 }}>📌 {symbol}</div>
-            <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginTop: 2 }}>
+            <div style={{ fontSize: '1.3rem', fontWeight: 700 }}>📌 {symbol}</div>
+            <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginTop: 2 }}>
               매수 근거 · 목표가 · 임박 이벤트 등
             </div>
           </div>
@@ -187,19 +187,19 @@ function MemoModal({ symbol, onClose }: { symbol: string; onClose: () => void })
             flex: 1, minHeight: 300,
             background: 'var(--surface2)', border: '1px solid var(--border)',
             borderRadius: 8, padding: '12px 14px',
-            color: 'var(--text)', fontSize: '0.7rem', lineHeight: 1.8, resize: 'vertical',
+            color: 'var(--text)', fontSize: '1.3rem', lineHeight: 1.8, resize: 'vertical',
           }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
           <button onClick={onClose} style={{
             background: 'none', border: '1px solid var(--border)',
-            borderRadius: 8, padding: '8px 16px', color: 'var(--muted)', cursor: 'pointer', fontSize: '0.6rem',
+            borderRadius: 8, padding: '8px 16px', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.0rem',
           }}>닫기</button>
           <button onClick={saveMemo} disabled={saving} style={{
             background: saved ? '#22c55e' : 'var(--accent)', color: '#fff', border: 'none',
             borderRadius: 8, padding: '8px 20px',
             cursor: saving ? 'not-allowed' : 'pointer',
-            fontSize: '0.6rem', fontWeight: 700, transition: 'background 0.3s', opacity: saving ? 0.7 : 1,
+            fontSize: '1.0rem', fontWeight: 700, transition: 'background 0.3s', opacity: saving ? 0.7 : 1,
           }}>
             {saving ? '저장 중...' : saved ? '✓ 저장됨' : '저장'}
           </button>
@@ -345,7 +345,7 @@ export default function Watchlist() {
           placeholder="티커 입력 (예: AAPL, TSLA, 005930.KS)"
           style={{
             flex: 1, background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: '0.7rem',
+            borderRadius: 8, padding: '10px 14px', color: 'var(--text)', fontSize: '1.3rem',
           }}
         />
         <button
@@ -355,7 +355,7 @@ export default function Watchlist() {
             background: 'var(--accent)', color: '#fff', border: 'none',
             borderRadius: 8, padding: '10px 18px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            fontWeight: 700, opacity: loading ? 0.7 : 1, fontSize: '0.6rem',
+            fontWeight: 700, opacity: loading ? 0.7 : 1, fontSize: '1.0rem',
           }}
         >
           {loading ? '...' : '추가'}
@@ -363,7 +363,7 @@ export default function Watchlist() {
       </div>
 
       {error && (
-        <div style={{ color: 'var(--down)', fontSize: '0.6rem', marginBottom: 12 }}>{error}</div>
+        <div style={{ color: 'var(--down)', fontSize: '1.0rem', marginBottom: 12 }}>{error}</div>
       )}
 
       <div style={{

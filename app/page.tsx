@@ -162,20 +162,20 @@ export default function Page() {
         marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 36, height: 36, background: 'var(--accent)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff', fontSize: '0.875rem' }}>M</div>
+          <div style={{ width: 36, height: 36, background: 'var(--accent)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff', fontSize: '1.3rem' }}>M</div>
           {!isMobile && (
             <div>
               <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>Market Monitor</div>
-              <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
+              <div style={{ fontSize: '1.0rem', color: 'var(--muted)' }}>REAL-TIME FINANCIAL DASHBOARD</div>
             </div>
           )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
           <BookmarkMenu />
-          <a href="/memo" style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 12px', color: 'var(--text)', textDecoration: 'none', fontSize: '0.7rem' }}>
+          <a href="/memo" style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 12px', color: 'var(--text)', textDecoration: 'none', fontSize: '1.3rem' }}>
             📝 메모
           </a>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.6rem', color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '1.0rem', color: loading ? 'var(--muted)' : 'var(--up)', marginLeft: 4 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: loading ? 'var(--muted)' : 'var(--up)', animation: loading ? 'none' : 'pulse 2s infinite' }} />
             {!isMobile && (loading ? 'LOADING...' : 'LIVE')}
           </div>
@@ -222,8 +222,8 @@ export default function Page() {
         borderRadius: 10, padding: isMobile ? '14px' : '16px', marginBottom: 4,
       }}>
         <div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
-          <div style={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1, color: 'var(--text)' }}>
+          <div style={{ fontSize: '1.0rem', color: 'var(--muted)', marginBottom: 8 }}>VIX 변동성 지수</div>
+          <div style={{ fontSize: '2.0rem', fontWeight: 700, lineHeight: 1, color: 'var(--text)' }}>
             {quotes['^VIX'] ? vix.toFixed(2) : '--'}
           </div>
           <CommentBox

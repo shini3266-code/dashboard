@@ -24,7 +24,7 @@ main * {
 }
 
 html {
-  font-size: 20px; /* 기본값, 여기서 18px로 바꾸면 전체 +2pt */
+  font-size: 10px;
 }
 
 body {
