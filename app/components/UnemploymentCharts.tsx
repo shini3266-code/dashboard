@@ -19,11 +19,11 @@ function CustomTooltip({ active, payload, label, color, suffix = '' }: any) {
         border: '1px solid var(--border)',
         borderRadius: 8,
         padding: '10px 14px',
-        fontSize: '0.6rem',
+        fontSize: '0.5rem',
         boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
       }}>
         <div style={{ color: 'var(--muted)', marginBottom: 4, fontSize: '0.6rem' }}>{label}</div>
-        <div style={{ color, fontWeight: 700, fontSize: '0.8rem' }}>{payload[0].value?.toLocaleString()}{suffix}</div>
+        <div style={{ color, fontWeight: 700, fontSize: '0.6rem' }}>{payload[0].value?.toLocaleString()}{suffix}</div>
       </div>
     )
   }
