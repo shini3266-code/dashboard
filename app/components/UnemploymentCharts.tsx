@@ -89,10 +89,10 @@ function UnempChart() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
+          <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
             미국 실업률 (UNRATE)
           </div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '1.3rem', color: 'var(--muted)' }}>
             4% 이하 = 완전고용 · 월간 데이터
           </div>
         </div>
@@ -102,7 +102,7 @@ function UnempChart() {
           </div>
           {change !== null && (
             <div style={{
-              fontSize: '0.6rem', marginTop: 2,
+              fontSize: '1.3rem', marginTop: 2,
               color: change > 0 ? 'var(--down)' : change < 0 ? 'var(--up)' : 'var(--muted)',
             }}>
               {change > 0 ? '▲ +' : change < 0 ? '▼ ' : ''}{change.toFixed(1)}%p
@@ -118,20 +118,20 @@ function UnempChart() {
           borderLeft: `2px solid ${latest <= 4 ? 'var(--up)' : latest <= 5 ? 'var(--gold)' : 'var(--down)'}`,
         }}>
           <div style={{
-            fontSize: '0.6rem', lineHeight: 1.6,
+            fontSize: '1.3rem', lineHeight: 1.6,
             color: latest <= 4 ? 'var(--up)' : latest <= 5 ? 'var(--gold)' : 'var(--down)',
           }}>
             {latest <= 4
-              ? `${latest.toFixed(1)}% — 완전고용 수준이에요. 고용시장이 탄탄해요.`
+              ? `완전고용 수준이에요. 고용시장이 탄탄해요.`
               : latest <= 5
-              ? `${latest.toFixed(1)}% — 소폭 상승 중이에요. 고용 냉각 신호를 모니터링하세요.`
-              : `${latest.toFixed(1)}% — 고용시장이 악화되고 있어요. 연준 피벗 기대가 커질 수 있어요.`}
+              ? `소폭 상승 중이에요. 고용 냉각 신호를 모니터링하세요.`
+              : `고용시장이 악화되고 있어요. 연준 피벗 기대가 커질 수 있어요.`}
           </div>
         </div>
       )}
 
       {loading ? (
-        <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.6rem' }}>
+        <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '1.3rem' }}>
           로딩 중...
         </div>
       ) : (
@@ -196,10 +196,10 @@ function JoblessChart() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
+          <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginBottom: 4, letterSpacing: '0.08em' }}>
             주간 신규 실업수당 청구 (ICSA)
           </div>
-          <div style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '1.3rem', color: 'var(--muted)' }}>
             30만+ 급증 = 고용 냉각 신호 · 주간 데이터
           </div>
         </div>
@@ -209,7 +209,7 @@ function JoblessChart() {
           </div>
           {change !== null && (
             <div style={{
-              fontSize: '0.6rem', marginTop: 2,
+              fontSize: '1.3rem', marginTop: 2,
               color: change > 0 ? 'var(--down)' : 'var(--up)',
             }}>
               {change > 0 ? '▲ +' : '▼ '}{Math.abs(Math.round(change)).toLocaleString()}건
@@ -225,20 +225,20 @@ function JoblessChart() {
           borderLeft: `2px solid ${latest > 300000 ? 'var(--down)' : latest > 250000 ? 'var(--gold)' : 'var(--up)'}`,
         }}>
           <div style={{
-            fontSize: '0.6rem', lineHeight: 1.6,
+            fontSize: '1.3rem', lineHeight: 1.6,
             color: latest > 300000 ? 'var(--down)' : latest > 250000 ? 'var(--gold)' : 'var(--up)',
           }}>
             {latest > 300000
-              ? `${Math.round(latest).toLocaleString()}건 — 30만 초과예요. 고용 냉각 신호예요.`
+              ? `30만 초과예요. 고용 냉각 신호예요.`
               : latest > 250000
-              ? `${Math.round(latest).toLocaleString()}건 — 정상 범위 상단이에요. 모니터링이 필요해요.`
-              : `${Math.round(latest).toLocaleString()}건 — 건강한 수준이에요. 고용시장이 탄탄해요.`}
+              ? `정상 범위 상단이에요. 모니터링이 필요해요.`
+              : `건강한 수준이에요. 고용시장이 탄탄해요.`}
           </div>
         </div>
       )}
 
       {loading ? (
-        <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '0.6rem' }}>
+        <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '1.3rem' }}>
           로딩 중...
         </div>
       ) : (
