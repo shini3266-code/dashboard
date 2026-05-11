@@ -46,9 +46,11 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
   }, [ticker, showDrawdown])
 
   const isUp = (data?.change ?? 0) >= 0
-  const fmt = (v: number) => {
-    if (unit === '') return v.toFixed(2)  // DXY 같은 경우
-    return `${unit}${Math.round(v).toLocaleString()}`  // 소수점 제거
+  const fmt = formatValue ?? ((v: number) => `${unit}${v.toLocaleString()}`)
+
+  const fmtYAxis = (v: number) => {
+    if (unit === '') return v.toFixed(2)
+    return `${unit}${Math.round(v).toLocaleString()}`
   }
   const dd = showDrawdown ? getDrawdownComment(data?.price ?? null, high) : null
 
