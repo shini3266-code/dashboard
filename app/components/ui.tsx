@@ -47,17 +47,11 @@ export function DrawdownBadge({ dd }: {
   dd: { drawdown: number; status: string; level: 'good' | 'warn' | 'bad' } | null
 }) {
   if (!dd) return null
-  const color = dd.level === 'good' ? '#22c55e' : dd.level === 'warn' ? '#f59e0b' : '#ef4444'
   return (
-    <div style={{ marginTop: 8 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-        <span style={{ fontSize: '0.6rem', fontWeight: 700, color, border: `1px solid ${color}`, borderRadius: 6, padding: '2px 8px' }}>
-          {dd.status}
-        </span>
-        <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
-          ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
-        </span>
-      </div>
+    <div style={{ marginTop: 4 }}>
+      <span style={{ fontSize: '0.6rem', color: 'var(--muted)' }}>
+        ATH 대비 {dd.drawdown.toFixed(1)}% 낙폭
+      </span>
     </div>
   )
 }

@@ -26,7 +26,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
   keyword?: string
   keywordLevel?: 'good' | 'warn' | 'bad' | 'neutral'
 }) {
-  const [shortRange, setShortRange] = useState<ShortRange>('1mo')
+  const [shortRange, setShortRange] = useState<ShortRange>('1m')
   const [longRange,  setLongRange ] = useState<LongRange>('1y')
   const [high, setHigh] = useState<number | null>(null)
 
