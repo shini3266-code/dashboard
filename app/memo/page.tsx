@@ -7,6 +7,7 @@ import CategoryModal from './components/CategoryModal'
 import MemoSidebar from './components/MemoSidebar'
 import MemoViewer from './components/MemoViewer'
 import MemoEditor from './components/MemoEditor'
+import TrashViewer from './components/TrashViewer'
 
 export default function MemoPage() {
   const isMobile = useIsMobile()
@@ -102,7 +103,7 @@ export default function MemoPage() {
     if (!a.pinned && b.pinned) return 1
     return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
   })
-  
+
   const trashed = memos.filter(m => m.deleted_at)
 
   return (
