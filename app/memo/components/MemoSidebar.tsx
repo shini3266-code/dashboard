@@ -13,8 +13,9 @@ export default function MemoSidebar({ memos, categories, filtered, selected, sel
   onNew: () => void
   onCategoryChange: (cat: string) => void
   onShowCatModal: () => void
-  onShowTrash: () => void
+  onShowTrash: (v: boolean) => void
   trashedCount: number
+  showTrash: boolean
 }) {
   const allCategories = ['전체', ...categories.map(c => c.name)]
 
@@ -37,18 +38,18 @@ export default function MemoSidebar({ memos, categories, filtered, selected, sel
           {allCategories.map(cat => {
             const catObj = categories.find(c => c.name === cat)
             return (
-              <button key={cat} onClick={() => onCategoryChange(cat)} style={{
+              <button key={cat} onClick={() => { onCategoryChange(cat); onShowTrash && onShowTrash(false) }} style={{
                 display: 'flex', alignItems: 'center', gap: 8,
-                background: selectedCategory === cat ? 'rgba(59,130,246,0.15)' : 'none',
-                color: selectedCategory === cat ? 'var(--text)' : 'var(--muted)',
+                background: selectedCategory === cat && !showTrash ? 'rgba(59,130,246,0.15)' : 'none',
+                color: selectedCategory === cat && !showTrash ? 'var(--text)' : 'var(--muted)',
                 border: 'none', borderRadius: 6, padding: '7px 10px',
                 cursor: 'pointer', fontSize: '1.3rem', textAlign: 'left',
-                borderLeft: selectedCategory === cat ? `3px solid ${catObj?.color ?? 'var(--accent)'}` : '3px solid transparent',
+                borderLeft: selectedCategory === cat && !showTrash ? `3px solid ${catObj?.color ?? 'var(--accent)'}` : '3px solid transparent',
               }}>
                 {catObj && <div style={{ width: 8, height: 8, borderRadius: '50%', background: catObj.color }} />}
                 {cat}
                 <span style={{ marginLeft: 'auto', fontSize: '1.3rem', color: 'var(--muted)' }}>
-                  {cat === '전체' ? memos.length : memos.filter(m => m.category === cat).length}
+                  {cat === '전체' ? memos.filter(m => !m.deleted_at).length : memos.filter(m => m.category === cat && !m.deleted_at).length}
                 </span>
               </button>
             )
@@ -60,12 +61,6 @@ export default function MemoSidebar({ memos, categories, filtered, selected, sel
           borderRadius: 6, padding: '6px', cursor: 'pointer', color: 'var(--muted)', fontSize: '1.3rem',
         }}>
           ⚙️ 카테고리 관리
-        </button>
-        <button onClick={onShowTrash} style={{
-          width: '100%', marginTop: 6, background: 'none', border: '1px solid var(--border)',
-          borderRadius: 6, padding: '6px', cursor: 'pointer', color: 'var(--muted)', fontSize: '1.3rem',
-        }}>
-          🗑️ 휴지통 {trashedCount > 0 && `(${trashedCount})`}
         </button>
       </div>
 
