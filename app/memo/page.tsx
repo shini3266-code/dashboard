@@ -94,12 +94,14 @@ export default function MemoPage() {
     setSelected(null)
   }
 
-  const filtered = (selectedCategory === '전체' ? memos.filter(m => !m.deleted_at) : memos.filter(m => m.category === selectedCategory && !m.deleted_at))
-    .sort((a, b) => {
-      if (a.pinned && !b.pinned) return -1
-      if (!a.pinned && b.pinned) return 1
-      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-    })
+  const filtered = (selectedCategory === '전체' 
+  ? memos.filter(m => !m.deleted_at) 
+  : memos.filter(m => m.category === selectedCategory && !m.deleted_at))
+  .sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1
+    if (!a.pinned && b.pinned) return 1
+    return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  })
   
   const trashed = memos.filter(m => m.deleted_at)
 
