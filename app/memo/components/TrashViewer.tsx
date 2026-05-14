@@ -11,7 +11,7 @@ export default function TrashViewer({ memos, onRestore, onPermanentDelete, onClo
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontSize: '1.3rem', fontWeight: 700 }}>🗑️ 휴지통 ({memos.length})</div>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem' }}>← 돌아가기</button>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text)', cursor: 'pointer', fontSize: '1.3rem' }}>← 돌아가기</button>
       </div>
       <div style={{ flex: 1, overflowY: 'auto' }}>
         {memos.length === 0 ? (

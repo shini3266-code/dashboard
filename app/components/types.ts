@@ -2,6 +2,9 @@ export interface QuoteData {
     symbol: string
     price: number
     change: number
+    prev: number
+    high52w?: number
+    drawdown?: number
   }
   
   export interface FredData {

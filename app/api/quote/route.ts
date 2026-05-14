@@ -1,6 +1,8 @@
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const symbol = searchParams.get('symbol')
+  const high52w = meta.fiftyTwoWeekHigh
+  const drawdown = high52w ? ((curr - high52w) / high52w) * 100 : null
 
   try {
     const res = await fetch(
@@ -21,7 +23,7 @@ export async function GET(request: Request) {
     const prev = meta.chartPreviousClose ?? meta.previousClose
     const curr = meta.regularMarketPrice
     const change = ((curr - prev) / prev) * 100
-    return Response.json({ symbol, price: curr, change, prev })
+    return Response.json({ symbol, price: curr, change, prev, high52w, drawdown })
   } catch {
     return Response.json(null)
   }

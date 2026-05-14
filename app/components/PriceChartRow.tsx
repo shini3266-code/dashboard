@@ -16,7 +16,7 @@ const rangeMap: Record<string, string> = {
   '1y': '1y',  '3y': '3y',  '5y': '5y',
 }
 
-export default function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel, keyword, keywordLevel, isMobile }: {
+export default function PriceChartRow({ ticker, label, color, unit = '$', sub, data, formatValue, showDrawdown = false, comment, commentLevel, keyword, keywordLevel, isMobile, high }: {
   ticker: string
   label: string
   color: string
@@ -30,21 +30,13 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
   keyword?: string
   keywordLevel?: 'good' | 'warn' | 'bad' | 'neutral'
   isMobile: boolean
+  high?: number | null
+
 }) {
   const [shortRange, setShortRange] = useState<ShortRange>('1m')
   const [longRange,  setLongRange ] = useState<LongRange>('1y')
   const [high, setHigh] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (!showDrawdown) return
-    fetch(`/api/history?symbol=${ticker}&range=2y`)
-      .then(r => r.json())
-      .then((d: { date: string; value: number }[]) => {
-        if (d.length) setHigh(Math.max(...d.map(x => x.value)))
-      })
-      .catch(() => {})
-  }, [ticker, showDrawdown])
-
+  const dd = showDrawdown ? getDrawdownComment(data?.price ?? null, high ?? null) : null
   const isUp = (data?.change ?? 0) >= 0
   const fmt = formatValue ?? ((v: number) => `${unit}${v.toLocaleString()}`)
 

@@ -49,12 +49,11 @@ async function fetchFred(series: string): Promise<FredData | null> {
   } catch { return null }
 }
 
-function etfSummary(change: number | null | undefined) {
-  if (change == null) return { keyword: '--', level: 'neutral' as const }
-  return {
-    keyword: change >= 1.5 ? '강세장' : change >= 0 ? '보합' : change >= -1.5 ? '조정초입' : '조정장',
-    level: (change >= 1.5 ? 'good' : change >= 0 ? 'neutral' : change >= -1.5 ? 'warn' : 'bad') as const,
-  }
+function etfSummary(change, drawdown) {
+  if (drawdown < -20) return { keyword: '약세', level: 'bad' }
+  if (drawdown < -10) return { keyword: '조정', level: 'warn' }
+  if (drawdown < -5)  return { keyword: '눌림목', level: 'neutral' }
+  return { keyword: '강세', level: 'good' }
 }
 
 export default function Page() {
@@ -89,6 +88,27 @@ export default function Page() {
     return () => clearInterval(interval)
   }, [])
 
+  const [highs, setHighs] = useState<Record<string, number | null>>({})
+
+  useEffect(() => {
+    const symbols = ['SPY', 'QQQ', 'SOXX', 'GC=F', 'BTC-USD']
+    Promise.all(
+      symbols.map(s =>
+        fetch(`/api/history?symbol=${s}&range=2y`)
+          .then(r => r.json())
+          .then((d: { date: string; value: number }[]) => ({
+            symbol: s,
+            high: d.length ? Math.max(...d.map(x => x.value)) : null,
+          }))
+          .catch(() => ({ symbol: s, high: null }))
+      )
+    ).then(results => {
+      const map: Record<string, number | null> = {}
+      results.forEach(({ symbol, high }) => { map[symbol] = high })
+      setHighs(map)
+    })
+  }, [])
+
   // 기본 변수
   const dxy      = quotes['DX-Y.NYB']?.price  ?? null
   const krw      = quotes['KRW=X']?.price      ?? null
@@ -114,20 +134,30 @@ export default function Page() {
   const t10y2yLevel = t10y2y != null ? (t10y2y < 0 ? 'bad' : t10y2y < 0.5 ? 'warn' : 'good') as const : 'neutral' as const
   const dgs10Level  = dgs10  != null ? (dgs10  >= 5 ? 'bad' : dgs10  >= 4 ? 'warn' : 'good') as const : 'neutral' as const
 
-  const spySummary  = etfSummary(quotes['SPY']?.change)
-  const qqqSummary  = etfSummary(quotes['QQQ']?.change)
-  const soxxSummary = etfSummary(quotes['SOXX']?.change)
+  const spyDrawdown   = highs['SPY']     ? ((quotes['SPY']?.price     ?? 0) - highs['SPY'])     / highs['SPY']     * 100 : null
+  const qqqDrawdown   = highs['QQQ']     ? ((quotes['QQQ']?.price     ?? 0) - highs['QQQ'])     / highs['QQQ']     * 100 : null
+  const soxxDrawdown  = highs['SOXX']    ? ((quotes['SOXX']?.price    ?? 0) - highs['SOXX'])    / highs['SOXX']    * 100 : null
+  const goldDrawdown  = highs['GC=F']    ? ((quotes['GC=F']?.price    ?? 0) - highs['GC=F'])    / highs['GC=F']    * 100 : null
+  const btcDrawdown   = highs['BTC-USD'] ? ((quotes['BTC-USD']?.price ?? 0) - highs['BTC-USD']) / highs['BTC-USD'] * 100 : null
 
-  const goldChange = quotes['GC=F']?.change ?? null
-  const goldSummary = goldChange != null ? {
-    keyword: goldChange >= 1 ? '강세장' : goldChange >= 0 ? '보합' : goldChange >= -1 ? '조정초입' : '조정장',
-    level: (goldChange >= 0 ? 'good' : goldChange >= -1 ? 'neutral' : 'warn') as const,
+  const spySummary  = getDrawdownComment(quotes['SPY']?.price     ?? null, highs['SPY']     ?? null)
+  const qqqSummary  = getDrawdownComment(quotes['QQQ']?.price     ?? null, highs['QQQ']     ?? null)
+  const soxxSummary = getDrawdownComment(quotes['SOXX']?.price    ?? null, highs['SOXX']    ?? null)
+  const goldSummary = getDrawdownComment(quotes['GC=F']?.price    ?? null, highs['GC=F']    ?? null, 'gold')
+  const btcSummary  = getDrawdownComment(quotes['BTC-USD']?.price ?? null, highs['BTC-USD'] ?? null, 'btc')
+
+  const goldSummary = goldDrawdown != null ? {
+    keyword: goldDrawdown >= -8  ? '강세'
+           : goldDrawdown >= -15 ? '조정'   
+           :                       '약세',
+    level: (goldDrawdown >= -8 ? 'good' : goldDrawdown >= -15 ? 'warn' : 'bad') as const,
   } : { keyword: '--', level: 'neutral' as const }
 
-  const btcChange = quotes['BTC-USD']?.change ?? null
-  const btcSummary = btcChange != null ? {
-    keyword: btcChange >= 3 ? '강세장' : btcChange >= 0 ? '보합' : btcChange >= -3 ? '조정장' : '급락장',
-    level: (btcChange >= 0 ? 'good' : btcChange >= -3 ? 'warn' : 'bad') as const,
+  const btcSummary = btcDrawdown != null ? {
+    keyword: btcDrawdown >= -15 ? '강세'
+           : btcDrawdown >= -30 ? '조정'
+           :                      '약세',
+    level: (btcDrawdown >= -15 ? 'good' : btcDrawdown >= -30 ? 'warn' : 'bad') as const,
   } : { keyword: '--', level: 'neutral' as const }
 
   const vixSummary = {
@@ -147,7 +177,7 @@ export default function Page() {
     ...(t10y2y != null ? [{ label: '금리차', keyword: yieldComment?.keyword ?? '--', level: t10y2yLevel }] : []),
     ...(dgs10  != null ? [{ label: '10Y',    keyword: bondComment?.keyword  ?? '--', level: dgs10Level  }] : []),
     { label: 'VIX', ...vixSummary },
-    ...(walcl   != null ? [{ label: '연준자산', keyword: walcl/1e6 >= 8 ? 'QT진행중' : walcl/1e6 >= 7 ? 'QT중반' : walcl/1e6 >= 6 ? 'QT후반' : '정상화', level: 'neutral' as const }] : []),
+    ...(walcl   != null ? [{ label: '연준자산', keyword: walcl/1e6 >= 8 ? 'QT잔재' : walcl/1e6 >= 7 ? 'QT진행중' : walcl/1e6 >= 6 ? 'QT마무리' : '정상화', level: 'neutral' as const }] : []),
     ...(wresbal != null ? [{ label: '지준금',  keyword: wresbal > 3e6 ? '충분' : wresbal > 2.5e6 ? '양호' : wresbal > 2e6 ? '주의' : '위험', level: (wresbal > 3e6 ? 'good' : wresbal > 2.5e6 ? 'neutral' : wresbal > 2e6 ? 'warn' : 'bad') as const }] : []),
     ...(rrp     != null ? [{ label: '역레포',  keyword: rrp < 100 ? '거의소진' : rrp < 500 ? '대폭감소' : '잔존', level: (rrp < 100 ? 'warn' : 'neutral') as const }] : []),
     ...(tga     != null ? [{ label: 'TGA',     keyword: tga > 800 ? '잔고풍부' : tga > 500 ? '정상' : tga > 200 ? '감소중' : '부채한도주의', level: (tga > 500 ? 'neutral' : 'warn') as const }] : []),
@@ -191,13 +221,13 @@ export default function Page() {
       <EventCalendar isMobile={isMobile} />
 
       <SectionLabel>📊 글로벌 ETF</SectionLabel>
-      <PriceChartRow ticker="SPY"  label="SPY · S&P 500 ETF"     color={COLORS.etf} data={quotes['SPY']}  showDrawdown isMobile={isMobile} keyword={spySummary.keyword} keywordLevel={spySummary.level}/>
-      <PriceChartRow ticker="QQQ"  label="QQQ · 나스닥 100 ETF"  color={COLORS.etf} data={quotes['QQQ']}  showDrawdown isMobile={isMobile} keyword={qqqSummary.keyword} keywordLevel={qqqSummary.level}/>
-      <PriceChartRow ticker="SOXX" label="SOXX · 반도체 ETF"     color={COLORS.etf} data={quotes['SOXX']} showDrawdown isMobile={isMobile} keyword={soxxSummary.keyword} keywordLevel={soxxSummary.level}/>
+      <PriceChartRow ticker="SPY"  label="SPY · S&P 500 ETF"     color={COLORS.etf} data={quotes['SPY']}  showDrawdown high={highs['SPY']} isMobile={isMobile} keyword={spySummary.keyword} keywordLevel={spySummary.level}/>
+      <PriceChartRow ticker="QQQ"  label="QQQ · 나스닥 100 ETF"  color={COLORS.etf} data={quotes['QQQ']}  showDrawdown high={highs['QQQ']} isMobile={isMobile} keyword={qqqSummary.keyword} keywordLevel={qqqSummary.level}/>
+      <PriceChartRow ticker="SOXX" label="SOXX · 반도체 ETF"     color={COLORS.etf} data={quotes['SOXX']} showDrawdown high={highs['SOXX']} isMobile={isMobile} keyword={soxxSummary.keyword} keywordLevel={soxxSummary.level}/>
 
       <SectionLabel>🏅 안전자산 & 위험자산</SectionLabel>
-      <PriceChartRow ticker="GC=F"    label="GC=F · 금 Gold"       color={COLORS.asset} unit="$" sub="USD / 온스"  data={quotes['GC=F']}    showDrawdown isMobile={isMobile} keyword={goldSummary.keyword} keywordLevel={goldSummary.level}/>
-      <PriceChartRow ticker="BTC-USD" label="BTC-USD · 비트코인"   color={COLORS.asset} unit="$" sub="BTC / USD"   data={quotes['BTC-USD']} showDrawdown isMobile={isMobile} keyword={btcSummary.keyword} keywordLevel={btcSummary.level}/>
+      <PriceChartRow ticker="GC=F"    label="GC=F · 금 Gold"       color={COLORS.asset} unit="$" sub="USD / 온스"  data={quotes['GC=F']}    showDrawdown high={highs['GC=F']} isMobile={isMobile} keyword={goldSummary.keyword} keywordLevel={goldSummary.level}/>
+      <PriceChartRow ticker="BTC-USD" label="BTC-USD · 비트코인"   color={COLORS.asset} unit="$" sub="BTC / USD"   data={quotes['BTC-USD']} showDrawdown high={highs['BTC-USD']} isMobile={isMobile} keyword={btcSummary.keyword} keywordLevel={btcSummary.level}/>
       <PriceChartRow ticker="CL=F"    label="CL=F · WTI 원유"      color={COLORS.asset} unit="$" sub="USD / 배럴"  data={quotes['CL=F']}
         comment={oilComment} commentLevel={oilLevel} isMobile={isMobile}
       />
@@ -262,7 +292,7 @@ export default function Page() {
       <FredChartRow series="M2SL" label="M2SL · 미국 M2 통화량" desc="광의 통화량 · 증가 = 유동성 확대" color={COLORS.liquidity} unit="B"
         getComment={(val) => {
           if (!val) return null
-          const t = val / 1000
+          const t = val /*/ 1000*/
           if (t > 21000) return { keyword: '역대최고', text: '풍부한 유동성이에요.' }
           if (t > 20000) return { keyword: '높은수준', text: '유동성이 충분해요.' }
           return { keyword: '정상', text: '정상 수준이에요.' }
@@ -273,8 +303,8 @@ export default function Page() {
         getComment={(val) => {
           if (!val) return null
           const t = val / 1000
-          if (t > 6000) return { keyword: '역대최고', text: '투자자들이 관망 중이에요.' }
-          if (t > 5000) return { keyword: '높은수준', text: '안전자산 선호가 강해요.' }
+          if (t > 6) return { keyword: '역대최고', text: '투자자들이 관망 중이에요.' }
+          if (t > 5) return { keyword: '높은수준', text: '안전자산 선호가 강해요.' }
           return { keyword: '정상', text: '정상 수준이에요.' }
         }}
         isMobile={isMobile}
