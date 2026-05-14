@@ -3,6 +3,10 @@ export async function GET(request: Request) {
     const symbol = searchParams.get('symbol')
     const range = searchParams.get('range') || '1y'
   
+    useEffect(() => {
+      console.log('highs updated:', highs)  // 추가
+    }, [highs])
+    
     const res = await fetch(
       `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=${range}`,
       {
