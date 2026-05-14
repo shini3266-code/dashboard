@@ -129,6 +129,8 @@ export default function MemoPage() {
             onNew={() => { setSelected(null); setIsEditing(true); setForm({ title: '', content: '', category: categories[0]?.name ?? '기타' }) }}
             onCategoryChange={setSelectedCategory}
             onShowCatModal={() => setShowCatModal(true)}
+            onShowTrash={() => setShowTrash(true)}
+            trashedCount={trashed.length}
           />
         </div>
       )}
