@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { Memo, Category } from '../types'
 
-export default function MemoSidebar({ memos, categories, filtered, selected, selectedCategory, loading, onSelect, onNew, onCategoryChange, onShowCatModal, onShowTrash, trashedCount }: {
+export default function MemoSidebar({ memos, categories, filtered, selected, selectedCategory, loading, onSelect, onNew, onCategoryChange, onShowCatModal, onShowTrash, trashedCount, showTrash }: {
   memos: Memo[]
   categories: Category[]
   filtered: Memo[]
