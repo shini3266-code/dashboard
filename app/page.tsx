@@ -141,11 +141,16 @@ export default function Page() {
   const goldDrawdown  = highs['GC=F']    ? ((quotes['GC=F']?.price    ?? 0) - highs['GC=F'])    / highs['GC=F']    * 100 : null
   const btcDrawdown   = highs['BTC-USD'] ? ((quotes['BTC-USD']?.price ?? 0) - highs['BTC-USD']) / highs['BTC-USD'] * 100 : null
 
-  const spySummary  = getDrawdownComment(quotes['SPY']?.price     ?? null, highs['SPY']     ?? null)
+  const spySummary  = getDrawdownComment(quotes['SPY']?.price     ?? null, highs['SPY']     ?? null )
+    ?? { keyword: '--', level: 'neutral' as const, drawdown: null, status: '--' }
   const qqqSummary  = getDrawdownComment(quotes['QQQ']?.price     ?? null, highs['QQQ']     ?? null)
+    ?? { keyword: '--', level: 'neutral' as const, drawdown: null, status: '--' }
   const soxxSummary = getDrawdownComment(quotes['SOXX']?.price    ?? null, highs['SOXX']    ?? null)
+    ?? { keyword: '--', level: 'neutral' as const, drawdown: null, status: '--' }
   const goldSummary = getDrawdownComment(quotes['GC=F']?.price    ?? null, highs['GC=F']    ?? null, 'gold')
+    ?? { keyword: '--', level: 'neutral' as const, drawdown: null, status: '--' }
   const btcSummary  = getDrawdownComment(quotes['BTC-USD']?.price ?? null, highs['BTC-USD'] ?? null, 'btc')
+    ?? { keyword: '--', level: 'neutral' as const, drawdown: null, status: '--' }
 
   const vixSummary = {
     keyword: vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정',
