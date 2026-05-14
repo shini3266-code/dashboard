@@ -35,10 +35,35 @@ export default function MemoPage() {
 
   async function saveCategory(data: Omit<Category, 'id'>, editId?: string) {
     if (editId) {
-      const { data: updated } = await supabase.from('memo_categories').update({ name: data.name, color: data.color }).eq('id', editId).select().single()
-      if (updated) setCategories(prev => prev.map(c => c.id === editId ? (updated as Category) : c))
+      const oldCat = categories.find(c => c.id === editId)
+      const { data: updated } = await supabase
+        .from('memo_categories')
+        .update({ name: data.name, color: data.color })
+        .eq('id', editId).select().single()
+  
+      if (updated) {
+        setCategories(prev => prev.map(c => c.id === editId ? (updated as Category) : c))
+  
+        // 이름이 바뀐 경우 메모들도 일괄 업데이트
+        if (oldCat && oldCat.name !== data.name) {
+          await supabase
+            .from('memos')
+            .update({ category: data.name })
+            .eq('category', oldCat.name)
+  
+          setMemos(prev => prev.map(m =>
+            m.category === oldCat.name ? { ...m, category: data.name } : m
+          ))
+          // 선택된 메모도 업데이트
+          setSelected(prev =>
+            prev?.category === oldCat.name ? { ...prev, category: data.name } : prev
+          )
+        }
+      }
     } else {
-      const { data: inserted } = await supabase.from('memo_categories').insert({ name: data.name, color: data.color }).select().single()
+      // 신규 추가 — 기존과 동일
+      const { data: inserted } = await supabase
+        .from('memo_categories').insert({ name: data.name, color: data.color }).select().single()
       if (inserted) setCategories(prev => [...prev, inserted as Category])
     }
   }
