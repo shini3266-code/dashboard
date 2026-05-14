@@ -14,6 +14,7 @@ import BookmarkMenu from './components/BookmarkMenu'
 import MarketSummaryBar from './components/MarketSummaryBar'
 import PriceChartRow from './components/PriceChartRow'
 import FredChartRow from './components/FredChartRow'
+import { getDrawdownComment } from './components/commentFunctions'
 import {
   getOilLevel, getKrwLevel, getDxyLevel,
   getOilComment, getKrwComment, getDxyComment,
