@@ -38,7 +38,7 @@ export default function MemoSidebar({ memos, categories, filtered, selected, sel
           {allCategories.map(cat => {
             const catObj = categories.find(c => c.name === cat)
             return (
-              <button key={cat} onClick={() => { onCategoryChange(cat); onShowTrash && onShowTrash(false) }} style={{
+              <button key={cat} onClick={() => { onCategoryChange(cat); onShowTrash(false) }} style={{
                 display: 'flex', alignItems: 'center', gap: 8,
                 background: selectedCategory === cat && !showTrash ? 'rgba(59,130,246,0.15)' : 'none',
                 color: selectedCategory === cat && !showTrash ? 'var(--text)' : 'var(--muted)',
@@ -54,6 +54,22 @@ export default function MemoSidebar({ memos, categories, filtered, selected, sel
               </button>
             )
           })}
+
+          {/* 휴지통 — 목록 안에 */}
+          <button onClick={() => { onShowTrash(true); onCategoryChange('전체') }} style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: showTrash ? 'rgba(59,130,246,0.15)' : 'none',
+            color: showTrash ? 'var(--text)' : 'var(--muted)',
+            border: 'none', borderRadius: 6, padding: '7px 10px',
+            cursor: 'pointer', fontSize: '1.3rem', textAlign: 'left',
+            borderLeft: showTrash ? '3px solid #808c9e' : '3px solid transparent',
+          }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#808c9e' }} />
+            휴지통
+            <span style={{ marginLeft: 'auto', fontSize: '1.3rem', color: 'var(--muted)' }}>
+              {trashedCount || ''}
+            </span>
+          </button>
         </div>
 
         <button onClick={onShowCatModal} style={{

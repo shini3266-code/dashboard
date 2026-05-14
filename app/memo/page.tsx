@@ -106,6 +106,7 @@ export default function MemoPage() {
     await supabase.from('memos').update({ deleted_at: now }).eq('id', id)
     setMemos(prev => prev.map(m => m.id === id ? { ...m, deleted_at: now } : m))
     setSelected(null)
+    setShowTrash(true)  // ← 삭제 후 자동으로 휴지통으로 이동
   }
 
   async function restoreMemo(id: string) {
