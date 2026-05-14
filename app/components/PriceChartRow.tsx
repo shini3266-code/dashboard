@@ -30,10 +30,10 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
   keyword?: string
   keywordLevel?: 'good' | 'warn' | 'bad' | 'neutral'
   isMobile: boolean
+  high?: number | null
 }) {
   const [shortRange, setShortRange] = useState<ShortRange>('1m')
   const [longRange,  setLongRange ] = useState<LongRange>('1y')
-  const [high, setHigh] = useState<number | null>(null)
   const dd = showDrawdown ? getDrawdownComment(data?.price ?? null, high ?? null) : null
   const isUp = (data?.change ?? 0) >= 0
   const fmt = formatValue ?? ((v: number) => `${unit}${v.toLocaleString()}`)
@@ -42,7 +42,7 @@ export default function PriceChartRow({ ticker, label, color, unit = '$', sub, d
     if (unit === '') return v.toFixed(2)
     return `${unit}${Math.round(v).toLocaleString()}`
   }
-  
+
   return (
     <div style={{
       display: 'grid',
