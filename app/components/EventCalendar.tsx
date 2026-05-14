@@ -223,7 +223,7 @@ export default function EventCalendar({ isMobile = false }: { isMobile?: boolean
   const month = currentMonth.getMonth()
   const firstDay = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const today = new Date().toISOString().slice(0, 10)
+  const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
 
   const cells: (number | null)[] = [
     ...Array(firstDay).fill(null),
