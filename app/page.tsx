@@ -110,6 +110,10 @@ export default function Page() {
     })
   }, [])
 
+  useEffect(() => {
+    console.log('highs updated:', highs)  // 추가
+  }, [highs])
+
   // 기본 변수
   const dxy      = quotes['DX-Y.NYB']?.price  ?? null
   const krw      = quotes['KRW=X']?.price      ?? null
