@@ -146,20 +146,6 @@ export default function Page() {
   const goldSummary = getDrawdownComment(quotes['GC=F']?.price    ?? null, highs['GC=F']    ?? null, 'gold')
   const btcSummary  = getDrawdownComment(quotes['BTC-USD']?.price ?? null, highs['BTC-USD'] ?? null, 'btc')
 
-  const goldSummary = goldDrawdown != null ? {
-    keyword: goldDrawdown >= -8  ? '강세'
-           : goldDrawdown >= -15 ? '조정'   
-           :                       '약세',
-    level: (goldDrawdown >= -8 ? 'good' : goldDrawdown >= -15 ? 'warn' : 'bad') as const,
-  } : { keyword: '--', level: 'neutral' as const }
-
-  const btcSummary = btcDrawdown != null ? {
-    keyword: btcDrawdown >= -15 ? '강세'
-           : btcDrawdown >= -30 ? '조정'
-           :                      '약세',
-    level: (btcDrawdown >= -15 ? 'good' : btcDrawdown >= -30 ? 'warn' : 'bad') as const,
-  } : { keyword: '--', level: 'neutral' as const }
-
   const vixSummary = {
     keyword: vix >= 30 ? '경계' : vix >= 20 ? '주의' : '안정',
     level: (vix >= 30 ? 'bad' : vix >= 20 ? 'warn' : 'good') as const,
