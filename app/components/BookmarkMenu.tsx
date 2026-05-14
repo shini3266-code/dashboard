@@ -53,13 +53,13 @@ export default function BookmarkMenu() {
             <div style={{ fontSize: '1.3rem', color: 'var(--muted)', marginBottom: 8 }}>북마크</div>
 
             {bookmarks.length === 0 ? (
-              <div style={{ fontSize: '3.0rem', color: 'var(--muted)', textAlign: 'center', padding: '8px 0' }}>북마크가 없어요</div>
+              <div style={{ fontSize: '1.3rem', color: 'var(--muted)', textAlign: 'center', padding: '8px 0' }}>북마크가 없어요</div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
                 {bookmarks.map(bm => (
                   <div key={bm.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 8px', background: 'var(--surface2)', borderRadius: 6 }}>
                     <a href={bm.url} target="_blank" rel="noreferrer" onClick={() => setOpen(false)}
-                      style={{ fontSize: '3.0rem', color: 'var(--text)', textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                      style={{ fontSize: '1.3rem', color: 'var(--text)', textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
                       {bm.name}
                     </a>
                     <button onClick={() => removeBookmark(bm.id)}
@@ -72,9 +72,9 @@ export default function BookmarkMenu() {
             {showForm ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
                 <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="북마크 이름" autoFocus
-                  style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '3.0rem' }} />
+                  style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '1.3rem' }} />
                 <input value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} onKeyDown={e => e.key === 'Enter' && addBookmark()} placeholder="URL"
-                  style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '3.0rem' }} />
+                  style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 10px', color: 'var(--text)', fontSize: '1.3rem' }} />
                 <div style={{ display: 'flex', gap: 6 }}>
                   <button onClick={() => { setShowForm(false); setForm({ name: '', url: '' }) }}
                     style={{ flex: 1, background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '5px', color: 'var(--muted)', cursor: 'pointer', fontSize: '1.3rem' }}>취소</button>

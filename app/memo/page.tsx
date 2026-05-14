@@ -18,6 +18,7 @@ export default function MemoPage() {
   const [form, setForm] = useState({ title: '', content: '', category: '' })
   const [loading, setLoading] = useState(true)
   const [showCatModal, setShowCatModal] = useState(false)
+  const [showTrash, setShowTrash] = useState(false)
 
   useEffect(() => { loadAll() }, [])
 
@@ -75,17 +76,32 @@ export default function MemoPage() {
 
   async function deleteMemo(id: string) {
     if (!confirm('메모를 삭제할까요?')) return
+    const now = new Date().toISOString()
+    await supabase.from('memos').update({ deleted_at: now }).eq('id', id)
+    setMemos(prev => prev.map(m => m.id === id ? { ...m, deleted_at: now } : m))
+    setSelected(null)
+  }
+
+  async function restoreMemo(id: string) {
+    await supabase.from('memos').update({ deleted_at: null }).eq('id', id)
+    setMemos(prev => prev.map(m => m.id === id ? { ...m, deleted_at: null } : m))
+  }
+
+  async function permanentDelete(id: string) {
+    if (!confirm('영구 삭제할까요? 복원할 수 없습니다.')) return
     await supabase.from('memos').delete().eq('id', id)
     setMemos(prev => prev.filter(m => m.id !== id))
     setSelected(null)
   }
 
-  const filtered = (selectedCategory === '전체' ? memos : memos.filter(m => m.category === selectedCategory))
+  const filtered = (selectedCategory === '전체' ? memos.filter(m => !m.deleted_at) : memos.filter(m => m.category === selectedCategory && !m.deleted_at))
     .sort((a, b) => {
       if (a.pinned && !b.pinned) return -1
       if (!a.pinned && b.pinned) return 1
       return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
     })
+  
+  const trashed = memos.filter(m => m.deleted_at)
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
@@ -129,6 +145,13 @@ export default function MemoPage() {
               isMobile={isMobile}
               onSave={saveMemo}
               onCancel={() => { setIsEditing(false); setSelected(null) }}
+            />
+          ) : showTrash ? (
+            <TrashViewer
+              memos={trashed}
+              onRestore={restoreMemo}
+              onPermanentDelete={permanentDelete}
+              onClose={() => setShowTrash(false)}
             />
           ) : selected ? (
             <MemoViewer

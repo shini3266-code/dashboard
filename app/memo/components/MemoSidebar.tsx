@@ -13,6 +13,8 @@ export default function MemoSidebar({ memos, categories, filtered, selected, sel
   onNew: () => void
   onCategoryChange: (cat: string) => void
   onShowCatModal: () => void
+  onShowTrash: () => void
+  trashedCount: number
 }) {
   const allCategories = ['전체', ...categories.map(c => c.name)]
 
@@ -58,6 +60,12 @@ export default function MemoSidebar({ memos, categories, filtered, selected, sel
           borderRadius: 6, padding: '6px', cursor: 'pointer', color: 'var(--muted)', fontSize: '1.3rem',
         }}>
           ⚙️ 카테고리 관리
+        </button>
+        <button onClick={onShowTrash} style={{
+          width: '100%', marginTop: 6, background: 'none', border: '1px solid var(--border)',
+          borderRadius: 6, padding: '6px', cursor: 'pointer', color: 'var(--muted)', fontSize: '1.3rem',
+        }}>
+          🗑️ 휴지통 {trashedCount > 0 && `(${trashedCount})`}
         </button>
       </div>
 
